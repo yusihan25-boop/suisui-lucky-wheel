@@ -1555,7 +1555,7 @@
     const board = document.getElementById("stageBoard");
     const scaler = board && board.parentElement;
     if (!board || !scaler) return;
-    const bw = 1440;
+    const bw = 1500;
     const bh = 860;
     board.style.width = `${bw}px`;
     board.style.height = `${bh}px`;

@@ -402,12 +402,12 @@ body {
 
 .stage-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   width: 100%;
-  margin: 0 0 4px;
+  margin: 0 0 2px;
 }
 
 .stage {
@@ -433,15 +433,16 @@ body {
 }
 
 .stage-board {
-  --board-w: 1440px;
+  --board-w: 1500px;
   --board-h: 860px;
   width: var(--board-w);
   height: var(--board-h);
   flex: 0 0 auto;
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr) 260px;
+  grid-template-columns: 300px minmax(0, 1fr) 270px;
   align-items: center;
-  gap: 32px;
+  column-gap: 64px;
+  row-gap: 24px;
   transform-origin: center center;
   will-change: transform;
 }
@@ -560,10 +561,10 @@ body {
 .stage-side {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-self: stretch;
-  padding-top: 10px;
-  gap: 14px;
+  justify-content: center;
+  align-self: center;
+  padding-top: 56px;
+  gap: 12px;
   width: 100%;
   max-height: 100%;
   z-index: 2;
