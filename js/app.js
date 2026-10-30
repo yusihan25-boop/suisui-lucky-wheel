@@ -1555,19 +1555,19 @@
     const board = document.getElementById("stageBoard");
     const scaler = board && board.parentElement;
     if (!board || !scaler) return;
-    const bw = 1560;
+    const bw = 1660;
     const bh = 900;
     board.style.width = `${bw}px`;
     board.style.height = `${bh}px`;
-    board.style.transform = "none";
-    board.style.margin = "0";
-    const pad = 4;
-    const sw = Math.max(scaler.clientWidth - pad, 1);
-    const sh = Math.max(scaler.clientHeight - pad, 1);
-    // 可放大也可缩小，尽量铺满可用区域
+    const sw = Math.max(scaler.clientWidth, 1);
+    const sh = Math.max(scaler.clientHeight, 1);
     const scale = Math.min(sw / bw, sh / bh);
+    const scaledH = bh * scale;
+    // 左边距 = 上下边距，多余空间留给右侧
+    const edge = Math.max((sh - scaledH) / 2, 0);
     board.style.transform = `scale(${scale})`;
-    board.style.margin = `${((bh * scale) - bh) / 2}px ${((bw * scale) - bw) / 2}px`;
+    board.style.left = `${edge}px`;
+    board.style.top = `${edge}px`;
   }
 
   let fitRaf = 0;
