@@ -62,148 +62,119 @@ body {
   overflow: hidden;
 }
 
-.festive-decor .ribbon {
+/* 螺旋挂彩带（参考扭曲线条） */
+.festive-decor .curl {
   position: absolute;
-  width: 120px;
-  height: 14px;
-  border-radius: 999px;
-  opacity: 0.82;
-  transform-origin: center;
-  animation: ribbonSway 2.8s ease-in-out infinite;
-}
-
-.festive-decor .ribbon-a {
-  top: 12%;
-  right: 6%;
-  background: linear-gradient(90deg, #ff7a45, #f0c14b);
-  transform: rotate(-28deg);
-  animation-delay: 0s;
-}
-
-.festive-decor .ribbon-b {
-  top: 22%;
-  right: 14%;
-  width: 90px;
-  background: linear-gradient(90deg, #4ecdc4, #457b9d);
-  transform: rotate(18deg);
-  animation-delay: -1.2s;
-}
-
-.festive-decor .ribbon-c {
-  bottom: 18%;
-  right: 8%;
-  width: 100px;
-  background: linear-gradient(90deg, #e76f51, #ff8fa3);
-  transform: rotate(32deg);
-  animation-delay: -2.4s;
-}
-
-.festive-decor .ribbon-d {
-  bottom: 28%;
-  left: 38%;
-  width: 80px;
-  background: linear-gradient(90deg, #f0c14b, #e9c46a);
-  transform: rotate(-12deg);
-  opacity: 0.5;
-  animation-delay: -0.8s;
-}
-
-.festive-decor .ribbon-e {
-  top: 8%;
-  left: 58%;
-  width: 70px;
-  background: linear-gradient(90deg, #ff8fa3, #ff7a45);
-  transform: rotate(24deg);
-  opacity: 0.55;
-  animation-delay: -1.8s;
-}
-
-.festive-decor .ribbon-f {
-  bottom: 12%;
-  right: 18%;
-  width: 95px;
-  background: linear-gradient(90deg, #7b5cff, #4ecdc4);
-  transform: rotate(-22deg);
-  opacity: 0.5;
-  animation-delay: -3s;
-}
-
-.festive-decor .ribbon-g {
-  top: 58%;
-  right: 4%;
-  width: 75px;
-  background: linear-gradient(90deg, #e9c46a, #ff7a45);
-  transform: rotate(8deg);
-  opacity: 0.55;
-  animation-delay: -2.2s;
-}
-
-.festive-decor .streamer {
-  position: absolute;
-  width: 8px;
-  height: 110px;
-  border-radius: 8px;
-  opacity: 0.58;
+  top: -18px;
+  height: min(52vh, 420px);
+  width: auto;
+  overflow: visible;
   transform-origin: top center;
-  animation: streamerWave 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 2px 0 rgba(40, 50, 70, 0.12));
+  animation: curlSway 3.2s ease-in-out infinite;
 }
 
-.festive-decor .streamer-1 {
-  top: -8px;
-  right: 18%;
-  background: linear-gradient(180deg, #ff7a45, transparent);
+.festive-decor .curl .curl-shade,
+.festive-decor .curl .curl-face {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.festive-decor .curl-1 {
+  left: 6%;
+  height: min(58vh, 460px);
   animation-delay: 0s;
 }
+.festive-decor .curl-1 .curl-shade { stroke: #d45520; stroke-width: 16; }
+.festive-decor .curl-1 .curl-face { stroke: #ff9a5c; stroke-width: 11; }
 
-.festive-decor .streamer-2 {
-  top: -8px;
-  right: 22%;
-  height: 90px;
-  background: linear-gradient(180deg, #f0c14b, transparent);
-  animation-delay: -0.7s;
+.festive-decor .curl-2 {
+  left: 14%;
+  height: min(42vh, 340px);
+  animation-delay: -0.6s;
+  animation-duration: 2.8s;
 }
+.festive-decor .curl-2 .curl-shade { stroke: #2f8f86; stroke-width: 11; }
+.festive-decor .curl-2 .curl-face { stroke: #7fd8cf; stroke-width: 7; }
 
-.festive-decor .streamer-3 {
-  top: -8px;
-  left: 42%;
-  height: 70px;
-  opacity: 0.28;
-  background: linear-gradient(180deg, #4ecdc4, transparent);
-  animation-delay: -1.4s;
+.festive-decor .curl-3 {
+  left: 22%;
+  height: min(50vh, 400px);
+  animation-delay: -1.2s;
+  animation-duration: 3.5s;
 }
+.festive-decor .curl-3 .curl-shade { stroke: #c9a016; stroke-width: 14; }
+.festive-decor .curl-3 .curl-face { stroke: #ffe08a; stroke-width: 9; }
 
-.festive-decor .streamer-4 {
-  top: -8px;
+.festive-decor .curl-4 {
   right: 28%;
-  height: 100px;
-  background: linear-gradient(180deg, #ff8fa3, transparent);
-  animation-delay: -2.1s;
+  left: auto;
+  height: min(36vh, 280px);
+  animation-delay: -0.3s;
+  animation-duration: 2.6s;
 }
+.festive-decor .curl-4 .curl-shade { stroke: #3d7ea8; stroke-width: 9; }
+.festive-decor .curl-4 .curl-face { stroke: #8ec8e8; stroke-width: 6; }
 
-.festive-decor .streamer-5 {
-  top: -8px;
-  right: 12%;
-  height: 120px;
-  background: linear-gradient(180deg, #7b5cff, transparent);
-  animation-delay: -0.4s;
+.festive-decor .curl-5 {
+  right: 18%;
+  left: auto;
+  height: min(48vh, 380px);
+  animation-delay: -1.5s;
+  animation-duration: 3.1s;
 }
+.festive-decor .curl-5 .curl-shade { stroke: #d45f78; stroke-width: 13; }
+.festive-decor .curl-5 .curl-face { stroke: #ffb0c4; stroke-width: 8; }
 
-.festive-decor .streamer-6 {
-  top: -8px;
-  left: 50%;
-  height: 85px;
-  background: linear-gradient(180deg, #e76f51, transparent);
+.festive-decor .curl-6 {
+  right: 10%;
+  left: auto;
+  height: min(40vh, 320px);
+  animation-delay: -2s;
+  animation-duration: 2.9s;
+}
+.festive-decor .curl-6 .curl-shade { stroke: #5a3fc4; stroke-width: 11; }
+.festive-decor .curl-6 .curl-face { stroke: #b8a0ff; stroke-width: 7; }
+
+.festive-decor .curl-7 {
+  right: 4%;
+  left: auto;
+  height: min(32vh, 250px);
+  animation-delay: -0.9s;
+  animation-duration: 2.4s;
+}
+.festive-decor .curl-7 .curl-shade { stroke: #2a9d8f; stroke-width: 8; }
+.festive-decor .curl-7 .curl-face { stroke: #9aeadf; stroke-width: 5; }
+
+.festive-decor .curl-8 {
+  left: 48%;
+  height: min(46vh, 370px);
+  opacity: 0.85;
   animation-delay: -1.8s;
+  animation-duration: 3.4s;
+}
+.festive-decor .curl-8 .curl-shade { stroke: #e76f51; stroke-width: 15; }
+.festive-decor .curl-8 .curl-face { stroke: #ffb08a; stroke-width: 10; }
+
+.festive-decor .petal {
+  position: absolute;
+  width: 14px;
+  height: 20px;
+  border-radius: 60% 60% 55% 55% / 70% 70% 35% 35%;
+  opacity: 0.55;
+  transform-origin: center;
+  animation: petalDrift 7s ease-in-out infinite;
 }
 
-.festive-decor .streamer-7 {
-  top: -8px;
-  right: 34%;
-  height: 75px;
-  width: 6px;
-  background: linear-gradient(180deg, #2a9d8f, transparent);
-  animation-delay: -2.8s;
-}
+.festive-decor .p1 { top: 18%; left: 10%; background: #ff9a5c; animation-delay: 0s; }
+.festive-decor .p2 { top: 28%; left: 20%; background: #7fd8cf; width: 11px; height: 16px; animation-delay: -1.2s; }
+.festive-decor .p3 { top: 22%; right: 22%; background: #ffe08a; animation-delay: -2.1s; }
+.festive-decor .p4 { top: 36%; right: 12%; background: #ffb0c4; width: 12px; height: 18px; animation-delay: -0.7s; }
+.festive-decor .p5 { top: 42%; left: 46%; background: #8ec8e8; opacity: 0.4; animation-delay: -3s; }
+.festive-decor .p6 { top: 14%; right: 8%; background: #b8a0ff; width: 10px; height: 15px; animation-delay: -1.6s; }
+.festive-decor .p7 { top: 50%; right: 26%; background: #e76f51; opacity: 0.42; animation-delay: -2.6s; }
+.festive-decor .p8 { top: 12%; left: 30%; background: #9aeadf; width: 13px; height: 17px; animation-delay: -4s; }
 
 .festive-decor .dot {
   position: absolute;
@@ -404,29 +375,18 @@ body {
 
 .festive-decor .balloon-xl6::after { height: 50px; }
 
-@keyframes ribbonSway {
-  0% { transform: translate(0, 0) rotate(var(--r, -20deg)) scaleX(1) skewX(0deg); }
-  15% { transform: translate(22px, -18px) rotate(calc(var(--r, -20deg) + 16deg)) scaleX(1.12) skewX(-8deg); }
-  35% { transform: translate(-16px, 14px) rotate(calc(var(--r, -20deg) - 14deg)) scaleX(0.9) skewX(10deg); }
-  55% { transform: translate(28px, 6px) rotate(calc(var(--r, -20deg) + 22deg)) scaleX(1.08) skewX(-6deg); }
-  75% { transform: translate(-10px, -20px) rotate(calc(var(--r, -20deg) - 8deg)) scaleX(1.04) skewX(7deg); }
-  100% { transform: translate(0, 0) rotate(var(--r, -20deg)) scaleX(1) skewX(0deg); }
+@keyframes curlSway {
+  0% { transform: rotate(-4deg) translateX(0); }
+  20% { transform: rotate(7deg) translateX(10px); }
+  45% { transform: rotate(-9deg) translateX(-8px); }
+  70% { transform: rotate(6deg) translateX(12px); }
+  100% { transform: rotate(-4deg) translateX(0); }
 }
 
-.festive-decor .ribbon-a { --r: -28deg; }
-.festive-decor .ribbon-b { --r: 18deg; }
-.festive-decor .ribbon-c { --r: 32deg; }
-.festive-decor .ribbon-d { --r: -12deg; }
-.festive-decor .ribbon-e { --r: 24deg; }
-.festive-decor .ribbon-f { --r: -22deg; }
-.festive-decor .ribbon-g { --r: 8deg; }
-
-@keyframes streamerWave {
-  0% { transform: rotate(-10deg) translateX(0); }
-  25% { transform: rotate(14deg) translateX(8px); }
-  50% { transform: rotate(-16deg) translateX(-6px); }
-  75% { transform: rotate(12deg) translateX(10px); }
-  100% { transform: rotate(-10deg) translateX(0); }
+@keyframes petalDrift {
+  0%, 100% { transform: translate(0, 0) rotate(-20deg); }
+  30% { transform: translate(12px, 18px) rotate(25deg); }
+  60% { transform: translate(-10px, 28px) rotate(-35deg); }
 }
 
 @keyframes confettiDrift {
@@ -483,7 +443,10 @@ body {
 
 @media (max-width: 820px) {
   .festive-decor .balloon-l,
-  .festive-decor .ribbon-d,
+  .festive-decor .curl-3,
+  .festive-decor .curl-8,
+  .festive-decor .p5,
+  .festive-decor .p7,
   .festive-decor .d7,
   .festive-decor .d8,
   .festive-decor .d9,
