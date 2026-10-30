@@ -368,24 +368,6 @@ body {
   }
 }
 
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
-  margin: 0 0 4px;
-  flex: 0 0 auto;
-  position: relative;
-  z-index: 2;
-}
-
-.topbar-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 .flow-hint {
   max-width: 1100px;
   width: 100%;
@@ -395,15 +377,37 @@ body {
   text-align: center;
 }
 
+.stage-title {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 8px;
+  position: relative;
+  z-index: 2;
+}
+
 .brand {
   margin: 0;
   font-family: var(--display);
-  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-size: 2.55rem;
   font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--gold);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
   animation: titleIn 0.7s ease both;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.stage-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 0 0 4px;
 }
 
 .stage {
@@ -430,7 +434,7 @@ body {
 
 .stage-board {
   --board-w: 1440px;
-  --board-h: 820px;
+  --board-h: 860px;
   width: var(--board-w);
   height: var(--board-h);
   flex: 0 0 auto;
@@ -546,6 +550,7 @@ body {
 .stage-main {
   min-width: 0;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -555,7 +560,9 @@ body {
 .stage-side {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  padding-top: 10px;
   gap: 14px;
   width: 100%;
   max-height: 100%;
@@ -1394,10 +1401,6 @@ body {
 @media (max-width: 560px) {
   .app {
     padding: 14px 12px 28px;
-  }
-
-  .topbar {
-    max-width: none;
   }
 
   .spin-btn {

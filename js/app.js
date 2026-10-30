@@ -1556,7 +1556,7 @@
     const scaler = board && board.parentElement;
     if (!board || !scaler) return;
     const bw = 1440;
-    const bh = 820;
+    const bh = 860;
     board.style.width = `${bw}px`;
     board.style.height = `${bh}px`;
     board.style.transform = "none";
