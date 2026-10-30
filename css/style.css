@@ -458,10 +458,16 @@ body {
   justify-content: center;
   align-items: center;
   margin: 0;
-  padding-top: 4px;
-  flex: 0 0 auto;
-  position: relative;
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
   z-index: 2;
+  pointer-events: none;
+}
+
+.stage-title .brand {
+  pointer-events: auto;
 }
 
 .brand {
@@ -632,13 +638,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 2px;
-}
-
-.stage-main .stage-row {
-  flex: 1 1 auto;
-  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .stage-side {
