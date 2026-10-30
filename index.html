@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>幸运大转盘</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="festive-decor" aria-hidden="true">
+    <span class="ribbon ribbon-a"></span>
+    <span class="ribbon ribbon-b"></span>
+    <span class="ribbon ribbon-c"></span>
+    <span class="ribbon ribbon-d"></span>
+    <span class="ribbon ribbon-e"></span>
+    <span class="ribbon ribbon-f"></span>
+    <span class="ribbon ribbon-g"></span>
+    <span class="streamer streamer-1"></span>
+    <span class="streamer streamer-2"></span>
+    <span class="streamer streamer-3"></span>
+    <span class="streamer streamer-4"></span>
+    <span class="streamer streamer-5"></span>
+    <span class="streamer streamer-6"></span>
+    <span class="streamer streamer-7"></span>
+    <span class="dot d1"></span>
+    <span class="dot d2"></span>
+    <span class="dot d3"></span>
+    <span class="dot d4"></span>
+    <span class="dot d5"></span>
+    <span class="dot d6"></span>
+    <span class="dot d7"></span>
+    <span class="dot d8"></span>
+    <span class="dot d9"></span>
+    <span class="dot d10"></span>
+    <span class="dot d11"></span>
+    <span class="dot d12"></span>
+    <span class="dot d13"></span>
+    <span class="dot d14"></span>
+    <span class="dot d15"></span>
+    <span class="dot d16"></span>
+    <span class="dot d17"></span>
+    <span class="dot d18"></span>
+    <span class="flake f1"></span>
+    <span class="flake f2"></span>
+    <span class="flake f3"></span>
+    <span class="flake f4"></span>
+    <span class="flake f5"></span>
+    <span class="flake f6"></span>
+    <span class="flake f7"></span>
+    <span class="flake f8"></span>
+    <span class="flake f9"></span>
+    <span class="balloon balloon-l"></span>
+    <span class="balloon balloon-r"></span>
+    <span class="balloon balloon-m"></span>
+    <span class="balloon balloon-tr"></span>
+  </div>
+  <div class="app">
+    <header class="topbar">
+      <h1 id="pageTitle" class="brand">幸运大转盘</h1>
+      <div class="topbar-actions">
+        <button type="button" id="btnHistory" class="btn btn-ghost">中奖记录</button>
+        <button type="button" id="btnSettings" class="btn btn-ghost" aria-label="打开设置">设置</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="stage-layout">
+        <aside class="decor-slot" aria-label="装饰图片">
+          <div class="decor-frame" id="decorFrame" title="点击上传或更换图片">
+            <img id="decorPreview" class="decor-preview" alt="" hidden />
+            <div id="decorEmpty" class="decor-empty">
+              <span>9:16</span>
+              <p>点击上传图片</p>
+            </div>
+            <input type="file" id="decorInput" accept="image/*" hidden />
+          </div>
+        </aside>
+        <div class="stage-main">
+          <div class="designate-bar">
+            <label class="designate-toggle">
+              <input type="checkbox" id="chkDesignate" />
+              <span>指定中奖人</span>
+            </label>
+            <input
+              type="text"
+              id="inputDesignate"
+              class="designate-input"
+              maxlength="20"
+              placeholder="已知中奖人时填写姓名"
+              disabled
+            />
+            <span class="designate-tip">开启后转奖品盘，会把人和奖品记在一起</span>
+          </div>
+          <div class="stage-row dual">
+            <section class="wheel-col" data-wheel="people">
+              <div class="wheel-wrap small">
+                <div class="pointer" aria-hidden="true"></div>
+                <canvas id="peopleWheel" width="480" height="480"></canvas>
+                <button type="button" id="btnSpinPeople" class="spin-btn">中奖人</button>
+              </div>
+              <p id="lastPerson" class="current-pick"></p>
+            </section>
+
+            <section class="wheel-col" data-wheel="prizes">
+              <div class="wheel-wrap small">
+                <div class="pointer" aria-hidden="true"></div>
+                <canvas id="prizeWheel" width="480" height="480"></canvas>
+                <button type="button" id="btnSpinPrize" class="spin-btn">奖品</button>
+              </div>
+              <p id="lastPrize" class="current-pick"></p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="stock-panel compact" aria-label="奖品库存">
+      <h3>奖品库存</h3>
+      <ul id="stockList" class="stock-list"></ul>
+    </aside>
+  </div>
+
+  <aside id="settingsPanel" class="settings" aria-hidden="true">
+    <div class="settings-backdrop" data-close></div>
+    <div class="settings-sheet wide" role="dialog" aria-labelledby="settingsHeading">
+      <div class="settings-head">
+        <h2 id="settingsHeading">转盘设置</h2>
+        <button type="button" class="icon-btn" data-close aria-label="关闭">×</button>
+      </div>
+
+      <label class="field">
+        <span>标题</span>
+        <input type="text" id="inputTitle" maxlength="40" placeholder="输入转盘标题" />
+      </label>
+
+      <label class="check-row">
+        <input type="checkbox" id="inputRemoveWinner" checked />
+        <span>中奖人抽出后从人员转盘移除（避免重复中奖）</span>
+      </label>
+
+      <div class="settings-tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="people" role="tab" aria-selected="true">人员名单</button>
+        <button type="button" class="tab" data-tab="prizes" role="tab" aria-selected="false">奖品设置</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="people">
+        <div class="section-label">
+          <span>姓名 / 概率</span>
+          <span id="peopleProbSum" class="prob-sum"></span>
+        </div>
+        <div class="prize-head people-head" aria-hidden="true">
+          <span></span>
+          <span>姓名</span>
+          <span>概率</span>
+          <span></span>
+        </div>
+        <div id="peopleList" class="prize-list"></div>
+        <div class="row-actions">
+          <button type="button" id="btnAddPerson" class="btn btn-secondary">添加人员</button>
+          <button type="button" id="btnEvenPeople" class="btn btn-secondary">均分概率</button>
+          <label class="btn btn-secondary file-btn">
+            Excel 导入
+            <input type="file" id="peopleExcelInput" accept=".xlsx,.xls,.csv" hidden />
+          </label>
+          <a class="btn btn-secondary" href="人员导入模板.xls" download>下载模板</a>
+        </div>
+        <p class="import-tip">列：姓名、概率（可不填概率，保存时自动均分到 100%）</p>
+      </div>
+
+      <div class="tab-panel" data-panel="prizes">
+        <div class="section-label">
+          <span>奖品 / 概率 / 库存</span>
+          <span id="prizeProbSum" class="prob-sum"></span>
+        </div>
+        <div class="prize-head" aria-hidden="true">
+          <span></span>
+          <span>名称</span>
+          <span>概率</span>
+          <span>库存</span>
+          <span></span>
+        </div>
+        <div id="prizeList" class="prize-list"></div>
+        <div class="row-actions">
+          <button type="button" id="btnAddPrize" class="btn btn-secondary">添加奖品</button>
+          <button type="button" id="btnEvenPrize" class="btn btn-secondary">均分概率</button>
+          <label class="btn btn-secondary file-btn">
+            Excel 导入
+            <input type="file" id="prizeExcelInput" accept=".xlsx,.xls,.csv" hidden />
+          </label>
+          <a class="btn btn-secondary" href="奖项导入模板.xls" download>下载模板</a>
+        </div>
+        <p class="import-tip">列：奖品名称、概率、库存（库存留空=不限量）。概率与库存同时生效。</p>
+      </div>
+
+      <div class="settings-foot">
+        <button type="button" id="btnReset" class="btn btn-ghost">恢复默认</button>
+        <button type="button" id="btnSave" class="btn btn-primary">保存并关闭</button>
+      </div>
+    </div>
+  </aside>
+
+  <div id="resultModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-result></div>
+    <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+    <div class="modal-card celebrate-card" role="dialog" aria-labelledby="resultTitle">
+      <div class="celeb-mascot" aria-hidden="true">
+        <img class="mascot-img" src="assets/celeb-mascot.png" alt="" />
+        <span class="spark spark-1"></span>
+        <span class="spark spark-2"></span>
+        <span class="spark spark-3"></span>
+      </div>
+      <h2 id="resultTitle" class="modal-title">恭喜中奖啦</h2>
+      <button type="button" id="btnCloseResult" class="btn btn-primary">继续</button>
+    </div>
+  </div>
+
+  <div id="historyModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-history></div>
+    <div class="modal-card history-card" role="dialog" aria-labelledby="historyHeading">
+      <h2 id="historyHeading" class="modal-heading">中奖记录</h2>
+      <ul id="historyList" class="history-list"></ul>
+      <div class="history-actions">
+        <button type="button" id="btnClearHistory" class="btn btn-ghost">清空记录</button>
+        <button type="button" id="btnExportHistory" class="btn btn-secondary">导出记录</button>
+        <button type="button" id="btnCloseHistory" class="btn btn-primary">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
