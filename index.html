@@ -67,60 +67,65 @@
     </header>
 
     <main class="stage">
-      <div class="stage-layout">
-        <aside class="decor-slot" aria-label="装饰图片">
-          <div class="decor-frame" id="decorFrame" title="点击上传或更换图片">
-            <img id="decorPreview" class="decor-preview" alt="" hidden />
-            <div id="decorEmpty" class="decor-empty">
-              <span>9:16</span>
-              <p>点击上传图片</p>
+      <div class="stage-scaler">
+        <div class="stage-board" id="stageBoard">
+          <aside class="decor-slot" aria-label="装饰图片">
+            <div class="decor-frame" id="decorFrame" title="点击上传或更换图片">
+              <img id="decorPreview" class="decor-preview" alt="" hidden />
+              <div id="decorEmpty" class="decor-empty">
+                <span>9:16</span>
+                <p>点击上传图片</p>
+              </div>
+              <input type="file" id="decorInput" accept="image/*" hidden />
             </div>
-            <input type="file" id="decorInput" accept="image/*" hidden />
-          </div>
-        </aside>
-        <div class="stage-main">
-          <div class="designate-bar">
-            <label class="designate-toggle">
-              <input type="checkbox" id="chkDesignate" />
-              <span>指定中奖人</span>
-            </label>
-            <input
-              type="text"
-              id="inputDesignate"
-              class="designate-input"
-              maxlength="20"
-              placeholder="已知中奖人时填写姓名"
-              disabled
-            />
-            <span class="designate-tip">开启后转奖品盘，会把人和奖品记在一起</span>
-          </div>
-          <div class="stage-row dual">
-            <section class="wheel-col" data-wheel="people">
-              <div class="wheel-wrap small">
-                <div class="pointer" aria-hidden="true"></div>
-                <canvas id="peopleWheel" width="480" height="480"></canvas>
-                <button type="button" id="btnSpinPeople" class="spin-btn">中奖人</button>
-              </div>
-              <p id="lastPerson" class="current-pick"></p>
-            </section>
+          </aside>
 
-            <section class="wheel-col" data-wheel="prizes">
-              <div class="wheel-wrap small">
-                <div class="pointer" aria-hidden="true"></div>
-                <canvas id="prizeWheel" width="480" height="480"></canvas>
-                <button type="button" id="btnSpinPrize" class="spin-btn">奖品</button>
-              </div>
-              <p id="lastPrize" class="current-pick"></p>
-            </section>
+          <div class="stage-main">
+            <div class="stage-row dual">
+              <section class="wheel-col" data-wheel="people">
+                <div class="wheel-wrap small">
+                  <div class="pointer" aria-hidden="true"></div>
+                  <canvas id="peopleWheel" width="480" height="480"></canvas>
+                  <button type="button" id="btnSpinPeople" class="spin-btn">中奖人</button>
+                </div>
+                <p id="lastPerson" class="current-pick"></p>
+              </section>
+
+              <section class="wheel-col" data-wheel="prizes">
+                <div class="wheel-wrap small">
+                  <div class="pointer" aria-hidden="true"></div>
+                  <canvas id="prizeWheel" width="480" height="480"></canvas>
+                  <button type="button" id="btnSpinPrize" class="spin-btn">奖品</button>
+                </div>
+                <p id="lastPrize" class="current-pick"></p>
+              </section>
+            </div>
           </div>
+
+          <aside class="stage-side">
+            <div class="designate-bar">
+              <label class="designate-toggle">
+                <input type="checkbox" id="chkDesignate" />
+                <span>指定中奖人</span>
+              </label>
+              <input
+                type="text"
+                id="inputDesignate"
+                class="designate-input"
+                maxlength="20"
+                placeholder="已知中奖人时填写姓名"
+                disabled
+              />
+              <span class="designate-tip">开启后转奖品盘，会把人和奖品记在一起</span>
+            </div>
+            <div class="stock-panel compact" aria-label="奖品库存">
+              <h3>奖品库存</h3>
+              <ul id="stockList" class="stock-list"></ul>
+            </div>
+          </aside>
         </div>
       </div>
     </main>
-
-    <aside class="stock-panel compact" aria-label="奖品库存">
-      <h3>奖品库存</h3>
-      <ul id="stockList" class="stock-list"></ul>
-    </aside>
   </div>
 
   <aside id="settingsPanel" class="settings" aria-hidden="true">
