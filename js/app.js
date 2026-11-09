@@ -59,7 +59,6 @@
     btnCloseStock: document.getElementById("btnCloseStock"),
     btnSettings: document.getElementById("btnSettings"),
     btnLiveMode: document.getElementById("btnLiveMode"),
-    btnBackLive: document.getElementById("btnBackLive"),
     rotateTipModal: document.getElementById("rotateTipModal"),
     btnRotateTipYes: document.getElementById("btnRotateTipYes"),
     btnRotateTipNo: document.getElementById("btnRotateTipNo"),
@@ -2370,19 +2369,10 @@
       setLiveCast(!isLiveCast());
     });
   }
-  if (els.btnBackLive) {
-    els.btnBackLive.hidden = true;
-    els.btnBackLive.addEventListener("click", () => {
-      hideRotateTip();
-      setForceLandscapeUi(false);
-      setLiveCast(true);
-    });
-  }
   if (els.btnRotateTipYes) {
     els.btnRotateTipYes.addEventListener("click", () => {
       hideRotateTip();
       setForceLandscapeUi(true);
-      if (els.btnBackLive) els.btnBackLive.hidden = true;
       scheduleFit();
       requestAnimationFrame(() => {
         scheduleFit();
@@ -2618,9 +2608,8 @@
     document.documentElement.classList.toggle("force-landscape-ui", !!on);
   }
 
-  /** 退出投屏后竖屏询问是否旋转；普通模式不再显示底部「返回直播投屏」 */
+  /** 退出投屏后竖屏询问是否旋转 */
   function syncPortraitNormalUi(exitedLive) {
-    if (els.btnBackLive) els.btnBackLive.hidden = true;
     const portrait = isPortraitViewport();
     if (!portrait || isLiveCast()) {
       setForceLandscapeUi(false);
