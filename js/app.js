@@ -84,18 +84,21 @@
     decorEmpty: document.getElementById("decorEmpty"),
     decorInput: document.getElementById("decorInput"),
     lotteryTube: document.getElementById("lotteryTube"),
-    tubeSticksBack: document.getElementById("tubeSticksBack"),
-    tubeSticksFront: document.getElementById("tubeSticksFront"),
-    tubeDrawn: document.getElementById("tubeDrawn"),
-    drawnTip: document.getElementById("drawnTip"),
-    drawnLabel: document.getElementById("drawnLabel"),
+    tubeCanvas: document.getElementById("tubeCanvas"),
   };
 
   const peopleCtx = els.peopleCanvas.getContext("2d");
   const prizeCtx = els.prizeCanvas ? els.prizeCanvas.getContext("2d") : null;
+  const tubeCtx = els.tubeCanvas ? els.tubeCanvas.getContext("2d") : null;
 
   const tubeState = {
+    sticks: [],
     mode: "idle", // idle | shake | rise
+    riseStick: null,
+    riseLabel: "",
+    riseProgress: 0,
+    raf: 0,
+    lastTs: 0,
   };
 
   let config = loadConfig();
@@ -416,13 +419,8 @@
   }
 
   function syncTubeSticks() {
-    if (!els.tubeSticksBack || !els.tubeSticksFront) return;
+    if (!els.tubeCanvas || !tubeCtx) return;
     const pool = availablePrizes();
-    const count = Math.max(20, Math.min(30, Math.max(pool.length, 1) * 4));
-    els.tubeSticksBack.innerHTML = "";
-    els.tubeSticksFront.innerHTML = "";
-
-    // 鲜艳签头色（更接近原版）
     const tips = [
       "#5b8fd9",
       "#7a6fd0",
@@ -432,40 +430,235 @@
       "#e25b5b",
       "#d47bb0",
       "#4eb3a5",
+      "#8ecf5a",
+      "#f0a0c0",
     ];
-
+    const count = Math.max(18, Math.min(26, Math.max(pool.length, 1) * 3));
+    const prev = tubeState.sticks || [];
+    tubeState.sticks = [];
     for (let i = 0; i < count; i++) {
       const prize = pool[i % Math.max(pool.length, 1)] || {};
-      const stick = document.createElement("div");
-      stick.className = "tube-stick";
-      const tip = document.createElement("span");
-      tip.className = "stick-tip";
-      tip.style.background = prize.color && String(prize.color).startsWith("#")
-        ? prize.color
-        : tips[i % tips.length];
-      stick.appendChild(tip);
-
-      // 椭圆口沿 + 径向外倾（中间留空），底座在口沿上
-      const ang = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.1;
-      const rx = 29 + Math.random() * 5;
-      const ry = 15 + Math.random() * 3;
-      const cx = 50 + Math.cos(ang) * rx;
-      const cy = 68 + Math.sin(ang) * ry;
-      // 靠着筒壁外倾：右倾为正、左倾为负，约 18°~34°
-      const lean = Math.cos(ang) * 28 + (Math.random() - 0.5) * 10;
-      const h = 92 + Math.random() * 30;
-
-      stick.style.left = `${cx}%`;
-      stick.style.top = `calc(${cy}% - ${h}px)`;
-      stick.style.height = `${h}px`;
-      stick.style.transform = `rotate(${lean}deg)`;
-      stick.style.animationDelay = `${(i % 7) * 0.04}s`;
-
-      const isFront = Math.sin(ang) > 0.02;
-      stick.style.zIndex = String(10 + Math.round(cy));
-      (isFront ? els.tubeSticksFront : els.tubeSticksBack).appendChild(stick);
+      const old = prev[i];
+      const ang = (i / count) * Math.PI * 2 + 0.18;
+      // 椭圆口沿：中间空心，签靠壁外倾
+      const ring = 0.78 + (i % 3) * 0.07;
+      tubeState.sticks.push({
+        ang,
+        ring,
+        tip:
+          prize.color && String(prize.color).startsWith("#")
+            ? prize.color
+            : tips[i % tips.length],
+        // 径向外倾角度（度）
+        lean: Math.cos(ang) * 32 + Math.sin(ang) * 6 + (Math.random() - 0.5) * 8,
+        h: 92 + (i % 5) * 6 + Math.random() * 10,
+        wobble: old ? old.wobble : Math.random() * Math.PI * 2,
+        phase: Math.random() * Math.PI * 2,
+      });
     }
-    if (els.tubeDrawn) els.tubeDrawn.hidden = true;
+    ensureTubeLoop();
+  }
+
+  function ensureTubeLoop() {
+    if (tubeState.raf) return;
+    tubeState.lastTs = performance.now();
+    const tick = (ts) => {
+      const dt = Math.min(0.033, (ts - tubeState.lastTs) / 1000 || 0.016);
+      tubeState.lastTs = ts;
+      stepTube(dt);
+      drawTubeScene();
+      tubeState.raf = requestAnimationFrame(tick);
+    };
+    tubeState.raf = requestAnimationFrame(tick);
+  }
+
+  function stepTube(dt) {
+    const shaking = tubeState.mode === "shake";
+    (tubeState.sticks || []).forEach((s) => {
+      s.wobble += dt * (shaking ? 10 : 1.6);
+      if (shaking) {
+        s.lean += Math.sin(s.wobble + s.phase) * 0.35;
+      }
+    });
+    if (tubeState.mode === "rise") {
+      tubeState.riseProgress = Math.min(1, tubeState.riseProgress + dt * 1.15);
+    }
+  }
+
+  function roundRectPath(ctx, x, y, w, h, r) {
+    const rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rr);
+    ctx.arcTo(x + w, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + w, y, rr);
+    ctx.closePath();
+  }
+
+  function drawStick(ctx, x, y, w, h, tipColor, leanDeg, label) {
+    ctx.save();
+    ctx.translate(x, y + h);
+    ctx.rotate((leanDeg * Math.PI) / 180);
+    ctx.translate(-w / 2, -h);
+
+    const tipH = h * 0.3;
+    roundRectPath(ctx, 0, 0, w, h, w * 0.48);
+    ctx.fillStyle = "#f3e4c4";
+    ctx.fill();
+    ctx.strokeStyle = "#3d2a1f";
+    ctx.lineWidth = 3.2;
+    ctx.stroke();
+
+    roundRectPath(ctx, 0, 0, w, tipH, w * 0.48);
+    ctx.fillStyle = tipColor || "#d08a5a";
+    ctx.fill();
+    ctx.strokeStyle = "#3d2a1f";
+    ctx.lineWidth = 3.2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(2, tipH);
+    ctx.lineTo(w - 2, tipH);
+    ctx.strokeStyle = "rgba(61,42,31,0.4)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    if (label) {
+      ctx.save();
+      ctx.translate(w / 2, h * 0.62);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = "#3d2a1f";
+      ctx.font = "bold 17px 'Noto Sans SC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(label).slice(0, 8), 0, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function drawTubeScene() {
+    if (!tubeCtx || !els.tubeCanvas) return;
+    const w = els.tubeCanvas.width;
+    const h = els.tubeCanvas.height;
+    tubeCtx.clearRect(0, 0, w, h);
+
+    const cx = w * 0.5;
+    const rimY = h * 0.30;
+    const topRx = w * 0.30;
+    const topRy = h * 0.055;
+    const botY = h * 0.92;
+    const botRx = w * 0.235;
+
+    // 筒身（梯形圆筒）
+    tubeCtx.beginPath();
+    tubeCtx.moveTo(cx - topRx, rimY);
+    tubeCtx.lineTo(cx + topRx, rimY);
+    tubeCtx.lineTo(cx + botRx, botY);
+    tubeCtx.quadraticCurveTo(cx, botY + h * 0.035, cx - botRx, botY);
+    tubeCtx.closePath();
+    tubeCtx.fillStyle = "#e85748";
+    tubeCtx.fill();
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 5;
+    tubeCtx.lineJoin = "round";
+    tubeCtx.stroke();
+
+    // 口沿内侧（深色后壁）
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY - 4, topRx * 0.98, topRy * 1.55, 0, 0, Math.PI * 2);
+    tubeCtx.fillStyle = "#c2473c";
+    tubeCtx.fill();
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 4;
+    tubeCtx.stroke();
+
+    // 筒口空洞
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY - 8, topRx * 0.78, topRy * 1.15, 0, 0, Math.PI * 2);
+    tubeCtx.fillStyle = "#5a2f2a";
+    tubeCtx.fill();
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 3.5;
+    tubeCtx.stroke();
+
+    // 竖排艺术字
+    tubeCtx.save();
+    tubeCtx.fillStyle = "#fff8ec";
+    tubeCtx.font = "42px 'Long Cang', 'Ma Shan Zheng', cursive";
+    tubeCtx.textAlign = "center";
+    tubeCtx.textBaseline = "middle";
+    const col1 = "碎碎生日快乐".split("");
+    const col2 = "♪٩(´ω`)و♪".split("");
+    col1.forEach((ch, i) => {
+      tubeCtx.fillText(ch, cx + w * 0.11, h * 0.46 + i * 28);
+    });
+    col2.forEach((ch, i) => {
+      tubeCtx.fillText(ch, cx - w * 0.11, h * 0.46 + i * 26);
+    });
+    tubeCtx.restore();
+
+    // 左高光
+    tubeCtx.beginPath();
+    tubeCtx.moveTo(cx - topRx * 0.72, rimY + 12);
+    tubeCtx.lineTo(cx - botRx * 0.55, botY - 18);
+    tubeCtx.strokeStyle = "rgba(255,255,255,0.22)";
+    tubeCtx.lineWidth = 10;
+    tubeCtx.lineCap = "round";
+    tubeCtx.stroke();
+
+    // 签：按 y 排序，后签先画
+    const sticks = [...(tubeState.sticks || [])].sort(
+      (a, b) => Math.sin(a.ang) - Math.sin(b.ang)
+    );
+    const stickW = w * 0.038;
+
+    sticks.forEach((s) => {
+      if (tubeState.riseStick === s && tubeState.mode === "rise") return;
+      const ox = Math.cos(s.ang) * topRx * s.ring;
+      const oy = Math.sin(s.ang) * topRy * 2.2 * s.ring;
+      const baseX = cx + ox;
+      const baseY = rimY - 2 + oy;
+      const jiggle =
+        tubeState.mode === "shake" ? Math.sin(s.wobble) * 2.2 : Math.sin(s.wobble) * 0.4;
+      drawStick(
+        tubeCtx,
+        baseX,
+        baseY - s.h + jiggle,
+        stickW,
+        s.h,
+        s.tip,
+        s.lean + jiggle * 0.8,
+        null
+      );
+    });
+
+    // 前口沿描边（压住签的底部，增加进筒感）
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY, topRx, topRy, 0, 0.15, Math.PI - 0.15);
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 5;
+    tubeCtx.stroke();
+
+    // 抽出的签
+    if (tubeState.riseStick && tubeState.mode === "rise") {
+      const p = tubeState.riseProgress;
+      const ease = 1 - Math.pow(1 - p, 3);
+      const sw = stickW * 1.55;
+      const sh = h * 0.42;
+      const y = rimY - sh * 0.35 - ease * h * 0.22;
+      drawStick(
+        tubeCtx,
+        cx,
+        y,
+        sw,
+        sh,
+        tubeState.riseStick.tip,
+        Math.sin(p * 5) * 3,
+        tubeState.riseLabel
+      );
+    }
   }
 
   function animateLotteryTube({ items, onDone, setSpinning }) {
@@ -475,33 +668,37 @@
     updateButtons();
     syncTubeSticks();
     tubeState.mode = "shake";
+    tubeState.riseStick = null;
+    tubeState.riseLabel = "";
+    tubeState.riseProgress = 0;
     if (els.lotteryTube) els.lotteryTube.classList.add("shaking");
-    if (els.tubeDrawn) els.tubeDrawn.hidden = true;
 
     window.setTimeout(() => {
+      const pick =
+        tubeState.sticks[Math.floor(Math.random() * tubeState.sticks.length)] || null;
+      if (pick) {
+        pick.tip =
+          winner.color && String(winner.color).startsWith("#")
+            ? winner.color
+            : pick.tip;
+      }
+      tubeState.riseStick = pick;
+      tubeState.riseLabel = winner.name || "";
+      tubeState.riseProgress = 0;
       tubeState.mode = "rise";
       if (els.lotteryTube) els.lotteryTube.classList.remove("shaking");
-      if (els.drawnTip) els.drawnTip.style.background = winner.color || PALETTE[0];
-      if (els.drawnLabel) els.drawnLabel.textContent = winner.name || "";
-      if (els.tubeDrawn) {
-        els.tubeDrawn.hidden = false;
-        const drawn = els.tubeDrawn.querySelector(".tube-stick");
-        if (drawn) {
-          drawn.style.animation = "none";
-          void drawn.offsetWidth;
-          drawn.style.animation = "";
-        }
-      }
-    }, 2800);
+    }, 2600);
 
     window.setTimeout(() => {
       tubeState.mode = "idle";
+      tubeState.riseStick = null;
+      tubeState.riseLabel = "";
+      tubeState.riseProgress = 0;
       setSpinning(false);
       updateButtons();
-      if (els.tubeDrawn) els.tubeDrawn.hidden = true;
       syncTubeSticks();
       onDone(winner);
-    }, 4600);
+    }, 4400);
   }
 
   function pickWeightedIndex(items) {

@@ -729,209 +729,40 @@ body {
 
 
 
-/* —— 抽签筒（对照 GACHAGO 原版扁平插画） —— */
+
+/* —— 抽签筒（Canvas 对照 GACHAGO 构图） —— */
 .tube-col {
   flex: 1 1 0;
   max-width: 420px;
 }
 
 .tube-wrap {
-  width: min(100%, 280px);
+  width: min(100%, 300px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .lottery-tube {
   position: relative;
   width: 100%;
-  aspect-ratio: 240 / 320;
+  aspect-ratio: 480 / 640;
   user-select: none;
-  filter: drop-shadow(0 14px 18px rgba(90, 40, 30, 0.2));
+  filter: drop-shadow(0 16px 22px rgba(90, 40, 30, 0.22));
 }
 
-.tube-pivot {
-  position: relative;
+.lottery-tube canvas {
+  display: block;
   width: 100%;
   height: 100%;
-  transform-origin: 50% 96%;
 }
 
-.lottery-tube.shaking .tube-pivot {
-  animation: tubeMouthShake 0.45s ease-in-out infinite;
-}
-
-.lottery-tube.shaking .tube-stick:not(.is-drawn) {
-  animation: stickJiggle 0.45s ease-in-out infinite;
-}
-
-.tube-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.tube-svg-back {
-  z-index: 1;
-}
-
-.tube-svg-front {
-  z-index: 4;
-  pointer-events: none;
-}
-
-.tube-shell {
-  fill: #e85748;
-  stroke: #3d2a1f;
-  stroke-width: 5;
-  stroke-linejoin: round;
-}
-
-/* 盖住伸进筒身的签杆，只露出口沿以上的签 */
-.tube-front-face {
-  position: absolute;
-  left: 21.5%;
-  right: 21.5%;
-  top: 30.5%;
-  bottom: 6%;
-  z-index: 4;
-  background: #e85748;
-  border: 5px solid #3d2a1f;
-  border-top: none;
-  border-radius: 0 0 28px 28px / 0 0 40px 40px;
-  clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%);
-  box-shadow: inset 12px 0 18px rgba(255, 255, 255, 0.12);
-  pointer-events: none;
-}
-
-.tube-inner {
-  fill: #c2473c;
-  stroke: #3d2a1f;
-  stroke-width: 4;
-}
-
-.tube-hole {
-  fill: #5a2f2a;
-  stroke: #3d2a1f;
-  stroke-width: 3.5;
-}
-
-.tube-lip,
-.tube-rim-arc {
-  fill: none;
-  stroke: #3d2a1f;
-  stroke-width: 5;
-  stroke-linecap: round;
-}
-
-.tube-side-text {
-  position: absolute;
-  left: 24%;
-  right: 24%;
-  top: 40%;
-  bottom: 14%;
-  z-index: 5;
-  display: flex;
-  justify-content: space-between;
-  pointer-events: none;
-}
-
-.tube-side-text span {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  color: #fff8ec;
-  font-family: "Long Cang", "Ma Shan Zheng", "ZCOOL KuaiLe", cursive;
-  font-size: clamp(1.15rem, 3.2vw, 1.55rem);
-  letter-spacing: 0.14em;
-  line-height: 1;
-  text-shadow: 0 2px 0 rgba(90, 25, 18, 0.28);
-}
-
-/* 签：后层 / 前层，绕筒口椭圆外倾 */
-.tube-sticks {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 42%;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.tube-sticks.is-back {
-  z-index: 2;
-}
-
-.tube-sticks.is-front {
-  z-index: 3;
-}
-
-.tube-stick {
-  position: absolute;
-  width: 15px;
-  height: 110px;
-  margin-left: -7.5px;
-  border: 3px solid #3d2a1f;
-  border-radius: 999px;
-  background: #f4e6c8;
-  transform-origin: 50% 100%;
-}
-
-.tube-stick .stick-tip {
-  position: absolute;
-  left: -3px;
-  right: -3px;
-  top: -3px;
-  height: 34%;
-  border: 3px solid #3d2a1f;
-  border-radius: 999px 999px 6px 6px;
-  background: #d08a5a;
-}
-
-.tube-stick.is-drawn {
-  position: relative;
-  width: 32px;
-  height: 240px;
-  margin: 0 auto;
-  left: auto;
-  top: auto;
-  transform: none !important;
-}
-
-.tube-stick.is-drawn .stick-tip {
-  height: 22%;
-}
-
-.tube-stick .stick-label {
-  position: absolute;
-  inset: 28% 0 10%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  color: #3d2a1f;
-  font-weight: 800;
-  font-size: 0.95rem;
-  letter-spacing: 0.1em;
-}
-
-.tube-drawn {
-  position: absolute;
-  inset: 0 0 18%;
-  z-index: 6;
-  display: grid;
-  place-items: end center;
-  pointer-events: none;
-}
-
-.tube-drawn .tube-stick.is-drawn {
-  animation: stickRise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+.lottery-tube.shaking canvas {
+  transform-origin: 50% 92%;
+  animation: tubeMouthShake 0.48s ease-in-out infinite;
 }
 
 .tube-draw-btn {
@@ -970,22 +801,9 @@ body {
 
 @keyframes tubeMouthShake {
   0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-6.5deg); }
-  50% { transform: rotate(0.4deg); }
-  75% { transform: rotate(6.5deg); }
-}
-
-@keyframes stickJiggle {
-  0%, 100% { translate: 0 0; }
-  25% { translate: -1px -2px; }
-  50% { translate: 1px 1px; }
-  75% { translate: 1px -1px; }
-}
-
-@keyframes stickRise {
-  0% { transform: translateY(34%) scale(0.92); opacity: 0.15; }
-  45% { opacity: 1; }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
+  25% { transform: rotate(-6deg); }
+  50% { transform: rotate(0.5deg); }
+  75% { transform: rotate(6deg); }
 }
 .wheel-wrap canvas {
   width: 100%;
