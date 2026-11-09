@@ -109,7 +109,8 @@ body {
   border-radius: 50%;
   background: #fff;
   opacity: 0.9;
-  animation: starTwinkle 5s ease-in-out infinite;
+  /* 只闪亮度，不能 scale（阴影星会跟着位移） */
+  animation: starfieldTwinkle 5s ease-in-out infinite;
 }
 .cosmos-decor .sf1 {
   top: 0; left: 0;
@@ -356,8 +357,12 @@ body {
   50% { opacity: 0.65; transform: scale(1.06); }
 }
 @keyframes starTwinkle {
-  0%, 100% { opacity: 0.35; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.4); }
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+@keyframes starfieldTwinkle {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.95; }
 }
 @keyframes sparkPulse {
   0%, 100% { opacity: 0.45; transform: scale(0.85) rotate(0deg); }
