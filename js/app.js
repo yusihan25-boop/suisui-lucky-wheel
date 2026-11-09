@@ -450,8 +450,8 @@
         ring: Math.min(0.94, ring),
         tip: TUBE_TIPS[(i * 3) % TUBE_TIPS.length],
         lean: Math.cos(ang) * (3 + layer * 2.2) + (i % 5 - 2) * 0.8,
-        // 闲置：圆头 + 一段签身露出，下端被筒前壁遮住
-        h: 0.16 + (i % 5) * 0.014 + (2 - layer) * 0.012,
+        // 闲置：花朵 + 签身露出，下端被前口沿遮住
+        h: 0.2 + (i % 5) * 0.016 + (2 - layer) * 0.014,
         shade: i % 3 === 0 ? 0.08 : i % 3 === 1 ? 0.04 : 0,
         wobble: old ? old.wobble : Math.random() * Math.PI * 2,
       });
@@ -491,14 +491,14 @@
 
   function paintFlower(ctx, cx, cy, radius, color) {
     const petals = 5;
-    const line = Math.max(1.8, radius * 0.18);
+    const line = Math.max(2.2, radius * 0.14);
     ctx.save();
     for (let i = 0; i < petals; i++) {
       const a = (i / petals) * Math.PI * 2 - Math.PI / 2;
-      const px = cx + Math.cos(a) * radius * 0.42;
-      const py = cy + Math.sin(a) * radius * 0.42;
+      const px = cx + Math.cos(a) * radius * 0.48;
+      const py = cy + Math.sin(a) * radius * 0.48;
       ctx.beginPath();
-      ctx.ellipse(px, py, radius * 0.4, radius * 0.28, a, 0, Math.PI * 2);
+      ctx.ellipse(px, py, radius * 0.46, radius * 0.32, a, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
       ctx.strokeStyle = "#3d2a1f";
@@ -506,7 +506,7 @@
       ctx.stroke();
     }
     ctx.beginPath();
-    ctx.arc(cx, cy, radius * 0.28, 0, Math.PI * 2);
+    ctx.arc(cx, cy, radius * 0.3, 0, Math.PI * 2);
     ctx.fillStyle = "#ffe56a";
     ctx.fill();
     ctx.strokeStyle = "#3d2a1f";
@@ -521,14 +521,14 @@
     ctx.rotate((lean * Math.PI) / 180);
     ctx.translate(-w / 2, -h);
 
-    const flowerR = w * 0.72;
-    const bodyTop = flowerR * 0.55;
+    const flowerR = w * 1.25;
+    const bodyTop = flowerR * 0.85;
     const r = w * 0.48;
     const line = Math.max(2.8, w * 0.18);
     const wood = shade > 0.05 ? "#e6d0a8" : shade > 0 ? "#efe0b8" : "#f6e7c4";
 
     // 签身（两端圆）
-    roundRect(ctx, 0, bodyTop, w, h - bodyTop, r);
+    roundRect(ctx, 0, bodyTop, w, Math.max(h - bodyTop, w), r);
     ctx.fillStyle = wood;
     ctx.fill();
     ctx.strokeStyle = "#3d2a1f";
@@ -536,13 +536,13 @@
     ctx.stroke();
 
     if (shade > 0) {
-      roundRect(ctx, line * 0.35, bodyTop + w * 0.2, w - line * 0.7, h - bodyTop - w * 0.35, r * 0.35);
+      roundRect(ctx, line * 0.35, bodyTop + w * 0.15, w - line * 0.7, Math.max(h - bodyTop - w * 0.3, 4), r * 0.35);
       ctx.fillStyle = `rgba(90, 55, 30, ${0.06 + shade * 0.35})`;
       ctx.fill();
     }
 
-    // 顶部彩色花朵
-    paintFlower(ctx, w / 2, bodyTop * 0.35 + flowerR * 0.15, flowerR, tipColor);
+    // 顶部大花朵
+    paintFlower(ctx, w / 2, flowerR * 0.55, flowerR, tipColor);
 
     if (label) {
       const text = String(label).slice(0, 8);
@@ -577,6 +577,15 @@
     ctx.stroke();
   }
 
+  /** 口沿圆环（外椭圆减去内椭圆），表现筒壁厚度 */
+  function fillRimRing(ctx, cx, cy, outRx, outRy, inRx, inRy, color) {
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, outRx, outRy, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy - 2, inRx, inRy, 0, 0, Math.PI * 2, true);
+    ctx.fillStyle = color;
+    ctx.fill("evenodd");
+  }
+
   function drawTube() {
     if (!tubeCtx || !els.tubeCanvas) return;
     const w = els.tubeCanvas.width;
@@ -584,17 +593,18 @@
     tubeCtx.clearRect(0, 0, w, h);
 
     const cx = w * 0.5;
-    const rimY = h * 0.34;
+    const rimY = h * 0.36;
     const topRx = w * 0.3;
-    const topRy = h * 0.052;
+    const topRy = h * 0.055;
     const botY = h * 0.9;
     const botRx = w * 0.235;
-    const stickW = w * 0.07;
-    const topPad = 14;
-    const lipRx = topRx * 0.98;
-    const lipRy = topRy * 1.55;
-    const holeRx = topRx * 0.72;
-    const holeRy = topRy * 1.05;
+    const stickW = w * 0.072;
+    const topPad = 22;
+    // 口沿外圈 / 内孔 —— 差值即厚度（像泡面桶卷边）
+    const outRx = topRx;
+    const outRy = topRy * 1.35;
+    const inRx = topRx * 0.78;
+    const inRy = topRy * 0.95;
 
     // 底部软影
     tubeCtx.beginPath();
@@ -602,22 +612,32 @@
     tubeCtx.fillStyle = "rgba(90, 50, 35, 0.16)";
     tubeCtx.fill();
 
-    // 1) 筒身
+    // 1) 筒身外壁
     fillTubeBody(tubeCtx, cx, rimY, topRx, botY, botRx, h);
 
-    // 2) 有厚度的筒口：外圈口沿 + 内圈深洞
+    // 2) 完整口沿圆环 + 筒内空间（先铺在签子后面）
+    fillRimRing(tubeCtx, cx, rimY, outRx, outRy, inRx, inRy, "#d84f42");
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY, lipRx, lipRy, 0, 0, Math.PI * 2);
-    tubeCtx.fillStyle = "#c2473c";
-    tubeCtx.fill();
+    tubeCtx.ellipse(cx, rimY, outRx, outRy, 0, 0, Math.PI * 2);
     tubeCtx.strokeStyle = "#3d2a1f";
     tubeCtx.lineWidth = 4.5;
     tubeCtx.stroke();
 
+    // 筒内：可见后壁 + 深色内腔
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 3, holeRx, holeRy, 0, 0, Math.PI * 2);
-    tubeCtx.fillStyle = "#4a2420";
+    tubeCtx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI * 2);
+    tubeCtx.fillStyle = "#5c2c28";
     tubeCtx.fill();
+
+    // 后半内壁（往里看能看见的那一圈）
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY - 2, inRx, inRy, 0, Math.PI, 0, true);
+    tubeCtx.strokeStyle = "#a83f36";
+    tubeCtx.lineWidth = Math.max(10, outRy - inRy);
+    tubeCtx.stroke();
+
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI * 2);
     tubeCtx.strokeStyle = "#3d2a1f";
     tubeCtx.lineWidth = 3.5;
     tubeCtx.stroke();
@@ -626,16 +646,22 @@
       (a, b) => Math.sin(a.ang) - Math.sin(b.ang)
     );
 
-    // 3) 签子从洞口伸出，根部伸进筒内
+    // 3) 签子插进开口里（像叉子插进泡面桶）
     tubeCtx.save();
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 3, holeRx * 1.02, holeRy * 1.15, 0, 0, Math.PI * 2);
-    tubeCtx.rect(cx - holeRx * 1.05, 0, holeRx * 2.1, rimY);
+    // 允许画出开口上方 + 开口内腔
+    tubeCtx.moveTo(cx - inRx * 1.15, 0);
+    tubeCtx.lineTo(cx + inRx * 1.15, 0);
+    tubeCtx.lineTo(cx + inRx * 1.15, rimY);
+    tubeCtx.ellipse(cx, rimY - 2, inRx * 1.05, inRy * 1.25, 0, 0, Math.PI);
+    tubeCtx.closePath();
     tubeCtx.clip();
+
     ordered.forEach((s) => {
-      const ox = Math.cos(s.ang) * holeRx * s.ring * 0.85;
+      const ox = Math.cos(s.ang) * inRx * s.ring * 0.82;
       const baseX = cx + ox;
-      const baseY = rimY + topRy * 1.6;
+      // 根部深入口内，稍后被前半口沿挡住
+      const baseY = rimY + inRy * 1.4;
       const jiggle =
         tubeState.mode === "shake"
           ? Math.sin(s.wobble * 1.8) * 2.4 + Math.cos(s.wobble) * 1.0
@@ -644,8 +670,8 @@
         tubeState.mode === "shake"
           ? Math.sin(s.wobble * 1.4) * 2.8
           : Math.sin(s.wobble) * 0.25;
-      const stickH = Math.min(h * s.h + topRy * 2.4, baseY - topPad);
-      if (stickH < stickW * 1.8) return;
+      const stickH = Math.min(h * s.h + inRy * 2.8, baseY - topPad);
+      if (stickH < stickW * 2) return;
       paintStick(
         tubeCtx,
         baseX,
@@ -660,17 +686,26 @@
     });
     tubeCtx.restore();
 
-    // 4) 筒身前壁遮住签子下端（表现插在筒里）
+    // 4) 关键：只把口沿的「前半圈」盖在签子上（桶沿挡住叉子）
+    tubeCtx.save();
     tubeCtx.beginPath();
-    tubeCtx.moveTo(cx - topRx, rimY);
-    tubeCtx.ellipse(cx, rimY, topRx, topRy, 0, Math.PI, 0, false);
-    tubeCtx.lineTo(cx + botRx, botY);
-    tubeCtx.quadraticCurveTo(cx, botY + h * 0.025, cx - botRx, botY);
-    tubeCtx.closePath();
-    tubeCtx.fillStyle = "#e85748";
-    tubeCtx.fill();
+    // 屏幕下方 = 靠近观众的前口沿
+    tubeCtx.rect(cx - outRx - 4, rimY - 2, outRx * 2 + 8, outRy * 2 + 8);
+    tubeCtx.clip();
+    fillRimRing(tubeCtx, cx, rimY, outRx, outRy, inRx, inRy, "#e85748");
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY, outRx, outRy, 0, 0, Math.PI);
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 4.5;
+    tubeCtx.stroke();
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI);
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 3.5;
+    tubeCtx.stroke();
+    tubeCtx.restore();
 
-    // 侧边与底边描线
+    // 5) 筒身侧边描线（不封死筒口）
     tubeCtx.beginPath();
     tubeCtx.moveTo(cx + topRx, rimY);
     tubeCtx.lineTo(cx + botRx, botY);
@@ -681,29 +716,6 @@
     tubeCtx.lineJoin = "round";
     tubeCtx.stroke();
 
-    // 5) 补回口沿厚度：后半外圈 + 完整内圈描边（前半外圈不描，避免“浮在圆口上”）
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY, lipRx, lipRy, 0, Math.PI, 0, true);
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 4.5;
-    tubeCtx.stroke();
-
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 3, holeRx, holeRy, 0, Math.PI, 0, true);
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 3.2;
-    tubeCtx.stroke();
-
-    // 左右侧口沿短描边，体现厚度
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY, lipRx, lipRy, 0, Math.PI * 0.72, Math.PI * 1.28);
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 4;
-    tubeCtx.stroke();
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY, lipRx, lipRy, 0, -Math.PI * 0.28, Math.PI * 0.28);
-    tubeCtx.stroke();
-
     // 筒身竖排文字
     tubeCtx.save();
     tubeCtx.fillStyle = "#fff7ea";
@@ -712,13 +724,13 @@
     tubeCtx.textBaseline = "middle";
     const chars = "碎碎生日快乐".split("");
     chars.forEach((ch, i) => {
-      tubeCtx.fillText(ch, cx, h * 0.48 + i * (h * 0.055));
+      tubeCtx.fillText(ch, cx, h * 0.5 + i * (h * 0.052));
     });
     tubeCtx.restore();
 
     // 左侧高光
     tubeCtx.beginPath();
-    tubeCtx.moveTo(cx - topRx * 0.72, rimY + 12);
+    tubeCtx.moveTo(cx - topRx * 0.72, rimY + 14);
     tubeCtx.lineTo(cx - botRx * 0.58, botY - 16);
     tubeCtx.strokeStyle = "rgba(255,255,255,0.22)";
     tubeCtx.lineWidth = 9;
@@ -729,9 +741,9 @@
       const p = tubeState.riseProgress;
       const ease = 1 - Math.pow(1 - p, 3);
       const label = tubeState.riseLabel || "";
-      const sw = Math.max(stickW * 1.6, w * 0.105);
+      const sw = Math.max(stickW * 1.55, w * 0.11);
       const sh = h * 0.58;
-      const yStart = rimY - h * 0.12;
+      const yStart = rimY - h * 0.14;
       const yEnd = Math.max(topPad, rimY - sh * 0.82);
       const y = yStart + (yEnd - yStart) * ease;
       paintStick(
