@@ -734,20 +734,22 @@ body {
 }
 
 .tube-wrap {
-  width: min(100%, 280px);
+  width: min(100%, 300px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  overflow: visible;
 }
 
 .lottery-tube {
   position: relative;
   width: 100%;
-  aspect-ratio: 420 / 560;
+  aspect-ratio: 420 / 620;
   filter: drop-shadow(0 16px 24px rgba(90, 40, 30, 0.22));
+  overflow: visible;
 }
 
 .lottery-tube canvas {
