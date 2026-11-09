@@ -812,7 +812,7 @@ body {
 }
 
 .modal-stock-list .stock-item .qty {
-  color: #1d4ed8;
+  color: #b76e86;
   font-weight: 700;
 }
 
@@ -1146,14 +1146,14 @@ body {
 }
 
 .btn-ghost {
-  background: rgba(30, 27, 75, 0.75);
+  background: rgba(16, 28, 48, 0.82);
   color: var(--ink);
   border: 1px solid var(--line);
 }
 
 .btn-ghost:hover,
 .btn-secondary:hover {
-  background: rgba(37, 99, 235, 0.28);
+  background: rgba(243, 167, 191, 0.28);
 }
 
 .icon-btn {
@@ -1383,7 +1383,7 @@ body {
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #1d4ed8;
+  color: #b76e86;
   pointer-events: none;
   font-size: 0.85rem;
   font-weight: 600;
