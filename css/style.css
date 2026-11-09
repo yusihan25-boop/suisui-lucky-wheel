@@ -768,7 +768,8 @@ body {
   height: 88px;
   border: 5px solid #fff8e8;
   border-radius: 50%;
-  background: linear-gradient(160deg, var(--accent), var(--accent-deep));
+  /* 与指针同色（--gold） */
+  background: linear-gradient(160deg, #d4a31f, var(--gold));
   color: #fff;
   font-family: var(--display);
   font-size: 1.05rem;
@@ -778,8 +779,8 @@ body {
   cursor: pointer;
   z-index: 2;
   box-shadow:
-    0 8px 20px rgba(232, 90, 36, 0.45),
-    inset 0 2px 0 rgba(255, 255, 255, 0.25);
+    0 8px 20px rgba(200, 146, 15, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.22);
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 

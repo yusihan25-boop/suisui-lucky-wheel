@@ -3,19 +3,20 @@
   const HISTORY_KEY = "lucky-wheel-history-v3";
   const DECOR_KEY = "lucky-wheel-decor-v1";
 
+  /* 莫兰迪色系：低饱和、柔和灰调 */
   const PALETTE = [
-    "#7BC8A4",
-    "#7EB6E0",
-    "#F0A8C0",
-    "#8DD4C8",
-    "#9BB8F0",
-    "#F5C4A8",
-    "#A8D98A",
-    "#B8A8E8",
-    "#F2B8B0",
-    "#6EC9C0",
-    "#8CC8E8",
-    "#E8B8D0",
+    "#A8B5A0",
+    "#B7C4CE",
+    "#D4B8B0",
+    "#C5B8A8",
+    "#A9B8C4",
+    "#D8C3B0",
+    "#B5A8B8",
+    "#9AADB5",
+    "#C9B5A5",
+    "#A3B5A8",
+    "#C4A8A5",
+    "#B0B8C0",
   ];
 
   function uid() {
@@ -365,7 +366,7 @@
         ctx.closePath();
         ctx.fillStyle = item.color;
         ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,0.55)";
+        ctx.strokeStyle = "rgba(255,255,255,0.45)";
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -375,8 +376,8 @@
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
         ctx.font = `bold ${Math.max(13, Math.min(20, radius / 11))}px "Noto Sans SC", sans-serif`;
-        ctx.shadowColor = "rgba(0,0,0,0.35)";
-        ctx.shadowBlur = 4;
+        ctx.shadowColor = "rgba(60,50,45,0.28)";
+        ctx.shadowBlur = 3;
         ctx.fillText(labelFn(item), radius - 20, 5);
         ctx.restore();
         start = end;
@@ -384,14 +385,8 @@
     }
 
     ctx.beginPath();
-    ctx.arc(0, 0, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = "#f0c14b";
-    ctx.lineWidth = 8;
-    ctx.stroke();
-
-    ctx.beginPath();
     ctx.arc(0, 0, 50, 0, Math.PI * 2);
-    ctx.fillStyle = "#fffaf0";
+    ctx.fillStyle = "#f7f4ef";
     ctx.fill();
     ctx.restore();
   }
