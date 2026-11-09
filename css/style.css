@@ -1829,8 +1829,56 @@ html.live-cast .stage-board {
   z-index: 1;
 }
 
+/* 直播投屏：左侧大图缩到右下角（控制栏下方） */
 html.live-cast .decor-slot {
-  display: none !important;
+  display: flex !important;
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 124px;
+  height: min(46%, 210px);
+  margin: 0;
+  z-index: 3;
+  align-items: stretch;
+  justify-content: stretch;
+  animation: none;
+  pointer-events: auto;
+}
+
+html.live-cast .decor-frame {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(230, 210, 190, 0.35);
+  background: rgba(12, 16, 42, 0.72);
+  box-shadow: 0 8px 18px rgba(0, 8, 24, 0.35);
+}
+
+html.live-cast .decor-frame.has-image {
+  border: 1px solid rgba(230, 195, 106, 0.45);
+  background: transparent;
+  box-shadow: 0 8px 18px rgba(0, 8, 24, 0.35);
+}
+
+html.live-cast .decor-preview {
+  object-fit: cover;
+  object-position: center top;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+html.live-cast .decor-empty {
+  gap: 2px;
+}
+
+html.live-cast .decor-empty span {
+  font-size: 0.62rem;
+}
+
+html.live-cast .decor-empty p {
+  font-size: 0.68rem;
 }
 
 html.live-cast .stage-main {
@@ -1940,7 +1988,8 @@ html.live-cast .stage-side {
   justify-content: flex-start;
   align-items: stretch;
   gap: 6px;
-  max-height: none;
+  max-height: calc(100% - min(46%, 210px) - 14px);
+  overflow: auto;
   z-index: 4;
 }
 
@@ -2055,6 +2104,11 @@ html.live-cast #stockModal .modal-card {
 
   html.live-cast .stage-side {
     width: 112px;
+  }
+
+  html.live-cast .decor-slot {
+    width: 112px;
+    height: min(42%, 180px);
   }
 
   html.live-cast .star-wheel-wrap {
