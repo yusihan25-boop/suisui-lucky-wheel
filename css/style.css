@@ -727,237 +727,401 @@ body {
   width: min(100%, 420px);
 }
 
-/* —— 黄色毛茸茸猫爪扭蛋机 —— */
+/* —— 纯 CSS 猫爪扭蛋机（不贴图） —— */
 .gashapon-col {
   flex: 1 1 0;
   max-width: 460px;
 }
 
 .gacha-wrap {
-  width: min(100%, 400px);
+  width: min(100%, 380px);
   margin: 0 auto;
   animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-  filter: drop-shadow(0 16px 28px rgba(180, 110, 40, 0.28));
 }
 
-.gacha-machine.catpaw {
+.gacha-machine {
   position: relative;
   width: 100%;
-  aspect-ratio: 392 / 550;
-  border-radius: 18px;
-  overflow: hidden;
   user-select: none;
+  filter: drop-shadow(0 18px 26px rgba(170, 100, 40, 0.28));
 }
 
-.gacha-machine.catpaw.shaking {
+.gacha-machine.shaking {
   animation: gachaRumble 0.08s linear infinite;
 }
 
-.gacha-skin {
-  position: absolute;
-  inset: 0;
+/* 上半：毛茸茸猫爪仓 */
+.gp-paw {
+  position: relative;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  pointer-events: none;
-  z-index: 0;
+  height: 250px;
+  z-index: 2;
 }
 
-.gacha-title {
+.gp-toe {
   position: absolute;
-  left: 11.5%;
-  right: 22%;
-  top: 54.2%;
-  z-index: 3;
-  padding: 8px 10px 7px;
-  border-radius: 8px;
-  background: linear-gradient(180deg, #f4a84f 0%, #e07830 100%);
-  color: #fffef8;
-  text-align: center;
-  font-family: "LiSu", "STLiti", "华文隶书", "隶书", "Noto Serif SC", serif;
-  font-size: clamp(0.7rem, 2.15vw, 0.9rem);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  line-height: 1.32;
-  text-shadow: 0 1px 0 rgba(120, 50, 10, 0.3);
+  top: 6px;
+  width: 58px;
+  height: 72px;
+  border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%;
+  background:
+    radial-gradient(ellipse at 40% 28%, #ffe9a8 0%, transparent 42%),
+    radial-gradient(ellipse at 55% 70%, #f0a030 0%, transparent 55%),
+    linear-gradient(180deg, #ffd56a 0%, #f4b03a 45%, #e89428 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 1px 2px rgba(120, 60, 20, 0.18);
-  word-break: break-all;
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -10px 16px rgba(200, 100, 20, 0.22),
+    0 6px 10px rgba(160, 90, 20, 0.2);
 }
 
-/* 覆盖机身右侧星星，可点击抽奖 */
-.gacha-star {
+.gp-toe::after {
+  content: "";
   position: absolute;
-  right: 8.5%;
-  top: 54.8%;
-  z-index: 4;
-  width: 42px;
-  height: 42px;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  background: radial-gradient(circle at 50% 50%, #fff6a8 0 22%, #ffe14a 22% 100%);
-  clip-path: polygon(
-    50% 0%,
-    61% 28%,
-    92% 22%,
-    72% 45%,
-    88% 72%,
-    50% 58%,
-    12% 72%,
-    28% 45%,
-    8% 22%,
-    39% 28%
-  );
-  box-shadow: 0 2px 6px rgba(160, 90, 20, 0.35);
-  transition: transform 0.12s ease;
+  inset: 10% 14% auto;
+  height: 38%;
+  border-radius: 50%;
+  background:
+    repeating-linear-gradient(
+      -18deg,
+      transparent 0 2px,
+      rgba(210, 120, 30, 0.08) 2px 3px
+    );
+  opacity: 0.9;
+  pointer-events: none;
 }
 
-.gacha-star::after {
-  content: "✓";
+.gp-toe.t1 { left: 8%; transform: rotate(-18deg); }
+.gp-toe.t2 { left: 28%; top: 0; transform: rotate(-6deg); height: 78px; }
+.gp-toe.t3 { right: 28%; top: 0; transform: rotate(6deg); height: 78px; left: auto; }
+.gp-toe.t4 { right: 8%; left: auto; transform: rotate(18deg); }
+
+.gp-palm {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 48px;
+  bottom: 0;
+  border-radius: 48% 48% 42% 42% / 40% 40% 56% 56%;
+  background:
+    radial-gradient(ellipse at 50% 18%, #ffe6a0 0%, transparent 40%),
+    radial-gradient(ellipse at 20% 60%, rgba(255, 200, 100, 0.55), transparent 45%),
+    radial-gradient(ellipse at 80% 55%, rgba(240, 150, 50, 0.45), transparent 42%),
+    linear-gradient(180deg, #ffd260 0%, #f0a832 42%, #e48a28 100%);
+  box-shadow:
+    inset 0 4px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -18px 30px rgba(180, 80, 20, 0.22),
+    0 10px 18px rgba(140, 70, 10, 0.18);
+  overflow: hidden;
+}
+
+/* 毛发纹理 */
+.gp-palm::before {
+  content: "";
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  color: #2a2418;
-  font-size: 0.85rem;
-  font-weight: 900;
-  line-height: 1;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      12deg,
+      transparent 0 3px,
+      rgba(190, 100, 20, 0.05) 3px 4px
+    ),
+    repeating-linear-gradient(
+      -22deg,
+      transparent 0 4px,
+      rgba(255, 230, 160, 0.07) 4px 5px
+    );
+  pointer-events: none;
+  z-index: 1;
 }
 
-.gacha-star:hover:not(:disabled) {
-  transform: scale(1.08);
-}
-
-.gacha-star:disabled {
-  cursor: not-allowed;
-  filter: grayscale(0.3) brightness(0.92);
-}
-
-.gacha-dome {
+.gp-glass {
   position: absolute;
-  left: 13.5%;
-  right: 13.5%;
-  top: 15.5%;
-  height: 36.5%;
+  left: 12%;
+  right: 12%;
+  top: 12%;
+  bottom: 14%;
   z-index: 2;
-  border-radius: 48% 48% 42% 42% / 58% 58% 40% 40%;
+  border-radius: 50% 50% 48% 48% / 54% 54% 46% 46%;
   overflow: hidden;
-  /* 遮住原图静态蛋，只显示物理双色蛋 */
   background:
-    radial-gradient(ellipse at 50% 16%, rgba(255, 255, 255, 0.55), transparent 52%),
-    linear-gradient(180deg, rgba(255, 232, 210, 0.94), rgba(255, 196, 176, 0.9));
+    radial-gradient(ellipse at 50% 20%, rgba(255, 255, 255, 0.55), transparent 50%),
+    linear-gradient(180deg, #fff4ea 0%, #ffd8c8 55%, #ffc4b0 100%);
   box-shadow:
-    inset 0 0 0 4px rgba(255, 120, 90, 0.42),
-    inset 0 -18px 28px rgba(200, 70, 40, 0.14);
+    inset 0 0 0 5px rgba(255, 120, 90, 0.55),
+    inset 0 0 0 9px rgba(255, 180, 140, 0.35),
+    inset 0 -20px 28px rgba(220, 90, 60, 0.12),
+    0 0 0 2px rgba(230, 140, 80, 0.35);
 }
 
-.gacha-dome canvas {
+.gp-glass canvas {
   display: block;
   width: 100%;
   height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
-/* 立体猫头 GO：紫面 + 蓝/白/橙分层底座 */
-.gacha-cat-go {
+.gp-glass-shine {
+  position: absolute;
+  left: 14%;
+  top: 8%;
+  width: 42%;
+  height: 28%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 下半：控制台 */
+.gp-board {
+  position: relative;
+  z-index: 1;
+  margin-top: -18px;
+  padding: 28px 14px 16px;
+  border-radius: 22px 22px 28px 28px;
+  background:
+    linear-gradient(180deg, #f6c35a 0%, #efab3a 28%, #e8962c 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 240, 180, 0.45),
+    inset 0 -10px 18px rgba(180, 90, 20, 0.18),
+    0 12px 20px rgba(140, 70, 10, 0.2);
+}
+
+.gp-board::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      18deg,
+      transparent 0 3px,
+      rgba(180, 90, 20, 0.04) 3px 4px
+    );
+  pointer-events: none;
+}
+
+.gp-title-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.gp-title {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f5a24a, #e0742c);
+  color: #fffef8;
+  text-align: center;
+  font-family: "LiSu", "STLiti", "华文隶书", "隶书", "Noto Serif SC", serif;
+  font-size: clamp(0.72rem, 2.1vw, 0.92rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-shadow: 0 1px 0 rgba(100, 40, 10, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 2px 0 rgba(180, 80, 20, 0.25);
+  word-break: break-all;
+}
+
+.gp-star {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #2a2418;
+  font-size: 0.85rem;
+  font-weight: 900;
+  background: radial-gradient(circle at 50% 45%, #fff8b8, #ffd93a 60%, #f0b820);
+  clip-path: polygon(
+    50% 0%,
+    61% 30%,
+    95% 28%,
+    70% 48%,
+    82% 80%,
+    50% 62%,
+    18% 80%,
+    30% 48%,
+    5% 28%,
+    39% 30%
+  );
+  box-shadow: 0 2px 6px rgba(140, 80, 10, 0.3);
+  transition: transform 0.12s ease;
+}
+
+.gp-star span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  transform: translateY(1px);
+}
+
+.gp-star:hover:not(:disabled) {
+  transform: scale(1.08) rotate(-8deg);
+}
+
+.gp-star:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.35);
+}
+
+.gp-console {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: end;
+  gap: 6px;
+  min-height: 118px;
+  padding: 10px 8px 14px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, #fff8e8 0%, #f4e2bc 42%, #e9d0a0 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -4px 10px rgba(160, 110, 40, 0.18),
+    0 3px 0 rgba(200, 140, 50, 0.35);
+}
+
+.gp-knob,
+.gp-stick {
+  justify-self: center;
+  margin-bottom: 18px;
+}
+
+.gp-knob {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #8aeee0, #2eb9a8 55%, #1a9088);
+  box-shadow:
+    0 5px 0 #157a72,
+    0 8px 10px rgba(20, 80, 70, 0.28),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+}
+
+.gp-stick {
+  width: 18px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #249e92, #5fd4c4 45%, #1f9a90);
+  box-shadow:
+    0 4px 0 #157a72,
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.gp-stick::before {
+  content: "";
   position: absolute;
   left: 50%;
-  bottom: 5.8%;
+  top: -12px;
   transform: translateX(-50%);
-  z-index: 4;
-  width: 132px;
-  height: 118px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #9af0e4, #2db8a8 58%, #178a80);
+  box-shadow:
+    0 4px 0 #157a72,
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+}
+
+/* 立体猫头 GO */
+.gp-go {
+  position: relative;
+  height: 108px;
   border: none;
   background: transparent;
   padding: 0;
   cursor: pointer;
 }
 
-.gacha-cat-base {
+.gp-go-pedestal {
   position: absolute;
   left: 50%;
-  bottom: 6px;
+  bottom: 4px;
   transform: translateX(-50%);
-  width: 104px;
-  height: 34px;
-  border-radius: 18px;
-  background:
-    linear-gradient(180deg, #fff8e8 0 28%, #f0b04a 28% 58%, #e08930 58% 100%);
+  width: 108px;
+  height: 28px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff4d8 0 34%, #f2b24a 34% 68%, #e0892e 68% 100%);
   box-shadow:
     0 4px 0 #c86e22,
     0 8px 12px rgba(90, 50, 20, 0.28);
 }
 
-.gacha-cat-face {
+.gp-go-cat {
   position: absolute;
   left: 50%;
-  top: 8px;
+  top: 4px;
   transform: translateX(-50%);
+  z-index: 2;
   display: grid;
   place-items: center;
-  width: 96px;
-  height: 76px;
+  width: 100px;
+  height: 78px;
   border-radius: 48% 48% 46% 46% / 58% 58% 42% 42%;
   color: #fff;
   font-family: var(--display);
-  font-size: 1.55rem;
+  font-size: 1.65rem;
   font-weight: 900;
-  letter-spacing: 0.06em;
-  text-shadow: 0 2px 0 rgba(60, 30, 100, 0.35);
-  background: linear-gradient(165deg, #e0c8ff 0%, #b088f8 38%, #7a52d4 100%);
+  letter-spacing: 0.08em;
+  text-shadow: 0 2px 0 rgba(50, 20, 90, 0.35);
+  background: linear-gradient(165deg, #e4ccff 0%, #b490f8 36%, #7a52d4 100%);
   box-shadow:
-    0 7px 0 #5f6ad8,
-    0 11px 0 #f4c25a,
-    0 15px 14px rgba(90, 50, 20, 0.3),
+    0 8px 0 #5e6ad8,
+    0 12px 0 #f0b04a,
+    0 16px 14px rgba(80, 40, 20, 0.28),
     inset 0 3px 0 rgba(255, 255, 255, 0.4);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-.gacha-cat-face::before,
-.gacha-cat-face::after {
+.gp-go-cat::before,
+.gp-go-cat::after {
   content: "";
   position: absolute;
-  top: -17px;
-  width: 26px;
-  height: 26px;
-  background: linear-gradient(180deg, #e0c8ff, #8a66e0);
-  clip-path: polygon(50% 0%, 8% 100%, 92% 100%);
-  filter: drop-shadow(0 5px 0 #5f6ad8);
+  top: -18px;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(180deg, #e4ccff, #8a66e0);
+  clip-path: polygon(50% 0%, 6% 100%, 94% 100%);
+  filter: drop-shadow(0 6px 0 #5e6ad8);
 }
 
-.gacha-cat-face::before {
+.gp-go-cat::before {
   left: 10px;
   transform: rotate(-18deg);
 }
 
-.gacha-cat-face::after {
+.gp-go-cat::after {
   right: 10px;
   transform: rotate(18deg);
 }
 
-.gacha-cat-go:hover:not(:disabled) .gacha-cat-face {
+.gp-go:hover:not(:disabled) .gp-go-cat {
   transform: translateX(-50%) translateY(-2px);
 }
 
-.gacha-cat-go:active:not(:disabled) .gacha-cat-face {
+.gp-go:active:not(:disabled) .gp-go-cat {
   transform: translateX(-50%) translateY(5px);
   box-shadow:
-    0 3px 0 #5f6ad8,
-    0 6px 0 #f4c25a,
-    0 8px 10px rgba(90, 50, 20, 0.25),
-    inset 0 3px 0 rgba(255, 255, 255, 0.3);
+    0 3px 0 #5e6ad8,
+    0 6px 0 #f0b04a,
+    0 8px 10px rgba(80, 40, 20, 0.25),
+    inset 0 3px 0 rgba(255, 255, 255, 0.35);
 }
 
-.gacha-cat-go:active:not(:disabled) .gacha-cat-base {
-  transform: translateX(-50%) scaleY(0.92);
-  transform-origin: bottom center;
-}
-
-.gacha-cat-go:disabled {
+.gp-go:disabled {
   cursor: not-allowed;
-  filter: grayscale(0.25) brightness(0.92);
+  filter: grayscale(0.28) brightness(0.92);
 }
 
 @keyframes gachaRumble {

@@ -589,16 +589,16 @@
 
       gachaCtx.beginPath();
       gachaCtx.arc(0, 0, b.r, 0, Math.PI * 2);
-      gachaCtx.strokeStyle = "#4a3428";
-      gachaCtx.lineWidth = 3.5;
+      gachaCtx.strokeStyle = "#2a2018";
+      gachaCtx.lineWidth = 4.5;
       gachaCtx.stroke();
 
       // seam
       gachaCtx.beginPath();
-      gachaCtx.moveTo(0, -b.r + 1);
-      gachaCtx.lineTo(0, b.r - 1);
-      gachaCtx.strokeStyle = "rgba(74, 52, 40, 0.55)";
-      gachaCtx.lineWidth = 2;
+      gachaCtx.moveTo(0, -b.r + 1.5);
+      gachaCtx.lineTo(0, b.r - 1.5);
+      gachaCtx.strokeStyle = "rgba(42, 32, 24, 0.7)";
+      gachaCtx.lineWidth = 2.5;
       gachaCtx.stroke();
 
       // highlight

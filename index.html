@@ -80,17 +80,37 @@
 
               <section class="wheel-col gashapon-col" data-wheel="prizes">
                 <div class="gacha-wrap">
-                  <div class="gacha-machine catpaw" id="gashaponMachine">
-                    <img class="gacha-skin" src="assets/gacha-catpaw.jpg" alt="" draggable="false" />
-                    <div class="gacha-title">碎碎生日快乐♪٩(´ω`)و♪</div>
-                    <button type="button" id="btnGachaStar" class="gacha-star" aria-label="抽取奖品"></button>
-                    <div class="gacha-dome">
-                      <canvas id="gachaCanvas" width="420" height="300" aria-hidden="true"></canvas>
+                  <div class="gacha-machine" id="gashaponMachine">
+                    <div class="gp-paw" aria-hidden="true">
+                      <span class="gp-toe t1"></span>
+                      <span class="gp-toe t2"></span>
+                      <span class="gp-toe t3"></span>
+                      <span class="gp-toe t4"></span>
+                      <div class="gp-palm">
+                        <div class="gp-glass">
+                          <canvas id="gachaCanvas" width="420" height="300" aria-hidden="true"></canvas>
+                          <span class="gp-glass-shine"></span>
+                        </div>
+                      </div>
                     </div>
-                    <button type="button" id="btnSpinPrize" class="gacha-cat-go" aria-label="抽取奖品">
-                      <span class="gacha-cat-base"></span>
-                      <span class="gacha-cat-face">GO</span>
-                    </button>
+
+                    <div class="gp-board">
+                      <div class="gp-title-row">
+                        <div class="gp-title">碎碎生日快乐♪٩(´ω`)و♪</div>
+                        <button type="button" id="btnGachaStar" class="gp-star" aria-label="抽取奖品">
+                          <span>✓</span>
+                        </button>
+                      </div>
+
+                      <div class="gp-console">
+                        <span class="gp-knob" aria-hidden="true"></span>
+                        <button type="button" id="btnSpinPrize" class="gp-go" aria-label="抽取奖品">
+                          <span class="gp-go-pedestal"></span>
+                          <span class="gp-go-cat">GO</span>
+                        </button>
+                        <span class="gp-stick" aria-hidden="true"></span>
+                      </div>
+                    </div>
                   </div>
                   <canvas id="prizeWheel" width="480" height="480" hidden></canvas>
                 </div>
