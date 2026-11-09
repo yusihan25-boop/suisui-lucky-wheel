@@ -743,14 +743,14 @@ body {
 .gacha-machine.catpaw {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4.2;
+  aspect-ratio: 392 / 550;
   border-radius: 18px;
   overflow: hidden;
   user-select: none;
 }
 
 .gacha-machine.catpaw.shaking {
-  animation: gachaRumble 0.2s linear infinite;
+  animation: gachaRumble 0.08s linear infinite;
 }
 
 .gacha-skin {
@@ -766,40 +766,92 @@ body {
 
 .gacha-title {
   position: absolute;
-  left: 12%;
-  right: 18%;
-  top: 54.5%;
+  left: 11.5%;
+  right: 22%;
+  top: 54.2%;
   z-index: 3;
-  padding: 7px 8px;
+  padding: 8px 10px 7px;
   border-radius: 8px;
-  background: linear-gradient(180deg, #f2a24c, #e07830);
-  color: #fff;
+  background: linear-gradient(180deg, #f4a84f 0%, #e07830 100%);
+  color: #fffef8;
   text-align: center;
-  font-family: "LiSu", "STLiti", "华文隶书", "Noto Serif SC", "宋体", serif;
-  font-size: clamp(0.68rem, 2.1vw, 0.86rem);
+  font-family: "LiSu", "STLiti", "华文隶书", "隶书", "Noto Serif SC", serif;
+  font-size: clamp(0.7rem, 2.15vw, 0.9rem);
   font-weight: 700;
-  letter-spacing: 0.01em;
-  line-height: 1.35;
-  text-shadow: 0 1px 0 rgba(120, 50, 10, 0.28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  letter-spacing: 0.02em;
+  line-height: 1.32;
+  text-shadow: 0 1px 0 rgba(120, 50, 10, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 1px 2px rgba(120, 60, 20, 0.18);
   word-break: break-all;
+}
+
+/* 覆盖机身右侧星星，可点击抽奖 */
+.gacha-star {
+  position: absolute;
+  right: 8.5%;
+  top: 54.8%;
+  z-index: 4;
+  width: 42px;
+  height: 42px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: radial-gradient(circle at 50% 50%, #fff6a8 0 22%, #ffe14a 22% 100%);
+  clip-path: polygon(
+    50% 0%,
+    61% 28%,
+    92% 22%,
+    72% 45%,
+    88% 72%,
+    50% 58%,
+    12% 72%,
+    28% 45%,
+    8% 22%,
+    39% 28%
+  );
+  box-shadow: 0 2px 6px rgba(160, 90, 20, 0.35);
+  transition: transform 0.12s ease;
+}
+
+.gacha-star::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #2a2418;
+  font-size: 0.85rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.gacha-star:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+
+.gacha-star:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.3) brightness(0.92);
 }
 
 .gacha-dome {
   position: absolute;
-  left: 14%;
-  right: 14%;
-  top: 16%;
-  height: 36%;
+  left: 13.5%;
+  right: 13.5%;
+  top: 15.5%;
+  height: 36.5%;
   z-index: 2;
   border-radius: 48% 48% 42% 42% / 58% 58% 40% 40%;
   overflow: hidden;
+  /* 遮住原图静态蛋，只显示物理双色蛋 */
   background:
-    radial-gradient(ellipse at 50% 18%, rgba(255, 255, 255, 0.35), transparent 55%),
-    linear-gradient(180deg, rgba(255, 220, 200, 0.42), rgba(255, 180, 160, 0.28));
+    radial-gradient(ellipse at 50% 16%, rgba(255, 255, 255, 0.55), transparent 52%),
+    linear-gradient(180deg, rgba(255, 232, 210, 0.94), rgba(255, 196, 176, 0.9));
   box-shadow:
-    inset 0 0 0 3px rgba(255, 140, 100, 0.35),
-    inset 0 -16px 24px rgba(200, 80, 50, 0.12);
+    inset 0 0 0 4px rgba(255, 120, 90, 0.42),
+    inset 0 -18px 28px rgba(200, 70, 40, 0.14);
 }
 
 .gacha-dome canvas {
@@ -808,53 +860,71 @@ body {
   height: 100%;
 }
 
-/* 立体猫头 GO 按钮 */
+/* 立体猫头 GO：紫面 + 蓝/白/橙分层底座 */
 .gacha-cat-go {
   position: absolute;
   left: 50%;
-  bottom: 7.5%;
+  bottom: 5.8%;
   transform: translateX(-50%);
   z-index: 4;
-  width: 118px;
-  height: 108px;
+  width: 132px;
+  height: 118px;
   border: none;
   background: transparent;
   padding: 0;
   cursor: pointer;
 }
 
+.gacha-cat-base {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  width: 104px;
+  height: 34px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, #fff8e8 0 28%, #f0b04a 28% 58%, #e08930 58% 100%);
+  box-shadow:
+    0 4px 0 #c86e22,
+    0 8px 12px rgba(90, 50, 20, 0.28);
+}
+
 .gacha-cat-face {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  transform: translateX(-50%);
   display: grid;
   place-items: center;
-  width: 92px;
-  height: 74px;
-  margin: 18px auto 0;
+  width: 96px;
+  height: 76px;
   border-radius: 48% 48% 46% 46% / 58% 58% 42% 42%;
   color: #fff;
   font-family: var(--display);
-  font-size: 1.45rem;
-  letter-spacing: 0.04em;
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
   text-shadow: 0 2px 0 rgba(60, 30, 100, 0.35);
-  background: linear-gradient(165deg, #d2b6ff 0%, #a078f0 40%, #7b57d8 100%);
+  background: linear-gradient(165deg, #e0c8ff 0%, #b088f8 38%, #7a52d4 100%);
   box-shadow:
-    0 8px 0 #5e6ad8,
-    0 12px 0 #f0b04a,
-    0 16px 14px rgba(90, 50, 20, 0.28),
-    inset 0 3px 0 rgba(255, 255, 255, 0.35);
-  transition: transform 0.15s ease;
+    0 7px 0 #5f6ad8,
+    0 11px 0 #f4c25a,
+    0 15px 14px rgba(90, 50, 20, 0.3),
+    inset 0 3px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .gacha-cat-face::before,
 .gacha-cat-face::after {
   content: "";
   position: absolute;
-  top: -16px;
-  width: 24px;
-  height: 24px;
-  background: linear-gradient(180deg, #d2b6ff, #8a66e0);
+  top: -17px;
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(180deg, #e0c8ff, #8a66e0);
   clip-path: polygon(50% 0%, 8% 100%, 92% 100%);
-  filter: drop-shadow(0 4px 0 #5e6ad8);
+  filter: drop-shadow(0 5px 0 #5f6ad8);
 }
 
 .gacha-cat-face::before {
@@ -868,16 +938,21 @@ body {
 }
 
 .gacha-cat-go:hover:not(:disabled) .gacha-cat-face {
-  transform: translateY(-2px);
+  transform: translateX(-50%) translateY(-2px);
 }
 
 .gacha-cat-go:active:not(:disabled) .gacha-cat-face {
-  transform: translateY(4px);
+  transform: translateX(-50%) translateY(5px);
   box-shadow:
-    0 4px 0 #5e6ad8,
-    0 7px 0 #f0b04a,
-    0 10px 10px rgba(90, 50, 20, 0.25),
+    0 3px 0 #5f6ad8,
+    0 6px 0 #f4c25a,
+    0 8px 10px rgba(90, 50, 20, 0.25),
     inset 0 3px 0 rgba(255, 255, 255, 0.3);
+}
+
+.gacha-cat-go:active:not(:disabled) .gacha-cat-base {
+  transform: translateX(-50%) scaleY(0.92);
+  transform-origin: bottom center;
 }
 
 .gacha-cat-go:disabled {
@@ -887,9 +962,15 @@ body {
 
 @keyframes gachaRumble {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(2px, -1px) rotate(-0.7deg); }
-  50% { transform: translate(-2px, 1px) rotate(0.7deg); }
-  75% { transform: translate(1px, 1px) rotate(-0.35deg); }
+  10% { transform: translate(7px, -5px) rotate(-2.2deg); }
+  20% { transform: translate(-8px, 4px) rotate(2.4deg); }
+  30% { transform: translate(6px, 6px) rotate(-1.8deg); }
+  40% { transform: translate(-7px, -3px) rotate(2deg); }
+  50% { transform: translate(5px, 5px) rotate(-2.5deg); }
+  60% { transform: translate(-6px, -4px) rotate(1.6deg); }
+  70% { transform: translate(8px, 3px) rotate(-2deg); }
+  80% { transform: translate(-5px, 5px) rotate(2.2deg); }
+  90% { transform: translate(4px, -6px) rotate(-1.5deg); }
 }
 
 .wheel-wrap canvas {

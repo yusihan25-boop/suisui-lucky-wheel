@@ -47,6 +47,7 @@
     prizeCanvas: document.getElementById("prizeWheel"),
     btnSpinPeople: document.getElementById("btnSpinPeople"),
     btnSpinPrize: document.getElementById("btnSpinPrize"),
+    btnGachaStar: document.getElementById("btnGachaStar"),
     lastPerson: document.getElementById("lastPerson"),
     lastPrize: document.getElementById("lastPrize"),
     chkDesignate: document.getElementById("chkDesignate"),
@@ -236,7 +237,9 @@
 
   function updateButtons() {
     els.btnSpinPeople.disabled = spinningPeople || config.people.length < 1;
-    els.btnSpinPrize.disabled = spinningPrize || availablePrizes().length < 1;
+    const prizeBusy = spinningPrize || availablePrizes().length < 1;
+    els.btnSpinPrize.disabled = prizeBusy;
+    if (els.btnGachaStar) els.btnGachaStar.disabled = prizeBusy;
   }
 
   function addHistory(type, name) {
@@ -468,9 +471,9 @@
     const cy = h * 0.52;
     const rx = w * 0.4;
     const ry = h * 0.38;
-    const g = gachaState.mode === "shake" ? 420 : 520;
-    const damp = gachaState.mode === "shake" ? 0.995 : 0.988;
-    const shake = gachaState.mode === "shake" ? 520 : 18;
+    const g = gachaState.mode === "shake" ? 380 : 520;
+    const damp = gachaState.mode === "shake" ? 0.997 : 0.988;
+    const shake = gachaState.mode === "shake" ? 920 : 22;
 
     const balls = gachaState.balls;
     for (const b of balls) {
@@ -616,11 +619,11 @@
     gachaState.mode = "shake";
     if (els.gashaponMachine) els.gashaponMachine.classList.add("shaking");
 
-    // strong impulses
+    // violent tumble impulses
     gachaState.balls.forEach((b) => {
-      b.vx += (Math.random() - 0.5) * 680;
-      b.vy += -200 - Math.random() * 420;
-      b.spin += (Math.random() - 0.5) * 10;
+      b.vx += (Math.random() - 0.5) * 980;
+      b.vy += -280 - Math.random() * 560;
+      b.spin += (Math.random() - 0.5) * 16;
     });
 
     window.setTimeout(() => {
@@ -1603,6 +1606,7 @@
   // events
   els.btnSpinPeople.addEventListener("click", spinPeople);
   els.btnSpinPrize.addEventListener("click", spinPrize);
+  if (els.btnGachaStar) els.btnGachaStar.addEventListener("click", spinPrize);
   els.btnSettings.addEventListener("click", openSettings);
   els.btnHistory.addEventListener("click", openHistory);
   els.btnAddPerson.addEventListener("click", () => {
