@@ -1,17 +1,20 @@
 :root {
-  --bg-deep: #06101f;
-  --bg-mid: #0b1a33;
-  --bg-soft: #122844;
-  --ink: #e6f0ff;
-  --muted: #8eabd4;
-  --accent: #60a5fa;
-  --accent-deep: #2563eb;
-  --gold: #f0c14b;
-  --panel: rgba(10, 22, 44, 0.82);
-  --line: rgba(140, 180, 255, 0.2);
+  --bg-deep: #0a1224;
+  --bg-mid: #101b32;
+  --bg-soft: #182744;
+  --ink: #f7f3ef;
+  --muted: #b7c2d8;
+  --accent: #f3a7bf;
+  --accent-deep: #e57a9b;
+  --pink: #f3a7bf;
+  --pink-soft: #f8c8d8;
+  --pearl: #f4f0ea;
+  --gold: #e6c36a;
+  --panel: rgba(12, 20, 38, 0.82);
+  --line: rgba(230, 210, 190, 0.22);
   --ok: #34d399;
   --warn: #fbbf24;
-  --shadow: 0 18px 40px rgba(0, 10, 30, 0.45);
+  --shadow: 0 18px 40px rgba(0, 8, 24, 0.5);
   --radius: 18px;
   --font: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   --display: "ZCOOL KuaiLe", "Noto Sans SC", cursive;
@@ -35,11 +38,11 @@ body {
   color: var(--ink);
   overflow: hidden;
   background:
-    radial-gradient(900px 520px at 18% 12%, rgba(37, 99, 235, 0.34) 0%, transparent 55%),
-    radial-gradient(760px 480px at 88% 18%, rgba(56, 120, 220, 0.28) 0%, transparent 52%),
-    radial-gradient(700px 500px at 70% 90%, rgba(96, 165, 250, 0.14) 0%, transparent 48%),
-    radial-gradient(600px 420px at 40% 60%, rgba(14, 80, 160, 0.18) 0%, transparent 50%),
-    linear-gradient(165deg, #040b18 0%, #0a162c 42%, #10203a 100%);
+    radial-gradient(920px 540px at 16% 10%, rgba(243, 167, 191, 0.16) 0%, transparent 55%),
+    radial-gradient(820px 500px at 86% 18%, rgba(180, 200, 230, 0.14) 0%, transparent 52%),
+    radial-gradient(700px 480px at 58% 88%, rgba(230, 195, 106, 0.1) 0%, transparent 48%),
+    radial-gradient(640px 420px at 42% 48%, rgba(90, 120, 170, 0.18) 0%, transparent 55%),
+    linear-gradient(165deg, #070e1c 0%, #0d1730 46%, #15243f 100%);
   overflow-x: hidden;
 }
 
@@ -74,30 +77,30 @@ body {
 .cosmos-decor .n1 {
   width: 420px; height: 280px;
   top: 8%; left: -4%;
-  background: radial-gradient(circle, rgba(37,99,235,0.48), transparent 70%);
+  background: radial-gradient(circle, rgba(243,167,191,0.28), transparent 70%);
 }
 .cosmos-decor .n2 {
   width: 360px; height: 300px;
   top: 20%; right: -6%;
-  background: radial-gradient(circle, rgba(56,140,230,0.4), transparent 70%);
+  background: radial-gradient(circle, rgba(170,195,230,0.26), transparent 70%);
   animation-delay: -4s;
 }
 .cosmos-decor .n3 {
   width: 480px; height: 260px;
   bottom: 4%; left: 30%;
-  background: radial-gradient(circle, rgba(125, 180, 255, 0.16), transparent 70%);
+  background: radial-gradient(circle, rgba(230,195,106,0.14), transparent 70%);
   animation-delay: -7s;
 }
 .cosmos-decor .n4 {
   width: 300px; height: 220px;
   top: 55%; right: 18%;
-  background: radial-gradient(circle, rgba(96,165,250,0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(200,170,210,0.16), transparent 70%);
   animation-delay: -2s;
 }
 .cosmos-decor .n5 {
   width: 380px; height: 240px;
   top: 35%; left: 55%;
-  background: radial-gradient(circle, rgba(30,90,180,0.28), transparent 70%);
+  background: radial-gradient(circle, rgba(120,150,200,0.22), transparent 70%);
   animation-delay: -9s;
 }
 
@@ -207,11 +210,11 @@ body {
 .cosmos-decor .p2 {
   width: 38px; height: 38px;
   top: 62%; left: 8%;
-  background: radial-gradient(circle at 30% 30%, #bfdbfe, #3b82f6 50%, #1e3a8a);
-  box-shadow: 0 0 20px rgba(37, 99, 235, 0.55);
+  background: radial-gradient(circle at 30% 30%, #f8c8d8, #e57a9b 50%, #8b4a66);
+  box-shadow: 0 0 20px rgba(243, 167, 191, 0.45);
   animation-delay: -5s;
-  --ring: rgba(147, 197, 253, 0.85);
-  --ring-soft: rgba(59, 130, 246, 0.4);
+  --ring: rgba(248, 200, 216, 0.85);
+  --ring-soft: rgba(243, 167, 191, 0.4);
   --ring-tilt: 22deg;
   --ring-w: 190%;
   --ring-h: 44%;
@@ -490,10 +493,10 @@ body {
   font-size: 2.55rem;
   font-weight: 400;
   letter-spacing: 0.04em;
-  color: #f5e6a8;
+  color: var(--gold);
   text-shadow:
-    0 0 18px rgba(96, 165, 250, 0.55),
-    0 0 8px rgba(240, 193, 75, 0.45);
+    0 0 18px rgba(243, 167, 191, 0.35),
+    0 0 10px rgba(230, 195, 106, 0.45);
   animation: titleIn 0.7s ease both;
   text-align: center;
   line-height: 1.2;
@@ -908,7 +911,7 @@ body {
   position: relative;
   width: min(100%, 400px);
   aspect-ratio: 1;
-  filter: drop-shadow(0 0 28px rgba(37, 99, 235, 0.35));
+  filter: drop-shadow(0 0 28px rgba(243, 167, 191, 0.28));
   animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -932,35 +935,35 @@ body {
 .star-spin-btn {
   min-width: 120px;
   height: 52px;
-  border: 2px solid rgba(240, 193, 75, 0.85);
+  border: 2px solid rgba(230, 195, 106, 0.9);
   border-radius: 999px;
-  background: linear-gradient(145deg, #3b82f6, #1d4ed8 55%, #0b1a33);
-  color: #fff7d6;
+  background: linear-gradient(145deg, #f3a7bf, #e57a9b 52%, #8b4a66);
+  color: #fffaf6;
   font-family: var(--display);
   font-size: 1.25rem;
   font-weight: 900;
   letter-spacing: 0.16em;
   cursor: pointer;
   box-shadow:
-    0 0 18px rgba(37, 99, 235, 0.45),
-    0 5px 0 #0a2a5c,
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 0 18px rgba(243, 167, 191, 0.4),
+    0 5px 0 #6e354c,
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .star-spin-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow:
-    0 0 24px rgba(96, 165, 250, 0.55),
-    0 7px 0 #0a2a5c,
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 0 24px rgba(248, 200, 216, 0.55),
+    0 7px 0 #6e354c,
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 
 .star-spin-btn:active:not(:disabled) {
   transform: translateY(2px);
   box-shadow:
-    0 0 12px rgba(37, 99, 235, 0.35),
-    0 2px 0 #0a2a5c;
+    0 0 12px rgba(243, 167, 191, 0.3),
+    0 2px 0 #6e354c;
 }
 
 .star-spin-btn:disabled {
@@ -978,7 +981,7 @@ body {
   position: relative;
   width: min(100%, 300px);
   aspect-ratio: 420 / 700;
-  filter: drop-shadow(0 16px 28px rgba(37, 99, 235, 0.35));
+  filter: drop-shadow(0 16px 28px rgba(230, 195, 106, 0.22));
   overflow: visible;
   animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -997,35 +1000,35 @@ body {
 .tube-btn {
   min-width: 120px;
   height: 52px;
-  border: 2px solid rgba(240, 193, 75, 0.85);
+  border: 2px solid rgba(230, 195, 106, 0.9);
   border-radius: 999px;
-  background: linear-gradient(145deg, #3b82f6, #1d4ed8 55%, #0b1a33);
-  color: #fff7d6;
+  background: linear-gradient(145deg, #f3a7bf, #e57a9b 52%, #8b4a66);
+  color: #fffaf6;
   font-family: var(--display);
   font-size: 1.25rem;
   font-weight: 900;
   letter-spacing: 0.14em;
   cursor: pointer;
   box-shadow:
-    0 0 18px rgba(37, 99, 235, 0.45),
-    0 5px 0 #0a2a5c,
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 0 18px rgba(243, 167, 191, 0.4),
+    0 5px 0 #6e354c,
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .tube-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow:
-    0 0 24px rgba(96, 165, 250, 0.55),
-    0 7px 0 #0a2a5c,
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 0 24px rgba(248, 200, 216, 0.55),
+    0 7px 0 #6e354c,
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 
 .tube-btn:active:not(:disabled) {
   transform: translateY(2px);
   box-shadow:
-    0 0 12px rgba(37, 99, 235, 0.35),
-    0 2px 0 #0a2a5c;
+    0 0 12px rgba(243, 167, 191, 0.3),
+    0 2px 0 #6e354c;
 }
 
 .tube-btn:disabled {
