@@ -1156,6 +1156,23 @@ body {
   background: rgba(243, 167, 191, 0.28);
 }
 
+/* 设置面板是深色底，次级按钮用浅色字 */
+.settings-sheet .btn-secondary,
+.settings-sheet a.btn-secondary,
+.settings-sheet .file-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f7f3ef;
+  border: 1px solid rgba(230, 210, 190, 0.4);
+  text-decoration: none;
+}
+
+.settings-sheet .btn-secondary:hover,
+.settings-sheet a.btn-secondary:hover,
+.settings-sheet .file-btn:hover {
+  background: rgba(243, 167, 191, 0.32);
+  color: #fff;
+}
+
 .icon-btn {
   width: 36px;
   height: 36px;
