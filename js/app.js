@@ -3,6 +3,7 @@
   const LIVE_CAST_KEY = "lucky-wheel-live-cast";
   const HISTORY_KEY = "lucky-wheel-history-v3";
   const DECOR_KEY = "lucky-wheel-decor-v1";
+  const DEFAULT_DECOR_SRC = "assets/decor-left.jpg";
 
   /* 用户提供的莫兰迪色板取样（避开过浅色，保证白字可读） */
   const PALETTE = [
@@ -2470,9 +2471,9 @@
 
   function loadDecor() {
     try {
-      return localStorage.getItem(DECOR_KEY) || "";
+      return localStorage.getItem(DECOR_KEY) || DEFAULT_DECOR_SRC;
     } catch {
-      return "";
+      return DEFAULT_DECOR_SRC;
     }
   }
 
