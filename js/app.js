@@ -2371,6 +2371,7 @@
     });
   }
   if (els.btnBackLive) {
+    els.btnBackLive.hidden = true;
     els.btnBackLive.addEventListener("click", () => {
       hideRotateTip();
       setForceLandscapeUi(false);
@@ -2381,7 +2382,7 @@
     els.btnRotateTipYes.addEventListener("click", () => {
       hideRotateTip();
       setForceLandscapeUi(true);
-      if (els.btnBackLive) els.btnBackLive.hidden = false;
+      if (els.btnBackLive) els.btnBackLive.hidden = true;
       scheduleFit();
       requestAnimationFrame(() => {
         scheduleFit();
@@ -2617,11 +2618,10 @@
     document.documentElement.classList.toggle("force-landscape-ui", !!on);
   }
 
-  /** 竖屏普通模式：浮层按钮保证能回直播；退出投屏时询问是否旋转 */
+  /** 退出投屏后竖屏询问是否旋转；普通模式不再显示底部「返回直播投屏」 */
   function syncPortraitNormalUi(exitedLive) {
+    if (els.btnBackLive) els.btnBackLive.hidden = true;
     const portrait = isPortraitViewport();
-    const portraitNormal = !isLiveCast() && portrait;
-    if (els.btnBackLive) els.btnBackLive.hidden = !portraitNormal;
     if (!portrait || isLiveCast()) {
       setForceLandscapeUi(false);
       hideRotateTip();
