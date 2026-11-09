@@ -1874,14 +1874,14 @@ html.live-cast .stage-row.dual {
   width: 100%;
   align-items: stretch;
   justify-content: center;
-  gap: clamp(8px, 2.5cqw, 28px);
+  gap: 10px;
   padding-top: 18px;
   padding-right: 118px; /* 给右上角浮层控制留空 */
 }
 
 html.live-cast .wheel-col {
-  flex: 1 1 0;
-  max-width: 460px;
+  flex: 0 0 auto;
+  max-width: none;
   width: auto;
   height: 100%;
   min-height: 0;
