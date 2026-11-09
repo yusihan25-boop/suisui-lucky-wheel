@@ -1452,75 +1452,38 @@
     osc.stop(start + dur + 0.02);
   }
 
-  /** 摇签筒：竹木签条轻碰声（短噪声脉冲，非电子哔哔） */
+  let tubeShakeAudio = null;
+  function getTubeShakeAudio() {
+    if (!tubeShakeAudio) {
+      tubeShakeAudio = new Audio("assets/tube-shake.mp3");
+      tubeShakeAudio.preload = "auto";
+    }
+    return tubeShakeAudio;
+  }
+
+  /** 摇签筒：使用指定 mp3 音效 */
   function playTubeShakeSound(durationSec = 2.2) {
     try {
-      const ctx = ensureAudio();
-      if (!ctx) return;
-      const now = ctx.currentTime;
-      const end = now + durationSec;
-      const sr = ctx.sampleRate;
-
-      function makeClackBuffer(lenSec) {
-        const n = Math.max(1, Math.floor(sr * lenSec));
-        const buf = ctx.createBuffer(1, n, sr);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < n; i++) {
-          const p = i / n;
-          const env = Math.exp(-p * 28) * (1 - p);
-          data[i] = (Math.random() * 2 - 1) * env;
+      const audio = getTubeShakeAudio();
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = 0.9;
+      audio.loop = false;
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch((err) => console.warn("摇签音效播放失败", err));
+      }
+      // 摇签结束时淡出停掉，避免音效比动画更长
+      window.setTimeout(() => {
+        try {
+          if (!audio.paused) {
+            audio.pause();
+            audio.currentTime = 0;
+          }
+        } catch (_) {
+          /* ignore */
         }
-        return buf;
-      }
-
-      // 轻柔底噪
-      const bedFrames = Math.floor(sr * (durationSec + 0.08));
-      const bedBuf = ctx.createBuffer(1, bedFrames, sr);
-      const bedData = bedBuf.getChannelData(0);
-      for (let i = 0; i < bedFrames; i++) {
-        const t = i / sr;
-        const env = Math.min(1, t * 10) * Math.min(1, (durationSec - t) * 5);
-        bedData[i] = (Math.random() * 2 - 1) * env * 0.12;
-      }
-      const bed = ctx.createBufferSource();
-      bed.buffer = bedBuf;
-      const bedLp = ctx.createBiquadFilter();
-      bedLp.type = "lowpass";
-      bedLp.frequency.value = 900;
-      const bedGain = ctx.createGain();
-      bedGain.gain.value = 0.16;
-      bed.connect(bedLp);
-      bedLp.connect(bedGain);
-      bedGain.connect(ctx.destination);
-      bed.start(now);
-      bed.stop(end + 0.04);
-
-      // 不规则签条碰撞
-      let t = now + 0.02;
-      while (t < end - 0.08) {
-        const gap = 0.055 + Math.random() * 0.09;
-        const src = ctx.createBufferSource();
-        src.buffer = makeClackBuffer(0.045 + Math.random() * 0.03);
-        const bp = ctx.createBiquadFilter();
-        bp.type = "bandpass";
-        bp.frequency.value = 480 + Math.random() * 520;
-        bp.Q.value = 1.4;
-        const hp = ctx.createBiquadFilter();
-        hp.type = "highpass";
-        hp.frequency.value = 180;
-        const g = ctx.createGain();
-        const peak = 0.22 + Math.random() * 0.14;
-        g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(peak, t + 0.004);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.055);
-        src.connect(hp);
-        hp.connect(bp);
-        bp.connect(g);
-        g.connect(ctx.destination);
-        src.start(t);
-        src.stop(t + 0.08);
-        t += gap;
-      }
+      }, Math.round(durationSec * 1000));
     } catch (err) {
       console.warn("摇签音效播放失败", err);
     }
