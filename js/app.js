@@ -2549,6 +2549,21 @@
     return document.documentElement.classList.contains("live-cast");
   }
 
+  function isPortraitViewport() {
+    try {
+      if (window.matchMedia) {
+        return window.matchMedia("(orientation: portrait)").matches;
+      }
+    } catch (_) {}
+    return window.innerHeight >= window.innerWidth;
+  }
+
+  /** 竖屏下普通模式无法滑动操作：用 CSS 旋转成横屏布局 */
+  function syncForceLandscapeUi() {
+    const force = !isLiveCast() && isPortraitViewport();
+    document.documentElement.classList.toggle("force-landscape-ui", force);
+  }
+
   function setLiveCast(on, persist) {
     document.documentElement.classList.toggle("live-cast", !!on);
     if (els.btnLiveMode) {
@@ -2560,8 +2575,10 @@
         localStorage.setItem(LIVE_CAST_KEY, on ? "1" : "0");
       } catch (_) {}
     }
+    syncForceLandscapeUi();
     scheduleFit();
     requestAnimationFrame(() => {
+      scheduleFit();
       try {
         redrawAll();
       } catch (_) {}
@@ -2613,7 +2630,17 @@
     cancelAnimationFrame(fitRaf);
     fitRaf = requestAnimationFrame(fitStageBoard);
   };
-  window.addEventListener("resize", scheduleFit);
+  window.addEventListener("resize", () => {
+    syncForceLandscapeUi();
+    scheduleFit();
+  });
+  window.addEventListener("orientationchange", () => {
+    syncForceLandscapeUi();
+    setTimeout(() => {
+      syncForceLandscapeUi();
+      scheduleFit();
+    }, 250);
+  });
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(scheduleFit).catch(() => {});
   }
@@ -2622,5 +2649,6 @@
   redrawAll();
   renderDecor(loadDecor());
   initLiveCast();
+  syncForceLandscapeUi();
   scheduleFit();
 })();
