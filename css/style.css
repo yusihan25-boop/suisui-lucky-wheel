@@ -1763,8 +1763,11 @@ html.live-cast body {
 html.live-cast .cosmos-decor {
   display: block !important;
   position: fixed;
-  left: 50%;
-  bottom: 1.2vh;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  left: 50% !important;
+  bottom: 1.2vh !important;
   transform: translateX(-50%);
   width: min(98vw, 1080px);
   height: 40vh;
@@ -1896,12 +1899,12 @@ html.live-cast .stage-visual {
 }
 
 html.live-cast .star-wheel-wrap {
-  width: min(72cqh, 52cqw, 360px);
+  width: min(78cqh, 56cqw, 380px);
   filter: drop-shadow(0 0 18px rgba(243, 167, 191, 0.28));
 }
 
 html.live-cast .lottery-tube {
-  width: min(40cqh, 24cqw, 210px);
+  width: min(44cqh, 26cqw, 230px);
   filter: drop-shadow(0 10px 18px rgba(230, 195, 106, 0.22));
 }
 
@@ -2039,10 +2042,10 @@ html.live-cast #stockModal .modal-card {
   }
 
   html.live-cast .star-wheel-wrap {
-    width: min(68cqh, 58cqw, 320px);
+    width: min(74cqh, 60cqw, 340px);
   }
 
   html.live-cast .lottery-tube {
-    width: min(36cqh, 26cqw, 180px);
+    width: min(40cqh, 28cqw, 200px);
   }
 }
