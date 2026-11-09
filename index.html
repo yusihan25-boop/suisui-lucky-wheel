@@ -78,47 +78,13 @@
                 <p id="lastPerson" class="current-pick"></p>
               </section>
 
-              <section class="wheel-col gashapon-col" data-wheel="prizes">
-                <div class="gacha-wrap">
-                  <div class="gacha-machine" id="gashaponMachine">
-                    <svg class="gp-defs" width="0" height="0" aria-hidden="true">
-                      <filter id="gpFur" x="-20%" y="-20%" width="140%" height="140%">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="noise"/>
-                        <feColorMatrix type="matrix" values="0 0 0 0 0.85  0 0 0 0 0.55  0 0 0 0 0.15  0 0 0 0.35 0" in="noise" result="tint"/>
-                        <feBlend in="SourceGraphic" in2="tint" mode="soft-light"/>
-                      </filter>
-                    </svg>
-                    <div class="gp-paw" aria-hidden="true">
-                      <span class="gp-toe t1"></span>
-                      <span class="gp-toe t2"></span>
-                      <span class="gp-toe t3"></span>
-                      <span class="gp-toe t4"></span>
-                      <div class="gp-palm">
-                        <div class="gp-glass">
-                          <canvas id="gachaCanvas" width="420" height="300" aria-hidden="true"></canvas>
-                          <span class="gp-glass-shine"></span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="gp-board">
-                      <div class="gp-title-row">
-                        <div class="gp-title">碎碎生日快乐♪٩(´ω`)و♪</div>
-                        <button type="button" id="btnGachaStar" class="gp-star" aria-label="抽取奖品">
-                          <span>✓</span>
-                        </button>
-                      </div>
-
-                      <div class="gp-console">
-                        <span class="gp-knob" aria-hidden="true"></span>
-                        <button type="button" id="btnSpinPrize" class="gp-go" aria-label="抽取奖品">
-                          <span class="gp-go-pedestal"></span>
-                          <span class="gp-go-cat">GO</span>
-                        </button>
-                        <span class="gp-stick" aria-hidden="true"></span>
-                      </div>
-                    </div>
+              <section class="wheel-col tube-col" data-wheel="prizes">
+                <div class="tube-wrap">
+                  <div class="tube-heading">碎碎生日快乐♪٩(´ω`)و♪</div>
+                  <div class="lottery-tube" id="lotteryTube">
+                    <canvas id="tubeCanvas" width="360" height="520" aria-hidden="true"></canvas>
                   </div>
+                  <button type="button" id="btnSpinPrize" class="tube-draw-btn" aria-label="抽取奖品">抽签</button>
                   <canvas id="prizeWheel" width="480" height="480" hidden></canvas>
                 </div>
                 <p id="lastPrize" class="current-pick"></p>
