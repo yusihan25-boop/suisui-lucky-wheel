@@ -84,11 +84,20 @@
     decorEmpty: document.getElementById("decorEmpty"),
     decorInput: document.getElementById("decorInput"),
     gashaponMachine: document.getElementById("gashaponMachine"),
-    gashaponEggs: document.getElementById("gashaponEggs"),
+    gachaCanvas: document.getElementById("gachaCanvas"),
   };
 
   const peopleCtx = els.peopleCanvas.getContext("2d");
   const prizeCtx = els.prizeCanvas ? els.prizeCanvas.getContext("2d") : null;
+  const gachaCtx = els.gachaCanvas ? els.gachaCanvas.getContext("2d") : null;
+
+  const gachaState = {
+    balls: [],
+    mode: "idle", // idle | shake | eject
+    ejectBall: null,
+    raf: 0,
+    lastTs: 0,
+  };
 
   let config = loadConfig();
   let history = loadHistory();
@@ -402,41 +411,237 @@
       "暂无人员",
       (p) => truncateLabel(p.name, 8)
     );
-    renderGashaponEggs();
+    syncGachaBalls();
     renderStockPanel();
     updateButtons();
   }
 
-  function renderGashaponEggs() {
-    if (!els.gashaponEggs) return;
-    const count = Math.max(6, Math.min(12, availablePrizes().length || 6));
-    const spots = [
-      [12, 18], [38, 8], [62, 16], [78, 28],
-      [22, 42], [48, 36], [70, 48], [34, 62],
-      [58, 66], [16, 72], [82, 58], [46, 78],
-    ];
-    els.gashaponEggs.innerHTML = spots
-      .slice(0, count)
-      .map(
-        ([l, t], i) =>
-          `<span class="gashapon-egg" style="left:${l}%;top:${t}%;animation-delay:${(-i * 0.28).toFixed(2)}s"></span>`
-      )
-      .join("");
+  function syncGachaBalls() {
+    if (!els.gachaCanvas || !gachaCtx) return;
+    const pool = availablePrizes();
+    const count = Math.max(5, Math.min(10, pool.length || 5));
+    const w = els.gachaCanvas.width;
+    const h = els.gachaCanvas.height;
+    const r = 22;
+    const cx = w / 2;
+    const cy = h * 0.52;
+    const rx = w * 0.38;
+    const ry = h * 0.36;
+    const prev = gachaState.balls;
+    gachaState.balls = [];
+    for (let i = 0; i < count; i++) {
+      const prize = pool[i % Math.max(pool.length, 1)] || { color: PALETTE[i % PALETTE.length] };
+      const old = prev[i];
+      const ang = (i / count) * Math.PI * 2;
+      gachaState.balls.push({
+        x: old ? old.x : cx + Math.cos(ang) * rx * 0.35,
+        y: old ? old.y : cy + Math.sin(ang) * ry * 0.25,
+        vx: old ? old.vx : (Math.random() - 0.5) * 40,
+        vy: old ? old.vy : (Math.random() - 0.5) * 30,
+        r,
+        color: prize.color || PALETTE[i % PALETTE.length],
+        rot: old ? old.rot : Math.random() * Math.PI * 2,
+        spin: old ? old.spin : (Math.random() - 0.5) * 2,
+      });
+    }
+    ensureGachaLoop();
+  }
+
+  function ensureGachaLoop() {
+    if (gachaState.raf) return;
+    gachaState.lastTs = performance.now();
+    const tick = (ts) => {
+      const dt = Math.min(0.032, (ts - gachaState.lastTs) / 1000 || 0.016);
+      gachaState.lastTs = ts;
+      stepGachaPhysics(dt);
+      drawGacha();
+      gachaState.raf = requestAnimationFrame(tick);
+    };
+    gachaState.raf = requestAnimationFrame(tick);
+  }
+
+  function stepGachaPhysics(dt) {
+    if (!els.gachaCanvas) return;
+    const w = els.gachaCanvas.width;
+    const h = els.gachaCanvas.height;
+    const cx = w / 2;
+    const cy = h * 0.52;
+    const rx = w * 0.4;
+    const ry = h * 0.38;
+    const g = gachaState.mode === "shake" ? 420 : 520;
+    const damp = gachaState.mode === "shake" ? 0.995 : 0.988;
+    const shake = gachaState.mode === "shake" ? 520 : 18;
+
+    const balls = gachaState.balls;
+    for (const b of balls) {
+      if (gachaState.ejectBall === b) continue;
+      b.vx += (Math.random() - 0.5) * shake * dt;
+      b.vy += g * dt + (Math.random() - 0.5) * shake * 0.6 * dt;
+      b.x += b.vx * dt;
+      b.y += b.vy * dt;
+      b.vx *= damp;
+      b.vy *= damp;
+      b.rot += b.spin * dt;
+      b.spin *= 0.995;
+
+      // keep inside ellipse
+      const nx = (b.x - cx) / Math.max(rx - b.r, 1);
+      const ny = (b.y - cy) / Math.max(ry - b.r, 1);
+      const d2 = nx * nx + ny * ny;
+      if (d2 > 1) {
+        const d = Math.sqrt(d2);
+        const px = cx + (nx / d) * (rx - b.r);
+        const py = cy + (ny / d) * (ry - b.r);
+        const tx = b.x - px;
+        const ty = b.y - py;
+        b.x = px;
+        b.y = py;
+        const dot = b.vx * tx + b.vy * ty;
+        if (dot > 0) {
+          const len2 = tx * tx + ty * ty || 1;
+          b.vx -= (1.55 * dot * tx) / len2;
+          b.vy -= (1.55 * dot * ty) / len2;
+        }
+        b.spin += (Math.random() - 0.5) * 4;
+      }
+    }
+
+    // ball-ball collisions
+    for (let i = 0; i < balls.length; i++) {
+      for (let j = i + 1; j < balls.length; j++) {
+        const a = balls[i];
+        const b = balls[j];
+        if (gachaState.ejectBall === a || gachaState.ejectBall === b) continue;
+        let dx = b.x - a.x;
+        let dy = b.y - a.y;
+        let dist = Math.hypot(dx, dy) || 0.0001;
+        const min = a.r + b.r;
+        if (dist < min) {
+          const overlap = (min - dist) / 2;
+          dx /= dist;
+          dy /= dist;
+          a.x -= dx * overlap;
+          a.y -= dy * overlap;
+          b.x += dx * overlap;
+          b.y += dy * overlap;
+          const dvx = b.vx - a.vx;
+          const dvy = b.vy - a.vy;
+          const impact = dvx * dx + dvy * dy;
+          if (impact < 0) {
+            const impulse = impact * 0.9;
+            a.vx += impulse * dx;
+            a.vy += impulse * dy;
+            b.vx -= impulse * dx;
+            b.vy -= impulse * dy;
+          }
+        }
+      }
+    }
+
+    if (gachaState.ejectBall) {
+      const e = gachaState.ejectBall;
+      e.vy -= 900 * dt;
+      e.x += e.vx * dt;
+      e.y += e.vy * dt;
+      e.rot += 8 * dt;
+    }
+  }
+
+  function drawGacha() {
+    if (!gachaCtx || !els.gachaCanvas) return;
+    const w = els.gachaCanvas.width;
+    const h = els.gachaCanvas.height;
+    gachaCtx.clearRect(0, 0, w, h);
+
+    // soft floor glow
+    gachaCtx.fillStyle = "rgba(210, 180, 120, 0.12)";
+    gachaCtx.beginPath();
+    gachaCtx.ellipse(w / 2, h * 0.78, w * 0.34, 16, 0, 0, Math.PI * 2);
+    gachaCtx.fill();
+
+    const ordered = [...gachaState.balls].sort((a, b) => a.y - b.y);
+    for (const b of ordered) {
+      // shadow
+      gachaCtx.fillStyle = "rgba(120, 90, 50, 0.18)";
+      gachaCtx.beginPath();
+      gachaCtx.ellipse(b.x + 2, b.y + b.r * 0.78, b.r * 0.78, b.r * 0.28, 0, 0, Math.PI * 2);
+      gachaCtx.fill();
+
+      gachaCtx.save();
+      gachaCtx.translate(b.x, b.y);
+      gachaCtx.rotate(b.rot);
+
+      // GACHAGO-like two-tone capsule (左色右白)
+      gachaCtx.beginPath();
+      gachaCtx.arc(0, 0, b.r, 0, Math.PI * 2);
+      gachaCtx.fillStyle = "#fffef8";
+      gachaCtx.fill();
+
+      gachaCtx.beginPath();
+      gachaCtx.moveTo(0, -b.r);
+      gachaCtx.arc(0, 0, b.r, -Math.PI / 2, Math.PI / 2, false);
+      gachaCtx.closePath();
+      gachaCtx.fillStyle = b.color;
+      gachaCtx.fill();
+
+      gachaCtx.beginPath();
+      gachaCtx.arc(0, 0, b.r, 0, Math.PI * 2);
+      gachaCtx.strokeStyle = "#4a3428";
+      gachaCtx.lineWidth = 3.5;
+      gachaCtx.stroke();
+
+      // seam
+      gachaCtx.beginPath();
+      gachaCtx.moveTo(0, -b.r + 1);
+      gachaCtx.lineTo(0, b.r - 1);
+      gachaCtx.strokeStyle = "rgba(74, 52, 40, 0.55)";
+      gachaCtx.lineWidth = 2;
+      gachaCtx.stroke();
+
+      // highlight
+      gachaCtx.beginPath();
+      gachaCtx.ellipse(-b.r * 0.28, -b.r * 0.35, b.r * 0.22, b.r * 0.14, -0.5, 0, Math.PI * 2);
+      gachaCtx.fillStyle = "rgba(255,255,255,0.55)";
+      gachaCtx.fill();
+      gachaCtx.restore();
+    }
   }
 
   function animateGashapon({ items, onDone, setSpinning }) {
     const winnerIndex = pickWeightedIndex(items);
     const winner = items[winnerIndex];
-    const duration = 3200 + Math.random() * 600;
     setSpinning(true);
     updateButtons();
+    syncGachaBalls();
+    gachaState.mode = "shake";
     if (els.gashaponMachine) els.gashaponMachine.classList.add("shaking");
+
+    // strong impulses
+    gachaState.balls.forEach((b) => {
+      b.vx += (Math.random() - 0.5) * 680;
+      b.vy += -200 - Math.random() * 420;
+      b.spin += (Math.random() - 0.5) * 10;
+    });
+
     window.setTimeout(() => {
+      const eject = gachaState.balls[Math.floor(Math.random() * gachaState.balls.length)] || null;
+      gachaState.ejectBall = eject;
+      gachaState.mode = "eject";
+      if (eject) {
+        eject.vx = (Math.random() - 0.5) * 80;
+        eject.vy = -520;
+      }
       if (els.gashaponMachine) els.gashaponMachine.classList.remove("shaking");
+    }, 2200);
+
+    window.setTimeout(() => {
+      gachaState.mode = "idle";
+      gachaState.ejectBall = null;
       setSpinning(false);
       updateButtons();
+      syncGachaBalls();
       onDone(winner);
-    }, duration);
+    }, 3400);
   }
 
   function pickWeightedIndex(items) {
