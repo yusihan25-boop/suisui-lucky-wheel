@@ -83,10 +83,36 @@
     decorPreview: document.getElementById("decorPreview"),
     decorEmpty: document.getElementById("decorEmpty"),
     decorInput: document.getElementById("decorInput"),
+    lotteryTube: document.getElementById("lotteryTube"),
+    tubeCanvas: document.getElementById("tubeCanvas"),
   };
 
   const peopleCtx = els.peopleCanvas.getContext("2d");
-  const prizeCtx = els.prizeCanvas.getContext("2d");
+  const prizeCtx = els.prizeCanvas ? els.prizeCanvas.getContext("2d") : null;
+  const tubeCtx = els.tubeCanvas ? els.tubeCanvas.getContext("2d") : null;
+
+  const TUBE_TIPS = [
+    "#5b8fd9",
+    "#7a6fd0",
+    "#e07a3a",
+    "#6aae5e",
+    "#e6c04a",
+    "#e25b5b",
+    "#d47bb0",
+    "#4eb3a5",
+    "#8ecf5a",
+    "#f0a0c0",
+  ];
+
+  const tubeState = {
+    sticks: [],
+    mode: "idle", // idle | shake | rise
+    riseProgress: 0,
+    riseLabel: "",
+    riseTip: "#e07a3a",
+    raf: 0,
+    lastTs: 0,
+  };
 
   let config = loadConfig();
   let history = loadHistory();
@@ -400,19 +426,252 @@
       "暂无人员",
       (p) => truncateLabel(p.name, 8)
     );
-    drawWheel(
-      prizeCtx,
-      els.prizeCanvas,
-      availablePrizes(),
-      prizeRotation,
-      "奖品已抽完",
-      (p) =>
-        p.stock === null
-          ? truncateLabel(p.name, 8)
-          : truncateLabel(`${p.name}×${p.stock}`, 9)
-    );
+    syncTubeSticks();
     renderStockPanel();
     updateButtons();
+  }
+
+  function syncTubeSticks() {
+    if (!els.tubeCanvas || !tubeCtx) return;
+    const pool = availablePrizes();
+    const count = Math.max(18, Math.min(24, Math.max(pool.length, 1) * 3));
+    const prev = tubeState.sticks;
+    tubeState.sticks = [];
+    for (let i = 0; i < count; i++) {
+      const prize = pool[i % Math.max(pool.length, 1)] || {};
+      const old = prev[i];
+      const ang = (i / count) * Math.PI * 2 - Math.PI / 2;
+      tubeState.sticks.push({
+        ang,
+        ring: 0.82 + (i % 3) * 0.06,
+        tip:
+          prize.color && String(prize.color).startsWith("#")
+            ? prize.color
+            : TUBE_TIPS[i % TUBE_TIPS.length],
+        lean: Math.cos(ang) * 18 + Math.sin(ang) * 4,
+        h: 0.2 + (i % 4) * 0.012,
+        wobble: old ? old.wobble : Math.random() * Math.PI * 2,
+      });
+    }
+    ensureTubeLoop();
+  }
+
+  function ensureTubeLoop() {
+    if (tubeState.raf) return;
+    tubeState.lastTs = performance.now();
+    const tick = (ts) => {
+      const dt = Math.min(0.033, (ts - tubeState.lastTs) / 1000 || 0.016);
+      tubeState.lastTs = ts;
+      const shaking = tubeState.mode === "shake";
+      tubeState.sticks.forEach((s) => {
+        s.wobble += dt * (shaking ? 9 : 1.4);
+      });
+      if (tubeState.mode === "rise") {
+        tubeState.riseProgress = Math.min(1, tubeState.riseProgress + dt * 1.2);
+      }
+      drawTube();
+      tubeState.raf = requestAnimationFrame(tick);
+    };
+    tubeState.raf = requestAnimationFrame(tick);
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    const rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rr);
+    ctx.arcTo(x + w, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + w, y, rr);
+    ctx.closePath();
+  }
+
+  function paintStick(ctx, x, y, w, h, tipColor, lean, label) {
+    ctx.save();
+    ctx.translate(x, y + h);
+    ctx.rotate((lean * Math.PI) / 180);
+    ctx.translate(-w / 2, -h);
+
+    const tipH = h * 0.28;
+    roundRect(ctx, 0, 0, w, h, w * 0.45);
+    ctx.fillStyle = "#f3e4c4";
+    ctx.fill();
+    ctx.strokeStyle = "#3d2a1f";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    roundRect(ctx, 0, 0, w, tipH, w * 0.45);
+    ctx.fillStyle = tipColor;
+    ctx.fill();
+    ctx.strokeStyle = "#3d2a1f";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    if (label) {
+      ctx.save();
+      ctx.translate(w / 2, h * 0.62);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = "#3d2a1f";
+      ctx.font = "bold 16px 'Noto Sans SC', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(String(label).slice(0, 8), 0, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function drawTube() {
+    if (!tubeCtx || !els.tubeCanvas) return;
+    const w = els.tubeCanvas.width;
+    const h = els.tubeCanvas.height;
+    tubeCtx.clearRect(0, 0, w, h);
+
+    const cx = w * 0.5;
+    const rimY = h * 0.32;
+    const topRx = w * 0.28;
+    const topRy = h * 0.048;
+    const botY = h * 0.9;
+    const botRx = w * 0.22;
+
+    // 筒身
+    tubeCtx.beginPath();
+    tubeCtx.moveTo(cx - topRx, rimY);
+    tubeCtx.lineTo(cx + topRx, rimY);
+    tubeCtx.lineTo(cx + botRx, botY);
+    tubeCtx.quadraticCurveTo(cx, botY + h * 0.03, cx - botRx, botY);
+    tubeCtx.closePath();
+    tubeCtx.fillStyle = "#e85748";
+    tubeCtx.fill();
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 5;
+    tubeCtx.lineJoin = "round";
+    tubeCtx.stroke();
+
+    // 口沿内壁
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY - 2, topRx * 0.98, topRy * 1.45, 0, 0, Math.PI * 2);
+    tubeCtx.fillStyle = "#c2473c";
+    tubeCtx.fill();
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 4;
+    tubeCtx.stroke();
+
+    // 筒口
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY - 6, topRx * 0.78, topRy * 1.1, 0, 0, Math.PI * 2);
+    tubeCtx.fillStyle = "#5a2f2a";
+    tubeCtx.fill();
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 3.5;
+    tubeCtx.stroke();
+
+    // 筒身文字
+    tubeCtx.save();
+    tubeCtx.fillStyle = "#fff8ec";
+    tubeCtx.font = `${Math.round(w * 0.095)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
+    tubeCtx.textAlign = "center";
+    tubeCtx.textBaseline = "middle";
+    const chars = "碎碎生日快乐".split("");
+    chars.forEach((ch, i) => {
+      tubeCtx.fillText(ch, cx, h * 0.48 + i * (h * 0.055));
+    });
+    tubeCtx.restore();
+
+    // 左高光
+    tubeCtx.beginPath();
+    tubeCtx.moveTo(cx - topRx * 0.7, rimY + 10);
+    tubeCtx.lineTo(cx - botRx * 0.55, botY - 16);
+    tubeCtx.strokeStyle = "rgba(255,255,255,0.22)";
+    tubeCtx.lineWidth = 9;
+    tubeCtx.lineCap = "round";
+    tubeCtx.stroke();
+
+    // 签（按前后排序）
+    const stickW = w * 0.036;
+    const ordered = [...tubeState.sticks].sort(
+      (a, b) => Math.sin(a.ang) - Math.sin(b.ang)
+    );
+    ordered.forEach((s) => {
+      const ox = Math.cos(s.ang) * topRx * s.ring;
+      const oy = Math.sin(s.ang) * topRy * 2.15 * s.ring;
+      const baseX = cx + ox;
+      const baseY = rimY + oy;
+      const stickH = h * s.h;
+      const jiggle =
+        tubeState.mode === "shake"
+          ? Math.sin(s.wobble) * 2.5
+          : Math.sin(s.wobble) * 0.35;
+      paintStick(
+        tubeCtx,
+        baseX,
+        baseY - stickH + jiggle,
+        stickW,
+        stickH,
+        s.tip,
+        s.lean + jiggle,
+        null
+      );
+    });
+
+    // 前口沿描边
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, rimY, topRx, topRy, 0, 0.12, Math.PI - 0.12);
+    tubeCtx.strokeStyle = "#3d2a1f";
+    tubeCtx.lineWidth = 5;
+    tubeCtx.stroke();
+
+    // 抽出的签
+    if (tubeState.mode === "rise") {
+      const p = tubeState.riseProgress;
+      const ease = 1 - Math.pow(1 - p, 3);
+      const sw = stickW * 1.6;
+      const sh = h * 0.4;
+      const y = rimY - sh * 0.25 - ease * h * 0.2;
+      paintStick(
+        tubeCtx,
+        cx,
+        y,
+        sw,
+        sh,
+        tubeState.riseTip,
+        Math.sin(p * 5) * 2.5,
+        tubeState.riseLabel
+      );
+    }
+  }
+
+  function animateLotteryTube({ items, onDone, setSpinning }) {
+    const winnerIndex = pickWeightedIndex(items);
+    const winner = items[winnerIndex];
+    setSpinning(true);
+    updateButtons();
+    syncTubeSticks();
+    tubeState.mode = "shake";
+    tubeState.riseProgress = 0;
+    tubeState.riseLabel = "";
+    if (els.lotteryTube) els.lotteryTube.classList.add("shaking");
+
+    window.setTimeout(() => {
+      tubeState.mode = "rise";
+      tubeState.riseProgress = 0;
+      tubeState.riseLabel = winner.name || "";
+      tubeState.riseTip =
+        winner.color && String(winner.color).startsWith("#")
+          ? winner.color
+          : TUBE_TIPS[Math.floor(Math.random() * TUBE_TIPS.length)];
+      if (els.lotteryTube) els.lotteryTube.classList.remove("shaking");
+    }, 2200);
+
+    window.setTimeout(() => {
+      tubeState.mode = "idle";
+      tubeState.riseProgress = 0;
+      tubeState.riseLabel = "";
+      setSpinning(false);
+      updateButtons();
+      syncTubeSticks();
+      onDone(winner);
+    }, 4000);
   }
 
   function pickWeightedIndex(items) {
@@ -541,23 +800,7 @@
       return;
     }
 
-    animateSpin({
-      getRotation: () => prizeRotation,
-      setRotation: (v) => {
-        prizeRotation = v;
-      },
-      draw: () =>
-        drawWheel(
-          prizeCtx,
-          els.prizeCanvas,
-          availablePrizes(),
-          prizeRotation,
-          "奖品已抽完",
-          (p) =>
-            p.stock === null
-              ? truncateLabel(p.name, 8)
-              : truncateLabel(`${p.name}×${p.stock}`, 9)
-        ),
+    animateLotteryTube({
       items: pool,
       setSpinning: (v) => {
         spinningPrize = v;

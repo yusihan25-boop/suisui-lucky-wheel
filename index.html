@@ -6,7 +6,7 @@
   <title>幸运大转盘</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -78,11 +78,13 @@
                 <p id="lastPerson" class="current-pick"></p>
               </section>
 
-              <section class="wheel-col" data-wheel="prizes">
-                <div class="wheel-wrap small">
-                  <div class="pointer" aria-hidden="true"></div>
-                  <canvas id="prizeWheel" width="480" height="480"></canvas>
-                  <button type="button" id="btnSpinPrize" class="spin-btn">奖品</button>
+              <section class="wheel-col tube-col" data-wheel="prizes">
+                <div class="tube-wrap">
+                  <div class="lottery-tube" id="lotteryTube">
+                    <canvas id="tubeCanvas" width="420" height="560" aria-hidden="true"></canvas>
+                  </div>
+                  <button type="button" id="btnSpinPrize" class="tube-btn" aria-label="抽取奖品">抽签</button>
+                  <canvas id="prizeWheel" width="480" height="480" hidden></canvas>
                 </div>
                 <p id="lastPrize" class="current-pick"></p>
               </section>
