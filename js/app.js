@@ -1270,7 +1270,12 @@
       alert(`已导入 ${imported.length} 名人员`);
     } catch (err) {
       console.error(err);
-      alert("人员导入失败");
+      const tip = !window.XLSX
+        ? "表格解析库未加载，请刷新页面后重试"
+        : err && err.message
+          ? `人员导入失败：${err.message}`
+          : "人员导入失败";
+      alert(tip);
     }
   }
 
@@ -1319,7 +1324,12 @@
       alert(`已导入 ${imported.length} 个奖品`);
     } catch (err) {
       console.error(err);
-      alert("奖品导入失败");
+      const tip = !window.XLSX
+        ? "表格解析库未加载，请刷新页面后重试"
+        : err && err.message
+          ? `奖品导入失败：${err.message}`
+          : "奖品导入失败";
+      alert(tip);
     }
   }
 
