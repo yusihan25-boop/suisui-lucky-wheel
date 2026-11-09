@@ -1759,8 +1759,25 @@ html.live-cast body {
   background-image: none !important;
 }
 
+/* 星空只铺在底部投屏框内，不挡人脸 */
 html.live-cast .cosmos-decor {
-  display: none !important;
+  display: block !important;
+  position: fixed;
+  left: 50%;
+  bottom: 1.2vh;
+  transform: translateX(-50%);
+  width: min(98vw, 1080px);
+  height: 40vh;
+  max-height: 40%;
+  border-radius: 22px;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(920px 540px at 16% 10%, rgba(243, 167, 191, 0.16) 0%, transparent 55%),
+    radial-gradient(820px 500px at 86% 18%, rgba(180, 200, 230, 0.14) 0%, transparent 52%),
+    radial-gradient(700px 480px at 58% 88%, rgba(230, 195, 106, 0.1) 0%, transparent 48%),
+    linear-gradient(165deg, #070e1c 0%, #0d1730 46%, #15243f 100%);
 }
 
 html.live-cast .app {
@@ -1784,14 +1801,16 @@ html.live-cast .stage-scaler {
   height: 40vh;
   max-height: 40%;
   margin: 0 auto;
-  overflow: visible;
+  overflow: hidden;
   border-radius: 22px;
-  background:
-    linear-gradient(165deg, rgba(248, 244, 238, 0.97) 0%, rgba(232, 238, 248, 0.97) 48%, rgba(246, 232, 238, 0.97) 100%);
+  container-type: size;
+  container-name: live-dock;
+  background: transparent;
   border: 3px solid rgba(126, 200, 210, 0.95);
   box-shadow:
     0 0 0 3px rgba(230, 195, 106, 0.55),
     0 14px 36px rgba(0, 8, 24, 0.35);
+  z-index: 1;
 }
 
 html.live-cast .stage-board {
@@ -1802,12 +1821,13 @@ html.live-cast .stage-board {
   height: 100% !important;
   transform: none !important;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 168px;
-  column-gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  column-gap: 6px;
   row-gap: 0;
   align-items: stretch;
-  padding: 8px 10px 10px;
+  padding: 6px 8px 8px;
   box-sizing: border-box;
+  z-index: 1;
 }
 
 html.live-cast .decor-slot {
@@ -1817,8 +1837,8 @@ html.live-cast .decor-slot {
 html.live-cast .stage-main {
   height: 100%;
   min-height: 0;
-  justify-content: space-between;
-  gap: 4px;
+  justify-content: flex-start;
+  gap: 2px;
 }
 
 html.live-cast .stage-title {
@@ -1836,11 +1856,13 @@ html.live-cast .stage-title {
 html.live-cast .stage-title .brand,
 html.live-cast .brand {
   margin: 0;
-  font-size: clamp(1rem, 2.6vh, 1.45rem);
+  font-size: clamp(1rem, 2.4cqh, 1.4rem);
   letter-spacing: 0.08em;
-  color: #1a3358 !important;
-  text-shadow: none !important;
-  line-height: 1.2;
+  color: var(--gold) !important;
+  text-shadow:
+    0 0 14px rgba(243, 167, 191, 0.35),
+    0 0 8px rgba(230, 195, 106, 0.4) !important;
+  line-height: 1.15;
 }
 
 html.live-cast .stage-row.dual {
@@ -1849,15 +1871,17 @@ html.live-cast .stage-row.dual {
   width: 100%;
   align-items: stretch;
   justify-content: center;
-  gap: clamp(12px, 3vw, 36px);
+  gap: clamp(4px, 1.2cqw, 14px);
 }
 
 html.live-cast .wheel-col {
+  flex: 0 1 auto;
   max-width: none;
+  width: auto;
   height: 100%;
   min-height: 0;
   justify-content: space-between;
-  gap: 6px;
+  gap: 4px;
 }
 
 html.live-cast .star-wheel-col .stage-visual {
@@ -1872,20 +1896,20 @@ html.live-cast .stage-visual {
 }
 
 html.live-cast .star-wheel-wrap {
-  width: min(34vh, 220px, 42vw);
-  filter: drop-shadow(0 6px 14px rgba(26, 51, 88, 0.22));
+  width: min(72cqh, 52cqw, 360px);
+  filter: drop-shadow(0 0 18px rgba(243, 167, 191, 0.28));
 }
 
 html.live-cast .lottery-tube {
-  width: min(18vh, 120px, 22vw);
-  filter: drop-shadow(0 8px 14px rgba(26, 51, 88, 0.2));
+  width: min(40cqh, 24cqw, 210px);
+  filter: drop-shadow(0 10px 18px rgba(230, 195, 106, 0.22));
 }
 
 html.live-cast .star-spin-btn,
 html.live-cast .tube-btn {
-  min-width: 96px;
-  height: 40px;
-  font-size: 1.05rem;
+  min-width: 104px;
+  height: 38px;
+  font-size: 1.08rem;
   letter-spacing: 0.12em;
   box-shadow:
     0 0 12px rgba(243, 167, 191, 0.35),
@@ -1894,16 +1918,17 @@ html.live-cast .tube-btn {
 }
 
 html.live-cast .current-pick {
-  min-height: 1.2em;
-  font-size: clamp(0.95rem, 2.2vh, 1.15rem);
+  min-height: 1.15em;
+  font-size: clamp(0.95rem, 2.4cqh, 1.2rem);
   font-weight: 700;
-  color: #1a3358;
+  color: var(--ink);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
 }
 
 html.live-cast .stage-side {
   padding-top: 0;
   justify-content: flex-start;
-  gap: 8px;
+  gap: 6px;
   max-height: none;
   align-self: stretch;
 }
@@ -1911,51 +1936,52 @@ html.live-cast .stage-side {
 html.live-cast .stage-actions {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 html.live-cast .stage-actions .btn,
 html.live-cast .stage-actions .btn.btn-ghost {
   width: 100%;
   justify-content: center;
-  padding: 7px 8px;
-  font-size: 0.82rem;
-  color: #1a3358 !important;
-  background: rgba(255, 255, 255, 0.88) !important;
-  border: 1px solid rgba(26, 51, 88, 0.2) !important;
+  padding: 6px 6px;
+  font-size: 0.78rem;
+  color: var(--ink) !important;
+  background: rgba(16, 28, 48, 0.72) !important;
+  border: 1px solid rgba(230, 210, 190, 0.28) !important;
 }
 
 html.live-cast #btnLiveMode,
 html.live-cast #btnLiveMode.btn-ghost {
-  background: rgba(230, 195, 106, 0.55) !important;
-  border-color: rgba(180, 140, 50, 0.65) !important;
+  background: rgba(230, 195, 106, 0.35) !important;
+  border-color: rgba(230, 195, 106, 0.7) !important;
+  color: #fff8e8 !important;
   font-weight: 700;
 }
 
 html.live-cast .designate-bar {
-  padding: 8px;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.78);
-  border-color: rgba(26, 51, 88, 0.14);
+  padding: 7px;
+  gap: 5px;
+  background: rgba(16, 20, 48, 0.78);
+  border-color: rgba(230, 210, 190, 0.22);
   box-shadow: none;
-  backdrop-filter: none;
+  backdrop-filter: blur(8px);
 }
 
 html.live-cast .designate-toggle {
-  font-size: 0.78rem;
-  color: #1a3358;
+  font-size: 0.74rem;
+  color: var(--ink);
 }
 
 html.live-cast .designate-input {
-  padding: 6px 8px;
-  font-size: 0.78rem;
-  color: #1a3358;
-  background: rgba(255, 255, 255, 0.92);
-  border-color: rgba(26, 51, 88, 0.2);
+  padding: 5px 7px;
+  font-size: 0.74rem;
+  color: var(--ink);
+  background: rgba(8, 12, 36, 0.85);
+  border-color: rgba(230, 210, 190, 0.22);
 }
 
 html.live-cast .designate-input:disabled {
-  background: rgba(240, 244, 250, 0.7);
+  background: rgba(8, 12, 36, 0.5);
 }
 
 /* 结果弹层只占底部投屏区，不挡人脸 */
@@ -2009,14 +2035,14 @@ html.live-cast #stockModal .modal-card {
 
 @media (max-aspect-ratio: 3/4) {
   html.live-cast .stage-board {
-    grid-template-columns: minmax(0, 1fr) 132px;
+    grid-template-columns: minmax(0, 1fr) 118px;
   }
 
   html.live-cast .star-wheel-wrap {
-    width: min(30vh, 200px, 38vw);
+    width: min(68cqh, 58cqw, 320px);
   }
 
   html.live-cast .lottery-tube {
-    width: min(16vh, 108px, 20vw);
+    width: min(36cqh, 26cqw, 180px);
   }
 }
