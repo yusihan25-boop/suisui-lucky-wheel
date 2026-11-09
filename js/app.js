@@ -587,16 +587,16 @@
     // 内圈紫金细环
     ctx.beginPath();
     ctx.arc(0, 0, innerR + 4, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(96, 165, 250, 0.65)";
+    ctx.strokeStyle = "rgba(243, 167, 191, 0.55)";
     ctx.lineWidth = 3;
     ctx.stroke();
 
     // 中心发光星芒（保留）
     const g = ctx.createRadialGradient(0, 0, 2, 0, 0, innerR * 0.95);
     g.addColorStop(0, `rgba(255, 250, 220, ${0.95 * pulse})`);
-    g.addColorStop(0.25, `rgba(240, 193, 75, ${0.55 * pulse})`);
-    g.addColorStop(0.55, `rgba(96, 165, 250, ${0.35 * pulse})`);
-    g.addColorStop(1, "rgba(6, 16, 36, 0)");
+    g.addColorStop(0.25, `rgba(230, 195, 106, ${0.55 * pulse})`);
+    g.addColorStop(0.55, `rgba(243, 167, 191, ${0.32 * pulse})`);
+    g.addColorStop(1, "rgba(8, 14, 28, 0)");
     ctx.beginPath();
     ctx.arc(0, 0, innerR - 2, 0, Math.PI * 2);
     ctx.fillStyle = g;
@@ -928,7 +928,7 @@
     for (let i = 3; i >= 0; i--) {
       ctx.beginPath();
       ctx.ellipse(0, -i * s * 0.22, s * (0.55 - i * 0.06), s * (0.32 - i * 0.03), 0, 0, Math.PI * 2);
-      ctx.fillStyle = i % 2 === 0 ? "#f2f7ff" : "#d4e6fb";
+      ctx.fillStyle = i % 2 === 0 ? "#fbf8f4" : "#f0e6ef";
       ctx.fill();
     }
     ctx.restore();
@@ -957,11 +957,11 @@
     ctx.moveTo(0, 0);
     ctx.quadraticCurveTo(s * 0.9, -s * 0.55, s * 1.15, s * 0.1);
     ctx.quadraticCurveTo(s * 0.35, s * 0.25, 0, 0);
-    ctx.fillStyle = "#2563eb";
+    ctx.fillStyle = "#e57a9b";
     ctx.fill();
     ctx.beginPath();
     ctx.ellipse(0, s * 0.05, s * 0.28, s * 0.22, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "#60a5fa";
+    ctx.fillStyle = "#f3a7bf";
     ctx.fill();
     ctx.beginPath();
     ctx.arc(0, s * 0.02, s * 0.14, 0, Math.PI * 2);
@@ -978,13 +978,13 @@
     ctx.quadraticCurveTo(cx, botY + h * 0.02, cx - botRx, botY);
     ctx.closePath();
     const g = ctx.createLinearGradient(cx - topRx, rimY, cx + topRx, botY);
-    g.addColorStop(0, "#1e4a8c");
-    g.addColorStop(0.4, "#163a6e");
-    g.addColorStop(0.75, "#0f2a52");
-    g.addColorStop(1, "#0a1c38");
+    g.addColorStop(0, "#24365a");
+    g.addColorStop(0.4, "#1a2a48");
+    g.addColorStop(0.75, "#121f38");
+    g.addColorStop(1, "#0c1628");
     ctx.fillStyle = g;
     ctx.fill();
-    ctx.strokeStyle = "rgba(240, 193, 75, 0.55)";
+    ctx.strokeStyle = "rgba(230, 195, 106, 0.6)";
     ctx.lineWidth = 4;
     ctx.lineJoin = "round";
     ctx.stroke();
@@ -1000,7 +1000,7 @@
     ctx.beginPath();
     ctx.ellipse(cx, cy, outRx, outRy, 0, 0, Math.PI * 2);
     ctx.ellipse(cx, cy - 2, inRx, inRy, 0, 0, Math.PI * 2, true);
-    ctx.fillStyle = "#e8f2ff";
+    ctx.fillStyle = "#f7f2ec";
     ctx.fill("evenodd");
     const count = 14;
     for (let i = 0; i < count; i++) {
@@ -1060,19 +1060,19 @@
     ctx.stroke();
 
     // 气球（身后）——紫金星夜
-    paintBalloon(ctx, cx - topRx * 1.35, rimY + h * 0.12, 18, 24, "#3b82f6", {
+    paintBalloon(ctx, cx - topRx * 1.35, rimY + h * 0.12, 18, 24, "#f3a7bf", {
       x: cx - botRx * 0.55,
       y: botY - 28,
     });
-    paintBalloon(ctx, cx - topRx * 1.05, rimY + h * 0.22, 12, 16, "#f0c14b", {
+    paintBalloon(ctx, cx - topRx * 1.05, rimY + h * 0.22, 12, 16, "#e6c36a", {
       x: cx - botRx * 0.4,
       y: botY - 20,
     });
-    paintBalloon(ctx, cx + topRx * 1.32, rimY + h * 0.14, 17, 23, "#60a5fa", {
+    paintBalloon(ctx, cx + topRx * 1.32, rimY + h * 0.14, 17, 23, "#c9b6e0", {
       x: cx + botRx * 0.55,
       y: botY - 28,
     });
-    paintBalloon(ctx, cx + topRx * 1.02, rimY + h * 0.24, 11, 15, "#93c5fd", {
+    paintBalloon(ctx, cx + topRx * 1.02, rimY + h * 0.24, 11, 15, "#f8c8d8", {
       x: cx + botRx * 0.4,
       y: botY - 18,
     });
@@ -1084,14 +1084,14 @@
     ctx.beginPath();
     ctx.moveTo(cx - botRx * 0.95, botY - 36);
     ctx.quadraticCurveTo(cx, botY - 22, cx + botRx * 0.95, botY - 36);
-    ctx.strokeStyle = "rgba(96, 165, 250, 0.85)";
+    ctx.strokeStyle = "rgba(243, 167, 191, 0.85)";
     ctx.lineWidth = 7;
     ctx.lineCap = "round";
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(cx - botRx * 0.92, botY - 26);
     ctx.quadraticCurveTo(cx, botY - 14, cx + botRx * 0.92, botY - 26);
-    ctx.strokeStyle = "rgba(240, 193, 75, 0.9)";
+    ctx.strokeStyle = "rgba(230, 195, 106, 0.9)";
     ctx.lineWidth = 6;
     ctx.stroke();
 
@@ -1099,11 +1099,11 @@
     fillCreamRim(ctx, cx, rimY, outRx, outRy, inRx, inRy, false);
     ctx.beginPath();
     ctx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "#071428";
+    ctx.fillStyle = "#0a1424";
     ctx.fill();
     ctx.beginPath();
     ctx.ellipse(cx, rimY - 2, inRx, inRy, 0, Math.PI, 0, true);
-    ctx.strokeStyle = "#2a5a9a";
+    ctx.strokeStyle = "#5a6f96";
     ctx.lineWidth = Math.max(8, outRy - inRy);
     ctx.stroke();
 
@@ -1152,12 +1152,12 @@
 
     // 口沿宝石 / 星芒
     paintGem(ctx, cx - outRx * 0.55, rimY + outRy * 0.55, 7, "#fde68a", "#d97706");
-    paintGem(ctx, cx + outRx * 0.42, rimY + outRy * 0.35, 6, "#93c5fd", "#1d4ed8");
-    paintGem(ctx, cx - outRx * 0.18, rimY + outRy * 0.75, 4.5, "#bfdbfe", "#2563eb");
-    paintGem(ctx, cx + outRx * 0.12, rimY + outRy * 0.7, 4, "#fde68a", "#f59e0b");
-    paintGem(ctx, cx + outRx * 0.65, rimY + outRy * 0.15, 5, "#60a5fa", "#1e3a8a");
+    paintGem(ctx, cx + outRx * 0.42, rimY + outRy * 0.35, 6, "#f8c8d8", "#e57a9b");
+    paintGem(ctx, cx - outRx * 0.18, rimY + outRy * 0.75, 4.5, "#e8eef8", "#8fa6c8");
+    paintGem(ctx, cx + outRx * 0.12, rimY + outRy * 0.7, 4, "#fde68a", "#d4a017");
+    paintGem(ctx, cx + outRx * 0.65, rimY + outRy * 0.15, 5, "#c9b6e0", "#7a6a9a");
     paintSpark4(ctx, cx - outRx * 0.05, rimY + outRy * 0.3, 8, "#fff6c2");
-    paintSpark4(ctx, cx + outRx * 0.28, rimY + outRy * 0.6, 6, "#dbeafe");
+    paintSpark4(ctx, cx + outRx * 0.28, rimY + outRy * 0.6, 6, "#f8c8d8");
 
     // 侧边描线
     ctx.beginPath();
@@ -1165,7 +1165,7 @@
     ctx.lineTo(cx + botRx, botY);
     ctx.quadraticCurveTo(cx, botY + h * 0.02, cx - botRx, botY);
     ctx.lineTo(cx - topRx, rimY);
-    ctx.strokeStyle = "rgba(96, 165, 250, 0.55)";
+    ctx.strokeStyle = "rgba(243, 167, 191, 0.45)";
     ctx.lineWidth = 3.5;
     ctx.lineJoin = "round";
     ctx.stroke();
@@ -1181,8 +1181,8 @@
 
     // 竖排「碎碎生日快乐」
     ctx.save();
-    ctx.fillStyle = "#f0c14b";
-    ctx.shadowColor = "rgba(240, 193, 75, 0.45)";
+    ctx.fillStyle = "#e6c36a";
+    ctx.shadowColor = "rgba(230, 195, 106, 0.45)";
     ctx.shadowBlur = 8;
     ctx.font = `${Math.round(w * 0.095)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
     ctx.textAlign = "center";
@@ -1194,19 +1194,19 @@
     ctx.restore();
 
     // 筒身星芒 / 爱心 / 星屑
-    paintHeart(ctx, cx - topRx * 0.55, h * 0.52, 14, "#60a5fa");
-    paintHeart(ctx, cx + topRx * 0.52, h * 0.58, 12, "#3b82f6");
-    paintHeart(ctx, cx + topRx * 0.35, h * 0.7, 10, "#93c5fd");
-    paintSpark4(ctx, cx - topRx * 0.7, rimY + 28, 8, "#fde047");
-    paintSpark4(ctx, cx + topRx * 0.72, rimY + 40, 7, "#fef08a");
-    paintSpark4(ctx, cx - topRx * 0.4, botY - 48, 6, "#dbeafe");
+    paintHeart(ctx, cx - topRx * 0.55, h * 0.52, 14, "#f3a7bf");
+    paintHeart(ctx, cx + topRx * 0.52, h * 0.58, 12, "#e57a9b");
+    paintHeart(ctx, cx + topRx * 0.35, h * 0.7, 10, "#f8c8d8");
+    paintSpark4(ctx, cx - topRx * 0.7, rimY + 28, 8, "#fff6c2");
+    paintSpark4(ctx, cx + topRx * 0.72, rimY + 40, 7, "#f8c8d8");
+    paintSpark4(ctx, cx - topRx * 0.4, botY - 48, 6, "#e8eef8");
     const confetti = [
-      [-0.75, 0.55, "#60a5fa", 0.4],
-      [0.7, 0.62, "#f0c14b", -0.3],
-      [-0.6, 0.72, "#93c5fd", 0.6],
-      [0.55, 0.48, "#38bdf8", -0.5],
+      [-0.75, 0.55, "#f3a7bf", 0.4],
+      [0.7, 0.62, "#e6c36a", -0.3],
+      [-0.6, 0.72, "#c9b6e0", 0.6],
+      [0.55, 0.48, "#f8c8d8", -0.5],
       [-0.35, 0.78, "#fde68a", 0.2],
-      [0.4, 0.75, "#2563eb", -0.2],
+      [0.4, 0.75, "#b7c2d8", -0.2],
     ];
     confetti.forEach(([nx, ny, color, rot], i) => {
       const bx = cx + topRx * nx;
