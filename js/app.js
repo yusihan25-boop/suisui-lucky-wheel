@@ -84,7 +84,8 @@
     decorEmpty: document.getElementById("decorEmpty"),
     decorInput: document.getElementById("decorInput"),
     lotteryTube: document.getElementById("lotteryTube"),
-    tubeSticks: document.getElementById("tubeSticks"),
+    tubeSticksBack: document.getElementById("tubeSticksBack"),
+    tubeSticksFront: document.getElementById("tubeSticksFront"),
     tubeDrawn: document.getElementById("tubeDrawn"),
     drawnTip: document.getElementById("drawnTip"),
     drawnLabel: document.getElementById("drawnLabel"),
@@ -415,34 +416,54 @@
   }
 
   function syncTubeSticks() {
-    if (!els.tubeSticks) return;
+    if (!els.tubeSticksBack || !els.tubeSticksFront) return;
     const pool = availablePrizes();
-    const count = Math.max(18, Math.min(28, Math.max(pool.length, 1) * 4));
-    els.tubeSticks.innerHTML = "";
+    const count = Math.max(20, Math.min(30, Math.max(pool.length, 1) * 4));
+    els.tubeSticksBack.innerHTML = "";
+    els.tubeSticksFront.innerHTML = "";
+
+    // 鲜艳签头色（更接近原版）
+    const tips = [
+      "#5b8fd9",
+      "#7a6fd0",
+      "#e07a3a",
+      "#6aae5e",
+      "#e6c04a",
+      "#e25b5b",
+      "#d47bb0",
+      "#4eb3a5",
+    ];
+
     for (let i = 0; i < count; i++) {
-      const prize = pool[i % Math.max(pool.length, 1)] || { color: PALETTE[i % PALETTE.length] };
+      const prize = pool[i % Math.max(pool.length, 1)] || {};
       const stick = document.createElement("div");
       stick.className = "tube-stick";
       const tip = document.createElement("span");
       tip.className = "stick-tip";
-      tip.style.background = prize.color || PALETTE[i % PALETTE.length];
+      tip.style.background = prize.color && String(prize.color).startsWith("#")
+        ? prize.color
+        : tips[i % tips.length];
       stick.appendChild(tip);
 
-      // 环绕筒口椭圆，中间留空（俯视感）
-      const ring = 0.72 + Math.random() * 0.22;
-      const ang = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
-      const cx = 50 + Math.cos(ang) * 38 * ring;
-      const cy = 58 + Math.sin(ang) * 22 * ring;
-      const rot = (ang * 180) / Math.PI * 0.08 + (Math.random() - 0.5) * 8;
-      const h = 96 + Math.random() * 36;
+      // 椭圆口沿 + 径向外倾（中间留空），底座在口沿上
+      const ang = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.1;
+      const rx = 29 + Math.random() * 5;
+      const ry = 15 + Math.random() * 3;
+      const cx = 50 + Math.cos(ang) * rx;
+      const cy = 68 + Math.sin(ang) * ry;
+      // 靠着筒壁外倾：右倾为正、左倾为负，约 18°~34°
+      const lean = Math.cos(ang) * 28 + (Math.random() - 0.5) * 10;
+      const h = 92 + Math.random() * 30;
 
-      stick.style.left = `calc(${cx}% - 8px)`;
-      stick.style.top = `calc(${cy}% - ${h * 0.78}px)`;
+      stick.style.left = `${cx}%`;
+      stick.style.top = `calc(${cy}% - ${h}px)`;
       stick.style.height = `${h}px`;
-      stick.style.transform = `rotate(${rot}deg)`;
-      stick.style.zIndex = String(20 + Math.round(cy));
-      stick.style.animationDelay = `${(i % 6) * 0.05}s`;
-      els.tubeSticks.appendChild(stick);
+      stick.style.transform = `rotate(${lean}deg)`;
+      stick.style.animationDelay = `${(i % 7) * 0.04}s`;
+
+      const isFront = Math.sin(ang) > 0.02;
+      stick.style.zIndex = String(10 + Math.round(cy));
+      (isFront ? els.tubeSticksFront : els.tubeSticksBack).appendChild(stick);
     }
     if (els.tubeDrawn) els.tubeDrawn.hidden = true;
   }
