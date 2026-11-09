@@ -78,25 +78,11 @@
                 <p id="lastPerson" class="current-pick"></p>
               </section>
 
-              <section class="wheel-col tube-col" data-wheel="prizes">
-                <div class="tube-wrap">
-                  <div class="lottery-tube" id="lotteryTube">
-                    <div class="tube-pivot">
-                      <div class="tube-sticks" id="tubeSticks" aria-hidden="true"></div>
-                      <div class="tube-body">
-                        <div class="tube-side-text">碎碎生日快乐</div>
-                      </div>
-                      <span class="tube-rim" aria-hidden="true"></span>
-                      <div class="tube-drawn" id="tubeDrawn" hidden>
-                        <div class="tube-stick is-drawn">
-                          <span class="stick-tip" id="drawnTip"></span>
-                          <span class="stick-label" id="drawnLabel"></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <button type="button" id="btnSpinPrize" class="tube-draw-btn" aria-label="抽取奖品">抽签</button>
-                  <canvas id="prizeWheel" width="480" height="480" hidden></canvas>
+              <section class="wheel-col" data-wheel="prizes">
+                <div class="wheel-wrap small">
+                  <div class="pointer" aria-hidden="true"></div>
+                  <canvas id="prizeWheel" width="480" height="480"></canvas>
+                  <button type="button" id="btnSpinPrize" class="spin-btn">奖品</button>
                 </div>
                 <p id="lastPrize" class="current-pick"></p>
               </section>

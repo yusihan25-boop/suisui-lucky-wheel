@@ -83,19 +83,10 @@
     decorPreview: document.getElementById("decorPreview"),
     decorEmpty: document.getElementById("decorEmpty"),
     decorInput: document.getElementById("decorInput"),
-    lotteryTube: document.getElementById("lotteryTube"),
-    tubeSticks: document.getElementById("tubeSticks"),
-    tubeDrawn: document.getElementById("tubeDrawn"),
-    drawnTip: document.getElementById("drawnTip"),
-    drawnLabel: document.getElementById("drawnLabel"),
   };
 
   const peopleCtx = els.peopleCanvas.getContext("2d");
-  const prizeCtx = els.prizeCanvas ? els.prizeCanvas.getContext("2d") : null;
-
-  const tubeState = {
-    mode: "idle", // idle | shake | rise
-  };
+  const prizeCtx = els.prizeCanvas.getContext("2d");
 
   let config = loadConfig();
   let history = loadHistory();
@@ -409,92 +400,19 @@
       "暂无人员",
       (p) => truncateLabel(p.name, 8)
     );
-    syncTubeSticks();
+    drawWheel(
+      prizeCtx,
+      els.prizeCanvas,
+      availablePrizes(),
+      prizeRotation,
+      "奖品已抽完",
+      (p) =>
+        p.stock === null
+          ? truncateLabel(p.name, 8)
+          : truncateLabel(`${p.name}×${p.stock}`, 9)
+    );
     renderStockPanel();
     updateButtons();
-  }
-
-  function syncTubeSticks() {
-    if (!els.tubeSticks) return;
-    const pool = availablePrizes();
-    const tips = [
-      "#5b8fd9",
-      "#7a6fd0",
-      "#e07a3a",
-      "#6aae5e",
-      "#e6c04a",
-      "#e25b5b",
-      "#d47bb0",
-      "#4eb3a5",
-    ];
-    const count = Math.max(16, Math.min(24, Math.max(pool.length, 1) * 3));
-    els.tubeSticks.innerHTML = "";
-    for (let i = 0; i < count; i++) {
-      const prize = pool[i % Math.max(pool.length, 1)] || {};
-      const stick = document.createElement("div");
-      stick.className = "tube-stick";
-      const tip = document.createElement("span");
-      tip.className = "stick-tip";
-      tip.style.background =
-        prize.color && String(prize.color).startsWith("#")
-          ? prize.color
-          : tips[i % tips.length];
-      stick.appendChild(tip);
-
-      // 收在筒口椭圆内侧，避免贴边被裁成半截
-      const ang = (i / count) * Math.PI * 2;
-      const left = 50 + Math.cos(ang) * 22;
-      const bottom = 4 + Math.max(0, Math.sin(ang)) * 6;
-      const lean = Math.cos(ang) * 14 + (Math.random() - 0.5) * 5;
-      stick.style.left = `calc(${left}% - 7px)`;
-      stick.style.bottom = `${bottom}%`;
-      stick.style.height = `${88 + Math.random() * 18}px`;
-      stick.style.transform = `rotate(${lean}deg)`;
-      stick.style.zIndex = String(10 + i);
-      els.tubeSticks.appendChild(stick);
-    }
-    if (els.tubeDrawn) els.tubeDrawn.hidden = true;
-  }
-
-  function animateLotteryTube({ items, onDone, setSpinning }) {
-    const winnerIndex = pickWeightedIndex(items);
-    const winner = items[winnerIndex];
-    setSpinning(true);
-    updateButtons();
-    syncTubeSticks();
-    tubeState.mode = "shake";
-    if (els.lotteryTube) els.lotteryTube.classList.add("shaking");
-    if (els.tubeDrawn) els.tubeDrawn.hidden = true;
-
-    window.setTimeout(() => {
-      tubeState.mode = "rise";
-      if (els.lotteryTube) els.lotteryTube.classList.remove("shaking");
-      if (els.drawnTip) {
-        els.drawnTip.style.background =
-          winner.color && String(winner.color).startsWith("#")
-            ? winner.color
-            : "#e07a3a";
-      }
-      if (els.drawnLabel) els.drawnLabel.textContent = winner.name || "";
-      if (els.tubeDrawn) {
-        els.tubeDrawn.hidden = false;
-        const drawn = els.tubeDrawn.querySelector(".tube-stick");
-        if (drawn) {
-          drawn.style.animation = "none";
-          void drawn.offsetWidth;
-          drawn.style.animation = "";
-        }
-      }
-    }, 2800);
-
-    window.setTimeout(() => {
-      tubeState.mode = "idle";
-      setSpinning(false);
-      updateButtons();
-      if (els.tubeDrawn) els.tubeDrawn.hidden = true;
-      syncTubeSticks();
-      onDone(winner);
-    }, 4600);
   }
 
   function pickWeightedIndex(items) {
@@ -623,7 +541,23 @@
       return;
     }
 
-    animateLotteryTube({
+    animateSpin({
+      getRotation: () => prizeRotation,
+      setRotation: (v) => {
+        prizeRotation = v;
+      },
+      draw: () =>
+        drawWheel(
+          prizeCtx,
+          els.prizeCanvas,
+          availablePrizes(),
+          prizeRotation,
+          "奖品已抽完",
+          (p) =>
+            p.stock === null
+              ? truncateLabel(p.name, 8)
+              : truncateLabel(`${p.name}×${p.stock}`, 9)
+        ),
       items: pool,
       setSpinning: (v) => {
         spinningPrize = v;
