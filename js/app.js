@@ -417,7 +417,7 @@
   function syncTubeSticks() {
     if (!els.tubeSticks) return;
     const pool = availablePrizes();
-    const count = Math.max(16, Math.min(26, Math.max(pool.length, 1) * 3));
+    const count = Math.max(18, Math.min(28, Math.max(pool.length, 1) * 4));
     els.tubeSticks.innerHTML = "";
     for (let i = 0; i < count; i++) {
       const prize = pool[i % Math.max(pool.length, 1)] || { color: PALETTE[i % PALETTE.length] };
@@ -427,14 +427,21 @@
       tip.className = "stick-tip";
       tip.style.background = prize.color || PALETTE[i % PALETTE.length];
       stick.appendChild(tip);
-      const left = 4 + (i % 9) * 10 + (Math.floor(i / 9) % 2) * 4 + Math.random() * 3;
-      const bottom = 8 + Math.floor(i / 9) * 10 + Math.random() * 8;
-      const rot = (Math.random() - 0.5) * 10;
-      stick.style.left = `${left}%`;
-      stick.style.bottom = `${bottom}%`;
-      stick.style.height = `${130 + Math.random() * 40}px`;
+
+      // 环绕筒口椭圆，中间留空（俯视感）
+      const ring = 0.72 + Math.random() * 0.22;
+      const ang = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
+      const cx = 50 + Math.cos(ang) * 38 * ring;
+      const cy = 58 + Math.sin(ang) * 22 * ring;
+      const rot = (ang * 180) / Math.PI * 0.08 + (Math.random() - 0.5) * 8;
+      const h = 96 + Math.random() * 36;
+
+      stick.style.left = `calc(${cx}% - 8px)`;
+      stick.style.top = `calc(${cy}% - ${h * 0.78}px)`;
+      stick.style.height = `${h}px`;
       stick.style.transform = `rotate(${rot}deg)`;
-      stick.style.zIndex = String(10 + i);
+      stick.style.zIndex = String(20 + Math.round(cy));
+      stick.style.animationDelay = `${(i % 6) * 0.05}s`;
       els.tubeSticks.appendChild(stick);
     }
     if (els.tubeDrawn) els.tubeDrawn.hidden = true;
@@ -464,7 +471,7 @@
           drawn.style.animation = "";
         }
       }
-    }, 1500);
+    }, 2800);
 
     window.setTimeout(() => {
       tubeState.mode = "idle";
@@ -473,7 +480,7 @@
       if (els.tubeDrawn) els.tubeDrawn.hidden = true;
       syncTubeSticks();
       onDone(winner);
-    }, 3100);
+    }, 4600);
   }
 
   function pickWeightedIndex(items) {
