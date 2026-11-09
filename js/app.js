@@ -495,9 +495,9 @@
     ctx.rotate((lean * Math.PI) / 180);
     ctx.translate(-w / 2, -h);
 
-    // 筒内露出部分为方头签，圆角极小
-    const tipH = Math.min(w * 1.05, Math.max(w * 0.75, h * 0.14));
-    const r = Math.max(2, w * 0.12);
+    // 签子两端都是圆的（对照截图）
+    const tipH = Math.min(w * 1.25, Math.max(w * 0.95, h * 0.16));
+    const r = w * 0.48;
     const line = Math.max(2.8, w * 0.18);
     const wood = shade > 0.05 ? "#e6d0a8" : shade > 0 ? "#efe0b8" : "#f6e7c4";
 
@@ -509,12 +509,11 @@
     ctx.stroke();
 
     if (shade > 0) {
-      roundRect(ctx, line * 0.35, tipH * 0.7, w - line * 0.7, h - tipH * 0.7 - line * 0.2, r * 0.5);
+      roundRect(ctx, line * 0.35, tipH * 0.7, w - line * 0.7, h - tipH * 0.7 - line * 0.2, r * 0.35);
       ctx.fillStyle = `rgba(90, 55, 30, ${0.06 + shade * 0.35})`;
       ctx.fill();
     }
 
-    // 顶部色块也保持方头
     roundRect(ctx, 0, 0, w, tipH, r);
     ctx.fillStyle = tipColor;
     ctx.fill();
@@ -530,13 +529,13 @@
     ctx.stroke();
 
     if (label) {
-      // 文字放在签尾（底部），字号加大
+      // 签尾文字，底部留边距，不顶格
       const text = String(label).slice(0, 8);
       const chars = text.split("");
-      const fontSize = Math.min(26, Math.max(18, Math.round(w * 0.52)));
+      const fontSize = Math.min(24, Math.max(17, Math.round(w * 0.48)));
       const gap = fontSize * 1.08;
-      const blockH = chars.length * gap;
-      const startY = h - fontSize * 0.55 - blockH + gap;
+      const bottomPad = Math.max(fontSize * 1.15, w * 0.55);
+      const startY = h - bottomPad - (chars.length - 1) * gap;
       ctx.fillStyle = "#3d2a1f";
       ctx.font = `bold ${fontSize}px 'Noto Sans SC', sans-serif`;
       ctx.textAlign = "center";
@@ -546,6 +545,21 @@
       });
     }
     ctx.restore();
+  }
+
+  function fillTubeBody(ctx, cx, rimY, topRx, botY, botRx, h) {
+    ctx.beginPath();
+    ctx.moveTo(cx - topRx, rimY);
+    ctx.lineTo(cx + topRx, rimY);
+    ctx.lineTo(cx + botRx, botY);
+    ctx.quadraticCurveTo(cx, botY + h * 0.025, cx - botRx, botY);
+    ctx.closePath();
+    ctx.fillStyle = "#e85748";
+    ctx.fill();
+    ctx.strokeStyle = "#3d2a1f";
+    ctx.lineWidth = 5.5;
+    ctx.lineJoin = "round";
+    ctx.stroke();
   }
 
   function drawTube() {
@@ -569,21 +583,9 @@
     tubeCtx.fillStyle = "rgba(90, 50, 35, 0.16)";
     tubeCtx.fill();
 
-    // 筒身
-    tubeCtx.beginPath();
-    tubeCtx.moveTo(cx - topRx, rimY);
-    tubeCtx.lineTo(cx + topRx, rimY);
-    tubeCtx.lineTo(cx + botRx, botY);
-    tubeCtx.quadraticCurveTo(cx, botY + h * 0.025, cx - botRx, botY);
-    tubeCtx.closePath();
-    tubeCtx.fillStyle = "#e85748";
-    tubeCtx.fill();
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 5.5;
-    tubeCtx.lineJoin = "round";
-    tubeCtx.stroke();
+    fillTubeBody(tubeCtx, cx, rimY, topRx, botY, botRx, h);
 
-    // 口沿内壁
+    // 口沿内壁 + 深洞
     tubeCtx.beginPath();
     tubeCtx.ellipse(cx, rimY, topRx * 0.98, topRy * 1.55, 0, 0, Math.PI * 2);
     tubeCtx.fillStyle = "#b53f35";
@@ -592,50 +594,51 @@
     tubeCtx.lineWidth = 4;
     tubeCtx.stroke();
 
-    // 筒口深洞
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 4, topRx * 0.7, topRy * 1.0, 0, 0, Math.PI * 2);
+    tubeCtx.ellipse(cx, rimY - 4, topRx * 0.72, topRy * 1.05, 0, 0, Math.PI * 2);
     tubeCtx.fillStyle = "#4a2420";
     tubeCtx.fill();
 
     const ordered = [...tubeState.sticks].sort(
       (a, b) => Math.sin(a.ang) - Math.sin(b.ang)
     );
-    const drawOne = (s, front) => {
-      const depth = Math.sin(s.ang);
-      if (front ? depth < 0.02 : depth >= 0.02) return;
-      const ox = Math.cos(s.ang) * topRx * s.ring * 0.86;
-      const oy = Math.sin(s.ang) * topRy * 2.1 * s.ring;
+
+    // 只画筒口上方：圆头露出；与口沿相交处被裁成方切面，且不与筒身穿模
+    tubeCtx.save();
+    tubeCtx.beginPath();
+    tubeCtx.rect(cx - topRx * 0.95, 0, topRx * 1.9, rimY);
+    tubeCtx.clip();
+    ordered.forEach((s) => {
+      const ox = Math.cos(s.ang) * topRx * s.ring * 0.7;
       const baseX = cx + ox;
-      const baseY = rimY + oy * 0.15;
+      const baseY = rimY;
       const jiggle =
         tubeState.mode === "shake"
-          ? Math.sin(s.wobble * 1.8) * 2.8 + Math.cos(s.wobble) * 1.2
+          ? Math.sin(s.wobble * 1.8) * 2.4 + Math.cos(s.wobble) * 1.0
           : Math.sin(s.wobble) * 0.25;
       const leanJ =
         tubeState.mode === "shake"
-          ? Math.sin(s.wobble * 1.4) * 3.5
-          : Math.sin(s.wobble) * 0.3;
-      // 只露出头部一小截
-      const stickH = Math.min(h * s.h, baseY + jiggle - topPad);
-      if (stickH < stickW * 1.6) return;
+          ? Math.sin(s.wobble * 1.4) * 2.8
+          : Math.sin(s.wobble) * 0.25;
+      const stickH = Math.min(h * s.h, rimY - topPad);
+      if (stickH < stickW * 1.8) return;
       paintStick(
         tubeCtx,
         baseX,
         baseY - stickH + jiggle,
-        stickW * (front ? 1 : 0.94),
+        stickW,
         stickH,
         s.tip,
         s.lean + leanJ,
         null,
         s.shade || 0
       );
-    };
-    ordered.forEach((s) => drawOne(s, false));
+    });
+    tubeCtx.restore();
 
-    // 前口沿
+    // 前口沿描边
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY, topRx, topRy, 0, 0.05, Math.PI - 0.05);
+    tubeCtx.ellipse(cx, rimY, topRx, topRy, 0, 0.08, Math.PI - 0.08);
     tubeCtx.strokeStyle = "#3d2a1f";
     tubeCtx.lineWidth = 5.5;
     tubeCtx.stroke();
@@ -661,15 +664,12 @@
     tubeCtx.lineCap = "round";
     tubeCtx.stroke();
 
-    ordered.forEach((s) => drawOne(s, true));
-
     if (tubeState.mode === "rise") {
       const p = tubeState.riseProgress;
       const ease = 1 - Math.pow(1 - p, 3);
       const label = tubeState.riseLabel || "";
       const sw = Math.max(stickW * 1.6, w * 0.105);
       const sh = h * 0.58;
-      // 从筒口只露头，抽到高处露出长签+头部文字
       const yStart = rimY - h * 0.12;
       const yEnd = Math.max(topPad, rimY - sh * 0.82);
       const y = yStart + (yEnd - yStart) * ease;
