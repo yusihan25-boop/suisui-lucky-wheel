@@ -1824,16 +1824,17 @@ html.live-cast .stage-board {
   height: 100% !important;
   transform: none !important;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 118px;
+  grid-template-columns: minmax(0, 1fr) minmax(96px, 22%);
   grid-template-rows: auto minmax(0, 1fr);
   column-gap: 8px;
   row-gap: 6px;
   padding: 6px 8px 8px;
   box-sizing: border-box;
   z-index: 1;
+  overflow: hidden;
 }
 
-/* 直播投屏：照片进右侧独立列，不再绝对定位盖住抽签 */
+/* 直播投屏：照片进右侧独立列，禁止溢出盖住抽签 */
 html.live-cast .decor-slot {
   display: flex !important;
   grid-column: 2;
@@ -1848,11 +1849,13 @@ html.live-cast .decor-slot {
   margin: 0;
   z-index: 1;
   align-self: end;
+  justify-self: stretch;
   align-items: stretch;
   justify-content: stretch;
   animation: none;
   pointer-events: auto;
   aspect-ratio: 9 / 16;
+  overflow: hidden;
 }
 
 html.live-cast .decor-frame {
@@ -1903,6 +1906,7 @@ html.live-cast .stage-main {
   gap: 0;
   padding-top: 2px;
   padding-right: 0;
+  overflow: hidden;
 }
 
 html.live-cast .stage-title {
@@ -1931,19 +1935,24 @@ html.live-cast .brand {
 
 html.live-cast .stage-row.dual {
   flex: 1 1 auto;
+  min-width: 0;
   min-height: 0;
   width: 100%;
+  max-width: 100%;
   align-items: stretch;
-  justify-content: center;
-  gap: 10px;
+  justify-content: space-evenly;
+  gap: 6px;
   padding-top: 18px;
   padding-right: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 html.live-cast .wheel-col {
-  flex: 0 0 auto;
-  max-width: none;
+  flex: 1 1 0;
+  max-width: 48%;
   width: auto;
+  min-width: 0;
   height: 100%;
   min-height: 0;
   justify-content: flex-end;
@@ -1955,6 +1964,9 @@ html.live-cast .tube-col {
   position: relative;
   z-index: 1;
   transform: none;
+  flex: 0 1 auto;
+  max-width: 36%;
+  min-width: 0;
 }
 
 html.live-cast .star-wheel-col .stage-visual {
@@ -1969,12 +1981,14 @@ html.live-cast .stage-visual {
 }
 
 html.live-cast .star-wheel-wrap {
-  width: min(86cqh, 44cqw, 420px);
+  width: min(78cqh, 92%, 360px);
+  max-width: 100%;
   filter: drop-shadow(0 0 18px rgba(243, 167, 191, 0.28));
 }
 
 html.live-cast .lottery-tube {
-  width: min(52cqh, 24cqw, 260px);
+  width: min(46cqh, 88%, 200px);
+  max-width: 100%;
   filter: drop-shadow(0 10px 18px rgba(230, 195, 106, 0.22));
 }
 
@@ -2120,24 +2134,32 @@ html.live-cast #stockModal .modal-card {
 
 @media (max-aspect-ratio: 3/4) {
   html.live-cast .stage-board {
-    grid-template-columns: minmax(0, 1fr) 104px;
+    grid-template-columns: minmax(0, 1fr) minmax(88px, 24%);
     column-gap: 6px;
   }
 
   html.live-cast .stage-row.dual {
     padding-right: 0;
-    gap: clamp(6px, 2cqw, 18px);
+    gap: 4px;
   }
 
   html.live-cast .tube-col {
     transform: none;
+    max-width: 34%;
   }
 
   html.live-cast .star-wheel-wrap {
-    width: min(80cqh, 48cqw, 360px);
+    width: min(70cqh, 94%, 280px);
   }
 
   html.live-cast .lottery-tube {
-    width: min(46cqh, 26cqw, 220px);
+    width: min(38cqh, 90%, 150px);
+  }
+
+  html.live-cast .star-spin-btn,
+  html.live-cast .tube-btn {
+    min-width: 84px;
+    height: 34px;
+    font-size: 0.95rem;
   }
 }
