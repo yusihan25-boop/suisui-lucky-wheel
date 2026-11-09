@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=invite2" />
+  <link rel="stylesheet" href="css/style.css?v=tplbtn1" />
 </head>
 <body>
   <div class="cosmos-decor" aria-hidden="true">
@@ -201,7 +201,7 @@
             Excel 导入
             <input type="file" id="peopleExcelInput" accept=".xlsx,.xls,.csv" hidden />
           </label>
-          <a class="btn btn-secondary" href="人员导入模板.xls" download>下载模板</a>
+          <button type="button" id="btnDownloadPeopleTpl" class="btn btn-secondary">下载模板</button>
         </div>
         <p class="import-tip">列：姓名、概率（可不填概率，保存时自动均分到 100%）</p>
       </div>
@@ -226,7 +226,7 @@
             Excel 导入
             <input type="file" id="prizeExcelInput" accept=".xlsx,.xls,.csv" hidden />
           </label>
-          <a class="btn btn-secondary" href="奖项导入模板.xls" download>下载模板</a>
+          <button type="button" id="btnDownloadPrizeTpl" class="btn btn-secondary">下载模板</button>
         </div>
         <p class="import-tip">列：奖品名称、概率、库存（库存留空=不限量）。概率与库存同时生效。</p>
       </div>
@@ -278,6 +278,6 @@
   </div>
 
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=invite2"></script>
+  <script src="js/app.js?v=tplbtn1"></script>
 </body>
 </html>
