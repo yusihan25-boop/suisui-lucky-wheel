@@ -887,6 +887,10 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 12px;
+}
+
+.star-wheel-col .stage-visual {
+  /* 只抬转盘，按钮仍与抽签同高 */
   transform: translateY(-22px);
 }
 
