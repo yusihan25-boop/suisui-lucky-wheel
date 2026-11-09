@@ -417,23 +417,39 @@
   function syncTubeSticks() {
     if (!els.tubeSticks) return;
     const pool = availablePrizes();
-    const count = Math.max(16, Math.min(26, Math.max(pool.length, 1) * 3));
+    const tips = [
+      "#5b8fd9",
+      "#7a6fd0",
+      "#e07a3a",
+      "#6aae5e",
+      "#e6c04a",
+      "#e25b5b",
+      "#d47bb0",
+      "#4eb3a5",
+    ];
+    const count = Math.max(16, Math.min(24, Math.max(pool.length, 1) * 3));
     els.tubeSticks.innerHTML = "";
     for (let i = 0; i < count; i++) {
-      const prize = pool[i % Math.max(pool.length, 1)] || { color: PALETTE[i % PALETTE.length] };
+      const prize = pool[i % Math.max(pool.length, 1)] || {};
       const stick = document.createElement("div");
       stick.className = "tube-stick";
       const tip = document.createElement("span");
       tip.className = "stick-tip";
-      tip.style.background = prize.color || PALETTE[i % PALETTE.length];
+      tip.style.background =
+        prize.color && String(prize.color).startsWith("#")
+          ? prize.color
+          : tips[i % tips.length];
       stick.appendChild(tip);
-      const left = 4 + (i % 9) * 10 + (Math.floor(i / 9) % 2) * 4 + Math.random() * 3;
-      const bottom = 8 + Math.floor(i / 9) * 10 + Math.random() * 8;
-      const rot = (Math.random() - 0.5) * 10;
-      stick.style.left = `${left}%`;
+
+      // 环绕口沿内侧，略向外倾；初始被 overflow 裁掉，不露在筒外
+      const ang = (i / count) * Math.PI * 2;
+      const left = 50 + Math.cos(ang) * 32;
+      const bottom = 8 + Math.sin(ang) * 8;
+      const lean = Math.cos(ang) * 18 + (Math.random() - 0.5) * 6;
+      stick.style.left = `calc(${left}% - 8px)`;
       stick.style.bottom = `${bottom}%`;
-      stick.style.height = `${130 + Math.random() * 40}px`;
-      stick.style.transform = `rotate(${rot}deg)`;
+      stick.style.height = `${110 + Math.random() * 24}px`;
+      stick.style.transform = `rotate(${lean}deg)`;
       stick.style.zIndex = String(10 + i);
       els.tubeSticks.appendChild(stick);
     }
@@ -453,7 +469,12 @@
     window.setTimeout(() => {
       tubeState.mode = "rise";
       if (els.lotteryTube) els.lotteryTube.classList.remove("shaking");
-      if (els.drawnTip) els.drawnTip.style.background = winner.color || PALETTE[0];
+      if (els.drawnTip) {
+        els.drawnTip.style.background =
+          winner.color && String(winner.color).startsWith("#")
+            ? winner.color
+            : "#e07a3a";
+      }
       if (els.drawnLabel) els.drawnLabel.textContent = winner.name || "";
       if (els.tubeDrawn) {
         els.tubeDrawn.hidden = false;
@@ -464,7 +485,7 @@
           drawn.style.animation = "";
         }
       }
-    }, 1500);
+    }, 2800);
 
     window.setTimeout(() => {
       tubeState.mode = "idle";
@@ -473,7 +494,7 @@
       if (els.tubeDrawn) els.tubeDrawn.hidden = true;
       syncTubeSticks();
       onDone(winner);
-    }, 3100);
+    }, 4600);
   }
 
   function pickWeightedIndex(items) {
