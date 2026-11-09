@@ -1248,6 +1248,7 @@ body {
 .settings-tabs {
   display: flex;
   gap: 8px;
+  align-items: center;
   border-bottom: 1px solid var(--line);
   padding-bottom: 8px;
 }
@@ -1266,6 +1267,12 @@ body {
   color: var(--ink);
   background: rgba(255, 122, 69, 0.16);
   border-color: rgba(255, 122, 69, 0.5);
+}
+
+.settings-save-inline {
+  margin-left: auto;
+  padding: 8px 16px;
+  white-space: nowrap;
 }
 
 .tab-panel {
