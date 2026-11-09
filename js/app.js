@@ -52,6 +52,9 @@
     chkDesignate: document.getElementById("chkDesignate"),
     inputDesignate: document.getElementById("inputDesignate"),
     stockList: document.getElementById("stockList"),
+    stockModal: document.getElementById("stockModal"),
+    btnStock: document.getElementById("btnStock"),
+    btnCloseStock: document.getElementById("btnCloseStock"),
     btnSettings: document.getElementById("btnSettings"),
     btnHistory: document.getElementById("btnHistory"),
     btnExportHistory: document.getElementById("btnExportHistory"),
@@ -1371,11 +1374,9 @@
           addHistory("prize", winner.name);
         }
         saveConfig(config);
-        const left =
-          prize && prize.stock !== null ? `（剩余 ${prize.stock}）` : "";
         els.lastPrize.textContent = designated
-          ? `${designated} → ${winner.name}${left}`
-          : `奖品：${winner.name}${left}`;
+          ? `${designated} → ${winner.name}`
+          : `奖品：${winner.name}`;
         redrawAll();
         showResult("prize", winner.name, designated || "");
       },
@@ -1857,6 +1858,20 @@
     els.historyModal.setAttribute("aria-hidden", "true");
   }
 
+  function openStock() {
+    renderStockPanel();
+    if (!config.prizes.length) {
+      els.stockList.innerHTML = '<li class="empty">暂无奖品</li>';
+    }
+    els.stockModal.classList.add("open");
+    els.stockModal.setAttribute("aria-hidden", "false");
+  }
+
+  function hideStock() {
+    els.stockModal.classList.remove("open");
+    els.stockModal.setAttribute("aria-hidden", "true");
+  }
+
   function exportHistory() {
     if (!history.length) {
       alert("暂无中奖记录可导出");
@@ -2253,6 +2268,7 @@
   });
   els.btnSpinPrize.addEventListener("click", spinPrize);
   els.btnSettings.addEventListener("click", openSettings);
+  els.btnStock.addEventListener("click", openStock);
   els.btnHistory.addEventListener("click", openHistory);
   els.btnAddPerson.addEventListener("click", () => {
     const i = draft.people.length;
@@ -2289,6 +2305,7 @@
   els.btnReset.addEventListener("click", resetDefaults);
   els.btnCloseResult.addEventListener("click", hideResult);
   els.btnCloseHistory.addEventListener("click", hideHistory);
+  els.btnCloseStock.addEventListener("click", hideStock);
   els.btnClearHistory.addEventListener("click", () => {
     if (!confirm("确定清空全部中奖记录？")) return;
     history = [];
@@ -2319,10 +2336,14 @@
   els.historyModal.querySelectorAll("[data-close-history]").forEach((el) => {
     el.addEventListener("click", hideHistory);
   });
+  els.stockModal.querySelectorAll("[data-close-stock]").forEach((el) => {
+    el.addEventListener("click", hideStock);
+  });
 
   window.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
     if (els.resultModal.classList.contains("open")) hideResult();
+    else if (els.stockModal.classList.contains("open")) hideStock();
     else if (els.historyModal.classList.contains("open")) hideHistory();
     else if (els.settingsPanel.classList.contains("open")) closeSettings();
   });
