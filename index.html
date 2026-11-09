@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=caketube1" />
+  <link rel="stylesheet" href="css/style.css?v=hidestock1" />
 </head>
 <body>
   <div class="cosmos-decor" aria-hidden="true">
@@ -133,6 +133,7 @@
 
           <aside class="stage-side">
             <div class="stage-actions">
+              <button type="button" id="btnStock" class="btn btn-ghost">查看库存</button>
               <button type="button" id="btnHistory" class="btn btn-ghost">中奖记录</button>
               <button type="button" id="btnSettings" class="btn btn-ghost" aria-label="打开设置">设置</button>
             </div>
@@ -149,10 +150,6 @@
                 placeholder="已知中奖人时填写姓名"
                 disabled
               />
-            </div>
-            <div class="stock-panel compact" aria-label="奖品库存">
-              <h3>奖品库存</h3>
-              <ul id="stockList" class="stock-list"></ul>
             </div>
           </aside>
         </div>
@@ -267,7 +264,18 @@
     </div>
   </div>
 
+  <div id="stockModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-stock></div>
+    <div class="modal-card history-card stock-card" role="dialog" aria-labelledby="stockHeading">
+      <h2 id="stockHeading" class="modal-heading">奖品库存</h2>
+      <ul id="stockList" class="stock-list modal-stock-list"></ul>
+      <div class="history-actions">
+        <button type="button" id="btnCloseStock" class="btn btn-primary">关闭</button>
+      </div>
+    </div>
+  </div>
+
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=caketube2"></script>
+  <script src="js/app.js?v=hidestock1"></script>
 </body>
 </html>
