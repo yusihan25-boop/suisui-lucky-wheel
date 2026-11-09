@@ -78,11 +78,26 @@
                 <p id="lastPerson" class="current-pick"></p>
               </section>
 
-              <section class="wheel-col" data-wheel="prizes">
-                <div class="wheel-wrap small">
-                  <div class="pointer" aria-hidden="true"></div>
-                  <canvas id="prizeWheel" width="480" height="480"></canvas>
-                  <button type="button" id="btnSpinPrize" class="spin-btn">奖品</button>
+              <section class="wheel-col gashapon-col" data-wheel="prizes">
+                <div class="gashapon-wrap">
+                  <div class="gashapon" id="gashaponMachine">
+                    <div class="gashapon-toes" aria-hidden="true">
+                      <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="gashapon-body">
+                      <div class="gashapon-dome">
+                        <div class="gashapon-eggs" id="gashaponEggs" aria-hidden="true"></div>
+                      </div>
+                      <div class="gashapon-banner">碎碎生日快乐♪٩(´ω`)و♪</div>
+                      <div class="gashapon-panel">
+                        <button type="button" id="btnSpinPrize" class="gashapon-go" aria-label="抽取奖品">
+                          <span class="gashapon-star">GO</span>
+                        </button>
+                        <div class="gashapon-stick" aria-hidden="true"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <canvas id="prizeWheel" width="480" height="480" hidden></canvas>
                 </div>
                 <p id="lastPrize" class="current-pick"></p>
               </section>

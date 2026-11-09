@@ -83,10 +83,12 @@
     decorPreview: document.getElementById("decorPreview"),
     decorEmpty: document.getElementById("decorEmpty"),
     decorInput: document.getElementById("decorInput"),
+    gashaponMachine: document.getElementById("gashaponMachine"),
+    gashaponEggs: document.getElementById("gashaponEggs"),
   };
 
   const peopleCtx = els.peopleCanvas.getContext("2d");
-  const prizeCtx = els.prizeCanvas.getContext("2d");
+  const prizeCtx = els.prizeCanvas ? els.prizeCanvas.getContext("2d") : null;
 
   let config = loadConfig();
   let history = loadHistory();
@@ -400,19 +402,41 @@
       "暂无人员",
       (p) => truncateLabel(p.name, 8)
     );
-    drawWheel(
-      prizeCtx,
-      els.prizeCanvas,
-      availablePrizes(),
-      prizeRotation,
-      "奖品已抽完",
-      (p) =>
-        p.stock === null
-          ? truncateLabel(p.name, 8)
-          : truncateLabel(`${p.name}×${p.stock}`, 9)
-    );
+    renderGashaponEggs();
     renderStockPanel();
     updateButtons();
+  }
+
+  function renderGashaponEggs() {
+    if (!els.gashaponEggs) return;
+    const count = Math.max(6, Math.min(12, availablePrizes().length || 6));
+    const spots = [
+      [12, 18], [38, 8], [62, 16], [78, 28],
+      [22, 42], [48, 36], [70, 48], [34, 62],
+      [58, 66], [16, 72], [82, 58], [46, 78],
+    ];
+    els.gashaponEggs.innerHTML = spots
+      .slice(0, count)
+      .map(
+        ([l, t], i) =>
+          `<span class="gashapon-egg" style="left:${l}%;top:${t}%;animation-delay:${(-i * 0.28).toFixed(2)}s"></span>`
+      )
+      .join("");
+  }
+
+  function animateGashapon({ items, onDone, setSpinning }) {
+    const winnerIndex = pickWeightedIndex(items);
+    const winner = items[winnerIndex];
+    const duration = 3200 + Math.random() * 600;
+    setSpinning(true);
+    updateButtons();
+    if (els.gashaponMachine) els.gashaponMachine.classList.add("shaking");
+    window.setTimeout(() => {
+      if (els.gashaponMachine) els.gashaponMachine.classList.remove("shaking");
+      setSpinning(false);
+      updateButtons();
+      onDone(winner);
+    }, duration);
   }
 
   function pickWeightedIndex(items) {
@@ -541,23 +565,7 @@
       return;
     }
 
-    animateSpin({
-      getRotation: () => prizeRotation,
-      setRotation: (v) => {
-        prizeRotation = v;
-      },
-      draw: () =>
-        drawWheel(
-          prizeCtx,
-          els.prizeCanvas,
-          availablePrizes(),
-          prizeRotation,
-          "奖品已抽完",
-          (p) =>
-            p.stock === null
-              ? truncateLabel(p.name, 8)
-              : truncateLabel(`${p.name}×${p.stock}`, 9)
-        ),
+    animateGashapon({
       items: pool,
       setSpinning: (v) => {
         spinningPrize = v;
