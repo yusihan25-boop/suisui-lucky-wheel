@@ -722,7 +722,7 @@
       ctx.ellipse(px, py, radius * 0.46, radius * 0.32, a, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
-      ctx.strokeStyle = "#3d2a1f";
+      ctx.strokeStyle = "#5c2418";
       ctx.lineWidth = line;
       ctx.stroke();
     }
@@ -730,7 +730,7 @@
     ctx.arc(cx, cy, radius * 0.3, 0, Math.PI * 2);
     ctx.fillStyle = "#ffe56a";
     ctx.fill();
-    ctx.strokeStyle = "#3d2a1f";
+    ctx.strokeStyle = "#5c2418";
     ctx.lineWidth = line;
     ctx.stroke();
     ctx.restore();
@@ -742,28 +742,34 @@
     ctx.rotate((lean * Math.PI) / 180);
     ctx.translate(-w / 2, -h);
 
-    const flowerR = w * 1.25;
-    const bodyTop = flowerR * 0.85;
+    const flowerR = w * 1.05;
+    const bodyTop = flowerR * 0.75;
     const r = w * 0.48;
-    const line = Math.max(2.8, w * 0.18);
-    const wood = shade > 0.05 ? "#e6d0a8" : shade > 0 ? "#efe0b8" : "#f6e7c4";
+    const line = Math.max(2.4, w * 0.16);
+    const choco =
+      shade > 0.05 ? "#5a2e1c" : shade > 0 ? "#6b3a24" : "#7a452c";
 
-    // 签身（两端圆）
     roundRect(ctx, 0, bodyTop, w, Math.max(h - bodyTop, w), r);
-    ctx.fillStyle = wood;
+    ctx.fillStyle = choco;
     ctx.fill();
-    ctx.strokeStyle = "#3d2a1f";
+    ctx.strokeStyle = "#3b1a10";
     ctx.lineWidth = line;
     ctx.stroke();
 
     if (shade > 0) {
-      roundRect(ctx, line * 0.35, bodyTop + w * 0.15, w - line * 0.7, Math.max(h - bodyTop - w * 0.3, 4), r * 0.35);
-      ctx.fillStyle = `rgba(90, 55, 30, ${0.06 + shade * 0.35})`;
+      roundRect(
+        ctx,
+        line * 0.35,
+        bodyTop + w * 0.15,
+        w - line * 0.7,
+        Math.max(h - bodyTop - w * 0.3, 4),
+        r * 0.35
+      );
+      ctx.fillStyle = `rgba(20, 8, 4, ${0.12 + shade * 0.35})`;
       ctx.fill();
     }
 
-    // 顶部大花朵
-    paintFlower(ctx, w / 2, flowerR * 0.55, flowerR, tipColor);
+    paintFlower(ctx, w / 2, flowerR * 0.5, flowerR, tipColor);
 
     if (label) {
       const text = String(label).slice(0, 8);
@@ -772,7 +778,7 @@
       const gap = fontSize * 1.08;
       const bottomPad = Math.max(fontSize * 1.15, w * 0.55);
       const startY = h - bottomPad - (chars.length - 1) * gap;
-      ctx.fillStyle = "#3d2a1f";
+      ctx.fillStyle = "#fff6e8";
       ctx.font = `bold ${fontSize}px 'Noto Sans SC', sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -783,28 +789,189 @@
     ctx.restore();
   }
 
-  function fillTubeBody(ctx, cx, rimY, topRx, botY, botRx, h) {
+  function paintHeart(ctx, x, y, size, color) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.moveTo(0, size * 0.32);
+    ctx.bezierCurveTo(0, size * 0.05, -size * 0.55, -size * 0.35, -size * 0.55, size * 0.05);
+    ctx.bezierCurveTo(-size * 0.55, size * 0.42, 0, size * 0.72, 0, size);
+    ctx.bezierCurveTo(0, size * 0.72, size * 0.55, size * 0.42, size * 0.55, size * 0.05);
+    ctx.bezierCurveTo(size * 0.55, -size * 0.35, 0, size * 0.05, 0, size * 0.32);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(120, 20, 40, 0.35)";
+    ctx.lineWidth = Math.max(1, size * 0.06);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function paintSpark4(ctx, x, y, size, color) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.moveTo(0, -size);
+    ctx.lineTo(size * 0.22, -size * 0.22);
+    ctx.lineTo(size, 0);
+    ctx.lineTo(size * 0.22, size * 0.22);
+    ctx.lineTo(0, size);
+    ctx.lineTo(-size * 0.22, size * 0.22);
+    ctx.lineTo(-size, 0);
+    ctx.lineTo(-size * 0.22, -size * 0.22);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function paintBalloon(ctx, x, y, rx, ry, color, stringTo) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+    const g = ctx.createRadialGradient(x - rx * 0.35, y - ry * 0.4, 2, x, y, rx);
+    g.addColorStop(0, "#ffffff");
+    g.addColorStop(0.22, color);
+    g.addColorStop(1, color);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(40, 20, 40, 0.2)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y + ry);
+    ctx.lineTo(x - 3, y + ry + 6);
+    ctx.lineTo(x + 3, y + ry + 6);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    if (stringTo) {
+      ctx.beginPath();
+      ctx.moveTo(x, y + ry + 6);
+      ctx.quadraticCurveTo(
+        (x + stringTo.x) / 2 + 8,
+        (y + ry + 6 + stringTo.y) / 2,
+        stringTo.x,
+        stringTo.y
+      );
+      ctx.strokeStyle = "rgba(80, 60, 90, 0.45)";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function paintBow(ctx, x, y, s) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(-s * 0.9, -s * 0.55, -s * 1.15, s * 0.1);
+    ctx.quadraticCurveTo(-s * 0.35, s * 0.25, 0, 0);
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(s * 0.9, -s * 0.55, s * 1.15, s * 0.1);
+    ctx.quadraticCurveTo(s * 0.35, s * 0.25, 0, 0);
+    ctx.fillStyle = "#e11d48";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(0, s * 0.05, s * 0.28, s * 0.22, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#fb7185";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(0, s * 0.02, s * 0.14, 0, Math.PI * 2);
+    ctx.fillStyle = "#f0c14b";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function paintStrawberry(ctx, x, y, s) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.moveTo(0, s);
+    ctx.bezierCurveTo(s * 0.85, s * 0.35, s * 0.7, -s * 0.35, 0, -s * 0.25);
+    ctx.bezierCurveTo(-s * 0.7, -s * 0.35, -s * 0.85, s * 0.35, 0, s);
+    ctx.fillStyle = "#ef4444";
+    ctx.fill();
+    for (let i = 0; i < 5; i++) {
+      const a = -0.7 + i * 0.35;
+      ctx.beginPath();
+      ctx.ellipse(Math.sin(a) * s * 0.28, Math.cos(a) * s * 0.15, 1.4, 2.2, a, 0, Math.PI * 2);
+      ctx.fillStyle = "#fde68a";
+      ctx.fill();
+    }
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.22, -s * 0.28);
+    ctx.quadraticCurveTo(0, -s * 0.7, s * 0.22, -s * 0.28);
+    ctx.quadraticCurveTo(0, -s * 0.42, -s * 0.22, -s * 0.28);
+    ctx.fillStyle = "#22c55e";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function paintBlueberry(ctx, x, y, r) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 1, x, y, r);
+    g.addColorStop(0, "#93c5fd");
+    g.addColorStop(1, "#1d4ed8");
+    ctx.fillStyle = g;
+    ctx.fill();
+  }
+
+  function paintCreamSwirl(ctx, x, y, s) {
+    ctx.save();
+    ctx.translate(x, y);
+    for (let i = 3; i >= 0; i--) {
+      ctx.beginPath();
+      ctx.ellipse(0, -i * s * 0.22, s * (0.55 - i * 0.06), s * (0.32 - i * 0.03), 0, 0, Math.PI * 2);
+      ctx.fillStyle = i % 2 === 0 ? "#fffef8" : "#fff5e6";
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function fillCakeBody(ctx, cx, rimY, topRx, botY, botRx, h) {
     ctx.beginPath();
     ctx.moveTo(cx - topRx, rimY);
     ctx.lineTo(cx + topRx, rimY);
     ctx.lineTo(cx + botRx, botY);
-    ctx.quadraticCurveTo(cx, botY + h * 0.025, cx - botRx, botY);
+    ctx.quadraticCurveTo(cx, botY + h * 0.02, cx - botRx, botY);
     ctx.closePath();
-    ctx.fillStyle = "#e85748";
+    const g = ctx.createLinearGradient(cx - topRx, rimY, cx + topRx, botY);
+    g.addColorStop(0, "#ffd0dc");
+    g.addColorStop(0.45, "#ffb6c8");
+    g.addColorStop(1, "#f9a0b5");
+    ctx.fillStyle = g;
     ctx.fill();
-    ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = 5.5;
+    ctx.strokeStyle = "#e8799a";
+    ctx.lineWidth = 4;
     ctx.lineJoin = "round";
     ctx.stroke();
   }
 
-  /** 口沿圆环（外椭圆减去内椭圆），表现筒壁厚度 */
-  function fillRimRing(ctx, cx, cy, outRx, outRy, inRx, inRy, color) {
+  function fillCreamRim(ctx, cx, cy, outRx, outRy, inRx, inRy, frontOnly) {
+    ctx.save();
+    if (frontOnly) {
+      ctx.beginPath();
+      ctx.rect(cx - outRx - 8, cy - 2, outRx * 2 + 16, outRy * 2 + 16);
+      ctx.clip();
+    }
     ctx.beginPath();
     ctx.ellipse(cx, cy, outRx, outRy, 0, 0, Math.PI * 2);
     ctx.ellipse(cx, cy - 2, inRx, inRy, 0, 0, Math.PI * 2, true);
-    ctx.fillStyle = color;
+    ctx.fillStyle = "#fffaf0";
     ctx.fill("evenodd");
+    const count = 14;
+    for (let i = 0; i < count; i++) {
+      const a = (i / count) * Math.PI * 2 + 0.12;
+      if (frontOnly && Math.sin(a) < 0.05) continue;
+      if (!frontOnly && Math.sin(a) > 0.35) continue;
+      const px = cx + Math.cos(a) * ((outRx + inRx) * 0.5);
+      const py = cy + Math.sin(a) * ((outRy + inRy) * 0.5) - 4;
+      paintCreamSwirl(ctx, px, py, Math.max(10, outRx * 0.14));
+    }
+    ctx.restore();
   }
 
   function drawTube() {
@@ -812,73 +979,101 @@
     const w = els.tubeCanvas.width;
     const h = els.tubeCanvas.height;
     tubeCtx.clearRect(0, 0, w, h);
+    const ctx = tubeCtx;
 
     const cx = w * 0.5;
-    const rimY = h * 0.4;
-    const topRx = w * 0.3;
-    const topRy = h * 0.05;
-    const botY = h * 0.9;
-    const botRx = w * 0.235;
-    const stickW = w * 0.072;
-    const topPad = 36;
-    // 口沿外圈 / 内孔 —— 差值即厚度（像泡面桶卷边）
-    const outRx = topRx;
-    const outRy = topRy * 1.35;
-    const inRx = topRx * 0.78;
+    const rimY = h * 0.38;
+    const topRx = w * 0.28;
+    const topRy = h * 0.048;
+    const botY = h * 0.88;
+    const botRx = w * 0.25;
+    const stickW = w * 0.068;
+    const topPad = 40;
+    const outRx = topRx * 1.06;
+    const outRy = topRy * 1.55;
+    const inRx = topRx * 0.72;
     const inRy = topRy * 0.95;
+    const t = performance.now() / 1000;
 
-    // 底部软影
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, botY + h * 0.028, botRx * 1.05, h * 0.025, 0, 0, Math.PI * 2);
-    tubeCtx.fillStyle = "rgba(90, 50, 35, 0.16)";
-    tubeCtx.fill();
+    // 底影
+    ctx.beginPath();
+    ctx.ellipse(cx, botY + h * 0.035, botRx * 1.15, h * 0.022, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(40, 20, 60, 0.28)";
+    ctx.fill();
 
-    // 1) 筒身外壁
-    fillTubeBody(tubeCtx, cx, rimY, topRx, botY, botRx, h);
+    // 金色底座
+    ctx.beginPath();
+    ctx.ellipse(cx, botY + 8, botRx * 1.12, h * 0.028, 0, 0, Math.PI * 2);
+    const gold = ctx.createLinearGradient(cx - botRx, botY, cx + botRx, botY + 16);
+    gold.addColorStop(0, "#fde68a");
+    gold.addColorStop(0.5, "#f0c14b");
+    gold.addColorStop(1, "#d97706");
+    ctx.fillStyle = gold;
+    ctx.fill();
+    ctx.strokeStyle = "#b45309";
+    ctx.lineWidth = 2;
+    ctx.stroke();
 
-    // 2) 完整口沿圆环 + 筒内空间（先铺在签子后面）
-    fillRimRing(tubeCtx, cx, rimY, outRx, outRy, inRx, inRy, "#d84f42");
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY, outRx, outRy, 0, 0, Math.PI * 2);
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 4.5;
-    tubeCtx.stroke();
+    // 气球（身后）
+    paintBalloon(ctx, cx - topRx * 1.35, rimY + h * 0.12, 18, 24, "#7dd3fc", {
+      x: cx - botRx * 0.55,
+      y: botY - 28,
+    });
+    paintBalloon(ctx, cx - topRx * 1.05, rimY + h * 0.22, 12, 16, "#fde047", {
+      x: cx - botRx * 0.4,
+      y: botY - 20,
+    });
+    paintBalloon(ctx, cx + topRx * 1.32, rimY + h * 0.14, 17, 23, "#fda4af", {
+      x: cx + botRx * 0.55,
+      y: botY - 28,
+    });
+    paintBalloon(ctx, cx + topRx * 1.02, rimY + h * 0.24, 11, 15, "#facc15", {
+      x: cx + botRx * 0.4,
+      y: botY - 18,
+    });
 
-    // 筒内：可见后壁 + 深色内腔
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI * 2);
-    tubeCtx.fillStyle = "#5c2c28";
-    tubeCtx.fill();
+    // 蛋糕身
+    fillCakeBody(ctx, cx, rimY, topRx, botY, botRx, h);
 
-    // 后半内壁（往里看能看见的那一圈）
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 2, inRx, inRy, 0, Math.PI, 0, true);
-    tubeCtx.strokeStyle = "#a83f36";
-    tubeCtx.lineWidth = Math.max(10, outRy - inRy);
-    tubeCtx.stroke();
+    // 腰部粉蓝丝带
+    ctx.beginPath();
+    ctx.moveTo(cx - botRx * 0.95, botY - 36);
+    ctx.quadraticCurveTo(cx, botY - 22, cx + botRx * 0.95, botY - 36);
+    ctx.strokeStyle = "#7dd3fc";
+    ctx.lineWidth = 7;
+    ctx.lineCap = "round";
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - botRx * 0.92, botY - 26);
+    ctx.quadraticCurveTo(cx, botY - 14, cx + botRx * 0.92, botY - 26);
+    ctx.strokeStyle = "#fb7185";
+    ctx.lineWidth = 6;
+    ctx.stroke();
 
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI * 2);
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 3.5;
-    tubeCtx.stroke();
+    // 奶油后沿 + 内腔
+    fillCreamRim(ctx, cx, rimY, outRx, outRy, inRx, inRy, false);
+    ctx.beginPath();
+    ctx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#6b3a2a";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(cx, rimY - 2, inRx, inRy, 0, Math.PI, 0, true);
+    ctx.strokeStyle = "#c4a484";
+    ctx.lineWidth = Math.max(8, outRy - inRy);
+    ctx.stroke();
 
     const ordered = [...tubeState.sticks].sort(
       (a, b) => Math.sin(a.ang) - Math.sin(b.ang)
     );
 
-    // 3) 签子插进开口里（像叉子插进泡面桶）
-    // 裁剪加宽加高，避免花朵/签头被切掉
-    tubeCtx.save();
-    tubeCtx.beginPath();
-    tubeCtx.rect(0, 0, w, rimY + inRy * 2.4);
-    tubeCtx.clip();
-
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, w, rimY + inRy * 2.6);
+    ctx.clip();
     ordered.forEach((s) => {
       const ox = Math.cos(s.ang) * inRx * s.ring * 0.72;
       const baseX = cx + ox;
-      // 根部深入口内，稍后被前半口沿挡住
-      const baseY = rimY + inRy * 1.4;
+      const baseY = rimY + inRy * 1.35;
       const jiggle =
         tubeState.mode === "shake"
           ? Math.sin(s.wobble * 1.8) * 2.4 + Math.cos(s.wobble) * 1.0
@@ -887,15 +1082,14 @@
         tubeState.mode === "shake"
           ? Math.sin(s.wobble * 1.4) * 2.2
           : Math.sin(s.wobble) * 0.25;
-      // 预留花朵超出签顶的高度，防止头顶被裁
-      const flowerOver = stickW * 1.25 * 0.55;
+      const flowerOver = stickW * 1.05 * 0.5;
       const stickH = Math.min(
         h * s.h + inRy * 2.8,
         baseY + jiggle - topPad - flowerOver
       );
       if (stickH < stickW * 2.2) return;
       paintStick(
-        tubeCtx,
+        ctx,
         baseX,
         baseY - stickH + jiggle,
         stickW,
@@ -906,58 +1100,79 @@
         s.shade || 0
       );
     });
-    tubeCtx.restore();
+    ctx.restore();
 
-    // 4) 关键：只把口沿的「前半圈」盖在签子上（桶沿挡住叉子）
-    tubeCtx.save();
-    tubeCtx.beginPath();
-    // 屏幕下方 = 靠近观众的前口沿
-    tubeCtx.rect(cx - outRx - 4, rimY - 2, outRx * 2 + 8, outRy * 2 + 8);
-    tubeCtx.clip();
-    fillRimRing(tubeCtx, cx, rimY, outRx, outRy, inRx, inRy, "#e85748");
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY, outRx, outRy, 0, 0, Math.PI);
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 4.5;
-    tubeCtx.stroke();
-    tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI);
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 3.5;
-    tubeCtx.stroke();
-    tubeCtx.restore();
+    // 奶油前沿盖住签根
+    fillCreamRim(ctx, cx, rimY, outRx, outRy, inRx, inRy, true);
 
-    // 5) 筒身侧边描线（不封死筒口）
-    tubeCtx.beginPath();
-    tubeCtx.moveTo(cx + topRx, rimY);
-    tubeCtx.lineTo(cx + botRx, botY);
-    tubeCtx.quadraticCurveTo(cx, botY + h * 0.025, cx - botRx, botY);
-    tubeCtx.lineTo(cx - topRx, rimY);
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 5.5;
-    tubeCtx.lineJoin = "round";
-    tubeCtx.stroke();
+    // 奶油上的水果 / 爱心（前沿附近）
+    paintStrawberry(ctx, cx - outRx * 0.55, rimY + outRy * 0.55, 14);
+    paintStrawberry(ctx, cx + outRx * 0.42, rimY + outRy * 0.35, 12);
+    paintBlueberry(ctx, cx - outRx * 0.18, rimY + outRy * 0.75, 5);
+    paintBlueberry(ctx, cx + outRx * 0.12, rimY + outRy * 0.7, 4.5);
+    paintBlueberry(ctx, cx + outRx * 0.65, rimY + outRy * 0.15, 5);
+    paintHeart(ctx, cx - outRx * 0.05, rimY + outRy * 0.35, 10, "#f43f5e");
+    paintHeart(ctx, cx + outRx * 0.28, rimY + outRy * 0.65, 8, "#fb7185");
 
-    // 筒身竖排文字
-    tubeCtx.save();
-    tubeCtx.fillStyle = "#fff7ea";
-    tubeCtx.font = `${Math.round(w * 0.1)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
-    tubeCtx.textAlign = "center";
-    tubeCtx.textBaseline = "middle";
-    const chars = "碎碎生日快乐".split("");
-    chars.forEach((ch, i) => {
-      tubeCtx.fillText(ch, cx, h * 0.5 + i * (h * 0.052));
+    // 侧边描线
+    ctx.beginPath();
+    ctx.moveTo(cx + topRx, rimY);
+    ctx.lineTo(cx + botRx, botY);
+    ctx.quadraticCurveTo(cx, botY + h * 0.02, cx - botRx, botY);
+    ctx.lineTo(cx - topRx, rimY);
+    ctx.strokeStyle = "#e8799a";
+    ctx.lineWidth = 3.5;
+    ctx.lineJoin = "round";
+    ctx.stroke();
+
+    // 高光
+    ctx.beginPath();
+    ctx.moveTo(cx - topRx * 0.7, rimY + 16);
+    ctx.lineTo(cx - botRx * 0.55, botY - 40);
+    ctx.strokeStyle = "rgba(255,255,255,0.45)";
+    ctx.lineWidth = 10;
+    ctx.lineCap = "round";
+    ctx.stroke();
+
+    // 竖排「碎碎生日快乐」
+    ctx.save();
+    ctx.fillStyle = "#e11d48";
+    ctx.font = `${Math.round(w * 0.095)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    "碎碎生日快乐".split("").forEach((ch, i) => {
+      ctx.fillText(ch, cx, h * 0.48 + i * (h * 0.05));
     });
-    tubeCtx.restore();
+    ctx.restore();
 
-    // 左侧高光
-    tubeCtx.beginPath();
-    tubeCtx.moveTo(cx - topRx * 0.72, rimY + 14);
-    tubeCtx.lineTo(cx - botRx * 0.58, botY - 16);
-    tubeCtx.strokeStyle = "rgba(255,255,255,0.22)";
-    tubeCtx.lineWidth = 9;
-    tubeCtx.lineCap = "round";
-    tubeCtx.stroke();
+    // 蛋糕身爱心 / 闪光 / 彩屑
+    paintHeart(ctx, cx - topRx * 0.55, h * 0.52, 14, "#ef4444");
+    paintHeart(ctx, cx + topRx * 0.52, h * 0.58, 12, "#f43f5e");
+    paintHeart(ctx, cx + topRx * 0.35, h * 0.7, 10, "#fb7185");
+    paintSpark4(ctx, cx - topRx * 0.7, rimY + 28, 8, "#fde047");
+    paintSpark4(ctx, cx + topRx * 0.72, rimY + 40, 7, "#fef08a");
+    paintSpark4(ctx, cx - topRx * 0.4, botY - 48, 6, "#fde68a");
+    const confetti = [
+      [-0.75, 0.55, "#60a5fa", 0.4],
+      [0.7, 0.62, "#f472b6", -0.3],
+      [-0.6, 0.72, "#facc15", 0.6],
+      [0.55, 0.48, "#a78bfa", -0.5],
+      [-0.35, 0.78, "#34d399", 0.2],
+      [0.4, 0.75, "#fb923c", -0.2],
+    ];
+    confetti.forEach(([nx, ny, color, rot], i) => {
+      const bx = cx + topRx * nx;
+      const by = h * ny + Math.sin(t * 1.5 + i) * 2;
+      ctx.save();
+      ctx.translate(bx, by);
+      ctx.rotate(rot + Math.sin(t + i) * 0.15);
+      ctx.fillStyle = color;
+      ctx.fillRect(-3, -2, 7, 4);
+      ctx.restore();
+    });
+
+    // 底部蝴蝶结
+    paintBow(ctx, cx, botY - 18, 22);
 
     if (tubeState.mode === "rise") {
       const p = tubeState.riseProgress;
@@ -969,7 +1184,7 @@
       const yEnd = Math.max(topPad, rimY - sh * 0.82);
       const y = yStart + (yEnd - yStart) * ease;
       paintStick(
-        tubeCtx,
+        ctx,
         cx,
         y,
         sw,
