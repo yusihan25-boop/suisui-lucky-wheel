@@ -511,7 +511,7 @@
       ctx.arc(0, 0, innerR, 0, Math.PI * 2, true);
       ctx.fillStyle = "rgba(60, 50, 120, 0.55)";
       ctx.fill("evenodd");
-      ctx.fillStyle = "#c4b5fd";
+      ctx.fillStyle = "#93c5fd";
       ctx.font = 'bold 18px "Noto Sans SC", sans-serif';
       ctx.textAlign = "center";
       ctx.fillText("暂无人员", 0, 6);
@@ -587,7 +587,7 @@
     // 内圈紫金细环
     ctx.beginPath();
     ctx.arc(0, 0, innerR + 4, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(192, 132, 252, 0.65)";
+    ctx.strokeStyle = "rgba(96, 165, 250, 0.65)";
     ctx.lineWidth = 3;
     ctx.stroke();
 
@@ -595,8 +595,8 @@
     const g = ctx.createRadialGradient(0, 0, 2, 0, 0, innerR * 0.95);
     g.addColorStop(0, `rgba(255, 250, 220, ${0.95 * pulse})`);
     g.addColorStop(0.25, `rgba(240, 193, 75, ${0.55 * pulse})`);
-    g.addColorStop(0.55, `rgba(167, 139, 250, ${0.35 * pulse})`);
-    g.addColorStop(1, "rgba(12, 16, 48, 0)");
+    g.addColorStop(0.55, `rgba(96, 165, 250, ${0.35 * pulse})`);
+    g.addColorStop(1, "rgba(6, 16, 36, 0)");
     ctx.beginPath();
     ctx.arc(0, 0, innerR - 2, 0, Math.PI * 2);
     ctx.fillStyle = g;
@@ -928,7 +928,7 @@
     for (let i = 3; i >= 0; i--) {
       ctx.beginPath();
       ctx.ellipse(0, -i * s * 0.22, s * (0.55 - i * 0.06), s * (0.32 - i * 0.03), 0, 0, Math.PI * 2);
-      ctx.fillStyle = i % 2 === 0 ? "#f4f0ff" : "#d8d0f5";
+      ctx.fillStyle = i % 2 === 0 ? "#f2f7ff" : "#d4e6fb";
       ctx.fill();
     }
     ctx.restore();
@@ -957,11 +957,11 @@
     ctx.moveTo(0, 0);
     ctx.quadraticCurveTo(s * 0.9, -s * 0.55, s * 1.15, s * 0.1);
     ctx.quadraticCurveTo(s * 0.35, s * 0.25, 0, 0);
-    ctx.fillStyle = "#7c3aed";
+    ctx.fillStyle = "#2563eb";
     ctx.fill();
     ctx.beginPath();
     ctx.ellipse(0, s * 0.05, s * 0.28, s * 0.22, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "#a78bfa";
+    ctx.fillStyle = "#60a5fa";
     ctx.fill();
     ctx.beginPath();
     ctx.arc(0, s * 0.02, s * 0.14, 0, Math.PI * 2);
@@ -978,10 +978,10 @@
     ctx.quadraticCurveTo(cx, botY + h * 0.02, cx - botRx, botY);
     ctx.closePath();
     const g = ctx.createLinearGradient(cx - topRx, rimY, cx + topRx, botY);
-    g.addColorStop(0, "#3b2a78");
-    g.addColorStop(0.4, "#2a1f5c");
-    g.addColorStop(0.75, "#1a1448");
-    g.addColorStop(1, "#12103a");
+    g.addColorStop(0, "#1e4a8c");
+    g.addColorStop(0.4, "#163a6e");
+    g.addColorStop(0.75, "#0f2a52");
+    g.addColorStop(1, "#0a1c38");
     ctx.fillStyle = g;
     ctx.fill();
     ctx.strokeStyle = "rgba(240, 193, 75, 0.55)";
@@ -1000,7 +1000,7 @@
     ctx.beginPath();
     ctx.ellipse(cx, cy, outRx, outRy, 0, 0, Math.PI * 2);
     ctx.ellipse(cx, cy - 2, inRx, inRy, 0, 0, Math.PI * 2, true);
-    ctx.fillStyle = "#e8e0ff";
+    ctx.fillStyle = "#e8f2ff";
     ctx.fill("evenodd");
     const count = 14;
     for (let i = 0; i < count; i++) {
@@ -1060,7 +1060,7 @@
     ctx.stroke();
 
     // 气球（身后）——紫金星夜
-    paintBalloon(ctx, cx - topRx * 1.35, rimY + h * 0.12, 18, 24, "#8b5cf6", {
+    paintBalloon(ctx, cx - topRx * 1.35, rimY + h * 0.12, 18, 24, "#3b82f6", {
       x: cx - botRx * 0.55,
       y: botY - 28,
     });
@@ -1068,11 +1068,11 @@
       x: cx - botRx * 0.4,
       y: botY - 20,
     });
-    paintBalloon(ctx, cx + topRx * 1.32, rimY + h * 0.14, 17, 23, "#6366f1", {
+    paintBalloon(ctx, cx + topRx * 1.32, rimY + h * 0.14, 17, 23, "#60a5fa", {
       x: cx + botRx * 0.55,
       y: botY - 28,
     });
-    paintBalloon(ctx, cx + topRx * 1.02, rimY + h * 0.24, 11, 15, "#c4b5fd", {
+    paintBalloon(ctx, cx + topRx * 1.02, rimY + h * 0.24, 11, 15, "#93c5fd", {
       x: cx + botRx * 0.4,
       y: botY - 18,
     });
@@ -1084,7 +1084,7 @@
     ctx.beginPath();
     ctx.moveTo(cx - botRx * 0.95, botY - 36);
     ctx.quadraticCurveTo(cx, botY - 22, cx + botRx * 0.95, botY - 36);
-    ctx.strokeStyle = "rgba(167, 139, 250, 0.85)";
+    ctx.strokeStyle = "rgba(96, 165, 250, 0.85)";
     ctx.lineWidth = 7;
     ctx.lineCap = "round";
     ctx.stroke();
@@ -1099,11 +1099,11 @@
     fillCreamRim(ctx, cx, rimY, outRx, outRy, inRx, inRy, false);
     ctx.beginPath();
     ctx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "#0c1233";
+    ctx.fillStyle = "#071428";
     ctx.fill();
     ctx.beginPath();
     ctx.ellipse(cx, rimY - 2, inRx, inRy, 0, Math.PI, 0, true);
-    ctx.strokeStyle = "#5b4a9a";
+    ctx.strokeStyle = "#2a5a9a";
     ctx.lineWidth = Math.max(8, outRy - inRy);
     ctx.stroke();
 
@@ -1152,12 +1152,12 @@
 
     // 口沿宝石 / 星芒
     paintGem(ctx, cx - outRx * 0.55, rimY + outRy * 0.55, 7, "#fde68a", "#d97706");
-    paintGem(ctx, cx + outRx * 0.42, rimY + outRy * 0.35, 6, "#c4b5fd", "#6d28d9");
+    paintGem(ctx, cx + outRx * 0.42, rimY + outRy * 0.35, 6, "#93c5fd", "#1d4ed8");
     paintGem(ctx, cx - outRx * 0.18, rimY + outRy * 0.75, 4.5, "#bfdbfe", "#2563eb");
     paintGem(ctx, cx + outRx * 0.12, rimY + outRy * 0.7, 4, "#fde68a", "#f59e0b");
-    paintGem(ctx, cx + outRx * 0.65, rimY + outRy * 0.15, 5, "#a78bfa", "#4c1d95");
+    paintGem(ctx, cx + outRx * 0.65, rimY + outRy * 0.15, 5, "#60a5fa", "#1e3a8a");
     paintSpark4(ctx, cx - outRx * 0.05, rimY + outRy * 0.3, 8, "#fff6c2");
-    paintSpark4(ctx, cx + outRx * 0.28, rimY + outRy * 0.6, 6, "#e9d5ff");
+    paintSpark4(ctx, cx + outRx * 0.28, rimY + outRy * 0.6, 6, "#dbeafe");
 
     // 侧边描线
     ctx.beginPath();
@@ -1165,7 +1165,7 @@
     ctx.lineTo(cx + botRx, botY);
     ctx.quadraticCurveTo(cx, botY + h * 0.02, cx - botRx, botY);
     ctx.lineTo(cx - topRx, rimY);
-    ctx.strokeStyle = "rgba(192, 132, 252, 0.55)";
+    ctx.strokeStyle = "rgba(96, 165, 250, 0.55)";
     ctx.lineWidth = 3.5;
     ctx.lineJoin = "round";
     ctx.stroke();
@@ -1194,19 +1194,19 @@
     ctx.restore();
 
     // 筒身星芒 / 爱心 / 星屑
-    paintHeart(ctx, cx - topRx * 0.55, h * 0.52, 14, "#c084fc");
-    paintHeart(ctx, cx + topRx * 0.52, h * 0.58, 12, "#a78bfa");
-    paintHeart(ctx, cx + topRx * 0.35, h * 0.7, 10, "#818cf8");
+    paintHeart(ctx, cx - topRx * 0.55, h * 0.52, 14, "#60a5fa");
+    paintHeart(ctx, cx + topRx * 0.52, h * 0.58, 12, "#3b82f6");
+    paintHeart(ctx, cx + topRx * 0.35, h * 0.7, 10, "#93c5fd");
     paintSpark4(ctx, cx - topRx * 0.7, rimY + 28, 8, "#fde047");
     paintSpark4(ctx, cx + topRx * 0.72, rimY + 40, 7, "#fef08a");
-    paintSpark4(ctx, cx - topRx * 0.4, botY - 48, 6, "#e9d5ff");
+    paintSpark4(ctx, cx - topRx * 0.4, botY - 48, 6, "#dbeafe");
     const confetti = [
-      [-0.75, 0.55, "#a78bfa", 0.4],
+      [-0.75, 0.55, "#60a5fa", 0.4],
       [0.7, 0.62, "#f0c14b", -0.3],
-      [-0.6, 0.72, "#c4b5fd", 0.6],
-      [0.55, 0.48, "#60a5fa", -0.5],
+      [-0.6, 0.72, "#93c5fd", 0.6],
+      [0.55, 0.48, "#38bdf8", -0.5],
       [-0.35, 0.78, "#fde68a", 0.2],
-      [0.4, 0.75, "#818cf8", -0.2],
+      [0.4, 0.75, "#2563eb", -0.2],
     ];
     confetti.forEach(([nx, ny, color, rot], i) => {
       const bx = cx + topRx * nx;
