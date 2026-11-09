@@ -751,6 +751,7 @@ body {
   height: 400px;
   user-select: none;
   filter: drop-shadow(0 14px 18px rgba(90, 30, 20, 0.22));
+  overflow: hidden;
 }
 
 /* 以筒底为轴，慢摇筒口 */
@@ -765,57 +766,48 @@ body {
   animation: tubeMouthShake 0.55s ease-in-out infinite;
 }
 
+/* 摇动时签才从口沿探出；平时整支藏在不透明筒身后 */
 .lottery-tube.shaking .tube-sticks {
-  transform: translateX(-50%) translateY(-18%);
+  transform: translateX(-50%) translateY(-22%);
 }
 
-.tube-mouth {
-  position: absolute;
-  left: 50%;
-  top: 10%;
-  z-index: 3;
-  width: 64%;
-  height: 28%;
-  transform: translateX(-50%);
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.tube-rim {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: 100%;
-  height: 28px;
-  border: 5px solid #3d2a1f;
-  border-radius: 50%;
-  background: #c01818;
-  box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.18);
-  z-index: 2;
-}
-
-/* 大红色、不透明 */
+/* 上大下小锥形大红筒，不透明 */
 .tube-body {
   position: absolute;
   left: 50%;
   bottom: 4%;
   transform: translateX(-50%);
-  width: 56%;
-  height: 66%;
-  z-index: 2;
+  width: 72%;
+  height: 70%;
+  z-index: 3;
   border: 5px solid #3d2a1f;
-  border-radius: 10px 10px 28px 28px / 8px 8px 40px 40px;
   background: #e31c23;
   opacity: 1;
-  box-shadow: inset 10px 0 16px rgba(255, 255, 255, 0.12);
-  clip-path: polygon(5% 0, 95% 0, 100% 100%, 0 100%);
+  /* 上宽下窄 */
+  clip-path: polygon(6% 0, 94% 0, 78% 100%, 22% 100%);
+  border-radius: 0;
+  box-shadow: inset 12px 0 18px rgba(255, 255, 255, 0.14);
   overflow: hidden;
+}
+
+.tube-rim {
+  position: absolute;
+  left: 50%;
+  top: 24%;
+  transform: translateX(-50%);
+  width: 68%;
+  height: 26px;
+  z-index: 4;
+  border: 5px solid #3d2a1f;
+  border-radius: 50%;
+  background: #c01818;
+  box-shadow: inset 0 4px 0 rgba(0, 0, 0, 0.2);
+  pointer-events: none;
 }
 
 .tube-side-text {
   position: absolute;
-  inset: 16% 0 14%;
+  inset: 18% 0 16%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -829,23 +821,25 @@ body {
   pointer-events: none;
 }
 
-/* 初始签完全藏在筒内，摇动时才从口沿探出 */
+/* 签在筒身后面：起始完全看不见 */
 .tube-sticks {
   position: absolute;
   left: 50%;
-  bottom: -70%;
+  top: 28%;
   transform: translateX(-50%);
-  width: 90%;
-  height: 140%;
+  width: 54%;
+  height: 48%;
   z-index: 1;
+  overflow: hidden;
   transition: transform 0.45s ease;
+  pointer-events: none;
 }
 
 .tube-stick {
   position: absolute;
   bottom: 0;
-  width: 16px;
-  height: 120px;
+  width: 15px;
+  height: 100px;
   border: 3px solid #3d2a1f;
   border-radius: 999px;
   background: #f3e4c4;
@@ -866,7 +860,7 @@ body {
 .tube-stick.is-drawn {
   position: relative;
   width: 34px;
-  height: 260px;
+  height: 240px;
   left: auto;
   bottom: auto;
   margin: 0 auto;
@@ -896,10 +890,14 @@ body {
   right: 0;
   top: 0;
   bottom: 18%;
-  z-index: 5;
+  z-index: 6;
   display: grid;
   place-items: end center;
   pointer-events: none;
+}
+
+.tube-drawn[hidden] {
+  display: none !important;
 }
 
 .tube-drawn .tube-stick.is-drawn {

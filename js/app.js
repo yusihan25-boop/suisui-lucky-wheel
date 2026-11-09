@@ -441,14 +441,14 @@
           : tips[i % tips.length];
       stick.appendChild(tip);
 
-      // 环绕口沿内侧，略向外倾；初始被 overflow 裁掉，不露在筒外
+      // 收在筒口椭圆内侧，避免贴边被裁成半截
       const ang = (i / count) * Math.PI * 2;
-      const left = 50 + Math.cos(ang) * 32;
-      const bottom = 8 + Math.sin(ang) * 8;
-      const lean = Math.cos(ang) * 18 + (Math.random() - 0.5) * 6;
-      stick.style.left = `calc(${left}% - 8px)`;
+      const left = 50 + Math.cos(ang) * 22;
+      const bottom = 4 + Math.max(0, Math.sin(ang)) * 6;
+      const lean = Math.cos(ang) * 14 + (Math.random() - 0.5) * 5;
+      stick.style.left = `calc(${left}% - 7px)`;
       stick.style.bottom = `${bottom}%`;
-      stick.style.height = `${110 + Math.random() * 24}px`;
+      stick.style.height = `${88 + Math.random() * 18}px`;
       stick.style.transform = `rotate(${lean}deg)`;
       stick.style.zIndex = String(10 + i);
       els.tubeSticks.appendChild(stick);
