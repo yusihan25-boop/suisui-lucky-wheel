@@ -61,8 +61,8 @@
     btnLiveMode: document.getElementById("btnLiveMode"),
     btnBackLive: document.getElementById("btnBackLive"),
     rotateTipModal: document.getElementById("rotateTipModal"),
-    btnRotateTipLive: document.getElementById("btnRotateTipLive"),
-    btnRotateTipOk: document.getElementById("btnRotateTipOk"),
+    btnRotateTipYes: document.getElementById("btnRotateTipYes"),
+    btnRotateTipNo: document.getElementById("btnRotateTipNo"),
     btnHistory: document.getElementById("btnHistory"),
     btnExportHistory: document.getElementById("btnExportHistory"),
     settingsPanel: document.getElementById("settingsPanel"),
@@ -2373,21 +2373,39 @@
   if (els.btnBackLive) {
     els.btnBackLive.addEventListener("click", () => {
       hideRotateTip();
+      setForceLandscapeUi(false);
       setLiveCast(true);
     });
   }
-  if (els.btnRotateTipLive) {
-    els.btnRotateTipLive.addEventListener("click", () => {
+  if (els.btnRotateTipYes) {
+    els.btnRotateTipYes.addEventListener("click", () => {
       hideRotateTip();
-      setLiveCast(true);
+      setForceLandscapeUi(true);
+      if (els.btnBackLive) els.btnBackLive.hidden = false;
+      scheduleFit();
+      requestAnimationFrame(() => {
+        scheduleFit();
+        try {
+          redrawAll();
+        } catch (_) {}
+      });
     });
   }
-  if (els.btnRotateTipOk) {
-    els.btnRotateTipOk.addEventListener("click", hideRotateTip);
+  if (els.btnRotateTipNo) {
+    els.btnRotateTipNo.addEventListener("click", () => {
+      hideRotateTip();
+      setForceLandscapeUi(false);
+      setLiveCast(true);
+    });
   }
   if (els.rotateTipModal) {
     els.rotateTipModal.querySelectorAll("[data-close-rotate-tip]").forEach((el) => {
-      el.addEventListener("click", hideRotateTip);
+      el.addEventListener("click", () => {
+        // 点遮罩视为「否」：回直播投屏
+        hideRotateTip();
+        setForceLandscapeUi(false);
+        setLiveCast(true);
+      });
     });
   }
   els.btnAddPerson.addEventListener("click", () => {
@@ -2595,17 +2613,30 @@
     els.rotateTipModal.setAttribute("aria-hidden", "true");
   }
 
-  /** 竖屏普通模式：浮层按钮保证能回直播；退出投屏时提示横屏 */
+  function setForceLandscapeUi(on) {
+    document.documentElement.classList.toggle("force-landscape-ui", !!on);
+  }
+
+  /** 竖屏普通模式：浮层按钮保证能回直播；退出投屏时询问是否旋转 */
   function syncPortraitNormalUi(exitedLive) {
-    const portraitNormal = !isLiveCast() && isPortraitViewport();
+    const portrait = isPortraitViewport();
+    const portraitNormal = !isLiveCast() && portrait;
     if (els.btnBackLive) els.btnBackLive.hidden = !portraitNormal;
-    if (exitedLive && portraitNormal) showRotateTip();
-    if (!portraitNormal) hideRotateTip();
+    if (!portrait || isLiveCast()) {
+      setForceLandscapeUi(false);
+      hideRotateTip();
+      return;
+    }
+    if (exitedLive) {
+      setForceLandscapeUi(false);
+      showRotateTip();
+    }
   }
 
   function setLiveCast(on, persist) {
     const wasLive = isLiveCast();
     document.documentElement.classList.toggle("live-cast", !!on);
+    if (on) setForceLandscapeUi(false);
     if (els.btnLiveMode) {
       els.btnLiveMode.setAttribute("aria-pressed", on ? "true" : "false");
       els.btnLiveMode.textContent = on ? "退出投屏" : "直播投屏";
