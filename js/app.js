@@ -2119,7 +2119,7 @@
     });
   }
 
-  function downloadWorkbook(filename, rows) {
+  async function downloadWorkbook(filename, rows) {
     if (!window.XLSX) {
       alert("表格解析库未加载，请刷新页面后重试");
       return;
@@ -2127,11 +2127,42 @@
     const book = XLSX.utils.book_new();
     const sheet = XLSX.utils.aoa_to_sheet(rows);
     XLSX.utils.book_append_sheet(book, sheet, "模板");
+    const buffer = XLSX.write(book, { bookType: "xlsx", type: "array" });
+
+    try {
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [
+            {
+              description: "Excel 工作簿",
+              accept: {
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+                  ".xlsx",
+                ],
+              },
+            },
+          ],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(buffer);
+        await writable.close();
+        return;
+      }
+    } catch (err) {
+      // 用户取消另存为
+      if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
+        return;
+      }
+      console.warn("另存为失败，回退普通下载", err);
+    }
+
+    // 不支持 File System Access API 时回退
     XLSX.writeFile(book, filename);
   }
 
   function downloadPeopleTemplate() {
-    downloadWorkbook("人员导入模板.xlsx", [
+    return downloadWorkbook("人员导入模板.xlsx", [
       ["姓名", "概率"],
       ["张三", 25],
       ["李四", 25],
@@ -2141,7 +2172,7 @@
   }
 
   function downloadPrizeTemplate() {
-    downloadWorkbook("奖项导入模板.xlsx", [
+    return downloadWorkbook("奖项导入模板.xlsx", [
       ["奖品名称", "概率", "库存"],
       ["一等奖", 5, 1],
       ["二等奖", 15, 3],
