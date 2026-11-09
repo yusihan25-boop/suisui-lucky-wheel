@@ -6,7 +6,7 @@
   <title>幸运大转盘</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -80,17 +80,15 @@
 
               <section class="wheel-col gashapon-col" data-wheel="prizes">
                 <div class="gacha-wrap">
-                  <div class="gacha-machine" id="gashaponMachine">
+                  <div class="gacha-machine catpaw" id="gashaponMachine">
+                    <img class="gacha-skin" src="assets/gacha-catpaw.jpg" alt="" draggable="false" />
                     <div class="gacha-title">碎碎生日快乐♪٩(´ω`)و♪</div>
                     <div class="gacha-dome">
-                      <canvas id="gachaCanvas" width="400" height="320" aria-hidden="true"></canvas>
+                      <canvas id="gachaCanvas" width="420" height="300" aria-hidden="true"></canvas>
                     </div>
-                    <div class="gacha-base">
-                      <div class="gacha-chute" aria-hidden="true"></div>
-                      <button type="button" id="btnSpinPrize" class="gacha-star-btn" aria-label="抽取奖品">
-                        <span>GO</span>
-                      </button>
-                    </div>
+                    <button type="button" id="btnSpinPrize" class="gacha-cat-go" aria-label="抽取奖品">
+                      <span class="gacha-cat-face">GO</span>
+                    </button>
                   </div>
                   <canvas id="prizeWheel" width="480" height="480" hidden></canvas>
                 </div>
