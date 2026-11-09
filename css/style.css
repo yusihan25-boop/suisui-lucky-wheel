@@ -2170,3 +2170,47 @@ html.live-cast #stockModal .modal-card {
     font-size: 0.95rem;
   }
 }
+
+/* 手机竖屏退出投屏后：普通模式视觉旋转 90°，铺满横屏效果 */
+.orient-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+html.force-landscape-ui,
+html.force-landscape-ui body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+}
+
+html.force-landscape-ui .orient-shell {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vh;
+  height: 100vw;
+  min-height: 0;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center center;
+  overflow: hidden;
+}
+
+html.force-landscape-ui .app {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 8px;
+}
+
+html.force-landscape-ui .cosmos-decor {
+  position: absolute;
+  inset: 0;
+}
+
+html.force-landscape-ui .modal,
+html.force-landscape-ui .settings {
+  position: absolute;
+}
