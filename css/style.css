@@ -2231,38 +2231,6 @@ html.force-landscape-ui .settings {
   flex: 1 1 0;
 }
 
-/* 竖屏普通模式：始终可点回直播投屏（不随界面旋转） */
-.back-live-fab {
-  position: fixed;
-  left: 50%;
-  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-  transform: translateX(-50%);
-  z-index: 90;
-  min-width: 168px;
-  height: 48px;
-  padding: 0 22px;
-  border: 2px solid rgba(230, 195, 106, 0.95);
-  border-radius: 999px;
-  background: linear-gradient(145deg, #f3a7bf, #e57a9b 52%, #8b4a66);
-  color: #fffaf6;
-  font-family: var(--display);
-  font-size: 1.05rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  box-shadow:
-    0 0 18px rgba(243, 167, 191, 0.45),
-    0 8px 24px rgba(0, 8, 24, 0.35);
-  cursor: pointer;
-}
-
-.back-live-fab[hidden] {
-  display: none !important;
-}
-
-html.live-cast .back-live-fab {
-  display: none !important;
-}
-
 #rotateTipModal {
   z-index: 100;
 }
