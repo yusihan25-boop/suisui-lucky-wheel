@@ -1,17 +1,17 @@
 :root {
-  --bg-deep: #070b1f;
-  --bg-mid: #12183a;
-  --bg-soft: #1a2150;
-  --ink: #e8e4ff;
-  --muted: #9aa3d4;
-  --accent: #c084fc;
-  --accent-deep: #8b5cf6;
+  --bg-deep: #06101f;
+  --bg-mid: #0b1a33;
+  --bg-soft: #122844;
+  --ink: #e6f0ff;
+  --muted: #8eabd4;
+  --accent: #60a5fa;
+  --accent-deep: #2563eb;
   --gold: #f0c14b;
-  --panel: rgba(18, 22, 55, 0.78);
-  --line: rgba(200, 180, 255, 0.18);
+  --panel: rgba(10, 22, 44, 0.82);
+  --line: rgba(140, 180, 255, 0.2);
   --ok: #34d399;
   --warn: #fbbf24;
-  --shadow: 0 18px 40px rgba(0, 0, 30, 0.45);
+  --shadow: 0 18px 40px rgba(0, 10, 30, 0.45);
   --radius: 18px;
   --font: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   --display: "ZCOOL KuaiLe", "Noto Sans SC", cursive;
@@ -35,11 +35,11 @@ body {
   color: var(--ink);
   overflow: hidden;
   background:
-    radial-gradient(900px 520px at 18% 12%, rgba(124, 58, 237, 0.38) 0%, transparent 55%),
-    radial-gradient(760px 480px at 88% 18%, rgba(56, 89, 220, 0.32) 0%, transparent 52%),
-    radial-gradient(700px 500px at 70% 90%, rgba(240, 193, 75, 0.14) 0%, transparent 48%),
-    radial-gradient(600px 420px at 40% 60%, rgba(168, 85, 247, 0.16) 0%, transparent 50%),
-    linear-gradient(165deg, #050816 0%, #0c1233 42%, #16104a 100%);
+    radial-gradient(900px 520px at 18% 12%, rgba(37, 99, 235, 0.34) 0%, transparent 55%),
+    radial-gradient(760px 480px at 88% 18%, rgba(56, 120, 220, 0.28) 0%, transparent 52%),
+    radial-gradient(700px 500px at 70% 90%, rgba(96, 165, 250, 0.14) 0%, transparent 48%),
+    radial-gradient(600px 420px at 40% 60%, rgba(14, 80, 160, 0.18) 0%, transparent 50%),
+    linear-gradient(165deg, #040b18 0%, #0a162c 42%, #10203a 100%);
   overflow-x: hidden;
 }
 
@@ -74,30 +74,30 @@ body {
 .cosmos-decor .n1 {
   width: 420px; height: 280px;
   top: 8%; left: -4%;
-  background: radial-gradient(circle, rgba(124,58,237,0.55), transparent 70%);
+  background: radial-gradient(circle, rgba(37,99,235,0.48), transparent 70%);
 }
 .cosmos-decor .n2 {
   width: 360px; height: 300px;
   top: 20%; right: -6%;
-  background: radial-gradient(circle, rgba(59,130,246,0.45), transparent 70%);
+  background: radial-gradient(circle, rgba(56,140,230,0.4), transparent 70%);
   animation-delay: -4s;
 }
 .cosmos-decor .n3 {
   width: 480px; height: 260px;
   bottom: 4%; left: 30%;
-  background: radial-gradient(circle, rgba(240,193,75,0.18), transparent 70%);
+  background: radial-gradient(circle, rgba(125, 180, 255, 0.16), transparent 70%);
   animation-delay: -7s;
 }
 .cosmos-decor .n4 {
   width: 300px; height: 220px;
   top: 55%; right: 18%;
-  background: radial-gradient(circle, rgba(236,72,153,0.22), transparent 70%);
+  background: radial-gradient(circle, rgba(96,165,250,0.2), transparent 70%);
   animation-delay: -2s;
 }
 .cosmos-decor .n5 {
   width: 380px; height: 240px;
   top: 35%; left: 55%;
-  background: radial-gradient(circle, rgba(99,102,241,0.28), transparent 70%);
+  background: radial-gradient(circle, rgba(30,90,180,0.28), transparent 70%);
   animation-delay: -9s;
 }
 
@@ -116,33 +116,33 @@ body {
   top: 0; left: 0;
   box-shadow:
     12vw 8vh 0 0 #fff, 18vw 22vh 0 1px #e0e7ff, 27vw 5vh 0 0 #fff,
-    35vw 18vh 0 0 #fde68a, 42vw 9vh 0 1px #fff, 51vw 28vh 0 0 #c4b5fd,
+    35vw 18vh 0 0 #fde68a, 42vw 9vh 0 1px #fff, 51vw 28vh 0 0 #93c5fd,
     58vw 6vh 0 0 #fff, 66vw 20vh 0 0 #fff, 74vw 11vh 0 1px #fef3c7,
-    82vw 25vh 0 0 #fff, 91vw 7vh 0 0 #ddd6fe, 8vw 35vh 0 0 #fff,
+    82vw 25vh 0 0 #fff, 91vw 7vh 0 0 #bfdbfe, 8vw 35vh 0 0 #fff,
     15vw 48vh 0 1px #fff, 24vw 41vh 0 0 #fde68a, 33vw 55vh 0 0 #fff,
-    47vw 38vh 0 0 #c4b5fd, 55vw 52vh 0 1px #fff, 63vw 44vh 0 0 #fff,
+    47vw 38vh 0 0 #93c5fd, 55vw 52vh 0 1px #fff, 63vw 44vh 0 0 #fff,
     71vw 58vh 0 0 #e0e7ff, 79vw 36vh 0 0 #fff, 88vw 49vh 0 1px #fde68a,
-    5vw 68vh 0 0 #fff, 14vw 75vh 0 0 #c4b5fd, 22vw 62vh 0 0 #fff,
+    5vw 68vh 0 0 #fff, 14vw 75vh 0 0 #93c5fd, 22vw 62vh 0 0 #fff,
     31vw 80vh 0 1px #fff, 39vw 70vh 0 0 #fef3c7, 48vw 85vh 0 0 #fff,
-    57vw 72vh 0 0 #fff, 65vw 88vh 0 1px #ddd6fe, 73vw 66vh 0 0 #fff,
+    57vw 72vh 0 0 #fff, 65vw 88vh 0 1px #bfdbfe, 73vw 66vh 0 0 #fff,
     81vw 82vh 0 0 #fde68a, 90vw 74vh 0 0 #fff, 96vw 60vh 0 1px #fff,
-    3vw 92vh 0 0 #c4b5fd, 28vw 94vh 0 0 #fff, 44vw 96vh 0 0 #fff,
+    3vw 92vh 0 0 #93c5fd, 28vw 94vh 0 0 #fff, 44vw 96vh 0 0 #fff,
     62vw 93vh 0 1px #e0e7ff, 77vw 97vh 0 0 #fff, 93vw 91vh 0 0 #fde68a;
 }
 .cosmos-decor .sf2 {
   top: 0; left: 0;
   animation-delay: -2.5s;
   box-shadow:
-    7vw 14vh 0 0 #fff, 21vw 31vh 0 0 #c4b5fd, 29vw 12vh 0 1px #fff,
+    7vw 14vh 0 0 #fff, 21vw 31vh 0 0 #93c5fd, 29vw 12vh 0 1px #fff,
     38vw 27vh 0 0 #fff, 46vw 3vh 0 0 #fde68a, 54vw 33vh 0 0 #fff,
     61vw 15vh 0 1px #e0e7ff, 69vw 29vh 0 0 #fff, 77vw 4vh 0 0 #fff,
-    85vw 17vh 0 0 #ddd6fe, 94vw 32vh 0 1px #fff, 11vw 43vh 0 0 #fff,
-    19vw 57vh 0 0 #fef3c7, 26vw 49vh 0 1px #fff, 37vw 63vh 0 0 #c4b5fd,
+    85vw 17vh 0 0 #bfdbfe, 94vw 32vh 0 1px #fff, 11vw 43vh 0 0 #fff,
+    19vw 57vh 0 0 #fef3c7, 26vw 49vh 0 1px #fff, 37vw 63vh 0 0 #93c5fd,
     44vw 46vh 0 0 #fff, 52vw 61vh 0 0 #fff, 60vw 39vh 0 1px #fde68a,
     68vw 54vh 0 0 #fff, 76vw 47vh 0 0 #e0e7ff, 84vw 64vh 0 0 #fff,
-    92vw 42vh 0 1px #fff, 6vw 78vh 0 0 #fff, 17vw 86vh 0 0 #c4b5fd,
+    92vw 42vh 0 1px #fff, 6vw 78vh 0 0 #fff, 17vw 86vh 0 0 #93c5fd,
     25vw 71vh 0 1px #fff, 34vw 89vh 0 0 #fff, 43vw 76vh 0 0 #fde68a,
-    50vw 90vh 0 0 #fff, 59vw 81vh 0 1px #ddd6fe, 67vw 95vh 0 0 #fff,
+    50vw 90vh 0 0 #fff, 59vw 81vh 0 1px #bfdbfe, 67vw 95vh 0 0 #fff,
     75vw 78vh 0 0 #fff, 83vw 90vh 0 0 #e0e7ff, 91vw 83vh 0 1px #fff,
     2vw 51vh 0 0 #fff, 98vw 19vh 0 0 #fef3c7, 40vw 21vh 0 0 #fff;
 
@@ -207,11 +207,11 @@ body {
 .cosmos-decor .p2 {
   width: 38px; height: 38px;
   top: 62%; left: 8%;
-  background: radial-gradient(circle at 30% 30%, #c4b5fd, #7c3aed 50%, #4c1d95);
-  box-shadow: 0 0 20px rgba(124, 58, 237, 0.55);
+  background: radial-gradient(circle at 30% 30%, #bfdbfe, #3b82f6 50%, #1e3a8a);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.55);
   animation-delay: -5s;
-  --ring: rgba(196, 181, 253, 0.85);
-  --ring-soft: rgba(167, 139, 250, 0.4);
+  --ring: rgba(147, 197, 253, 0.85);
+  --ring-soft: rgba(59, 130, 246, 0.4);
   --ring-tilt: 22deg;
   --ring-w: 190%;
   --ring-h: 44%;
@@ -492,7 +492,7 @@ body {
   letter-spacing: 0.04em;
   color: #f5e6a8;
   text-shadow:
-    0 0 18px rgba(192, 132, 252, 0.55),
+    0 0 18px rgba(96, 165, 250, 0.55),
     0 0 8px rgba(240, 193, 75, 0.45);
   animation: titleIn 0.7s ease both;
   text-align: center;
@@ -576,7 +576,7 @@ body {
   aspect-ratio: auto;
   border-radius: 18px;
   overflow: hidden;
-  border: 1px dashed rgba(192, 132, 252, 0.4);
+  border: 1px dashed rgba(96, 165, 250, 0.4);
   background: rgba(12, 16, 42, 0.72);
   cursor: pointer;
   box-shadow: var(--shadow);
@@ -809,7 +809,7 @@ body {
 }
 
 .modal-stock-list .stock-item .qty {
-  color: #4c1d95;
+  color: #1d4ed8;
   font-weight: 700;
 }
 
@@ -908,7 +908,7 @@ body {
   position: relative;
   width: min(100%, 400px);
   aspect-ratio: 1;
-  filter: drop-shadow(0 0 28px rgba(124, 58, 237, 0.35));
+  filter: drop-shadow(0 0 28px rgba(37, 99, 235, 0.35));
   animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -934,7 +934,7 @@ body {
   height: 52px;
   border: 2px solid rgba(240, 193, 75, 0.85);
   border-radius: 999px;
-  background: linear-gradient(145deg, #7c3aed, #4c1d95 55%, #1e1b4b);
+  background: linear-gradient(145deg, #3b82f6, #1d4ed8 55%, #0b1a33);
   color: #fff7d6;
   font-family: var(--display);
   font-size: 1.25rem;
@@ -942,8 +942,8 @@ body {
   letter-spacing: 0.16em;
   cursor: pointer;
   box-shadow:
-    0 0 18px rgba(124, 58, 237, 0.45),
-    0 5px 0 #2e1065,
+    0 0 18px rgba(37, 99, 235, 0.45),
+    0 5px 0 #0a2a5c,
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
@@ -951,16 +951,16 @@ body {
 .star-spin-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow:
-    0 0 24px rgba(192, 132, 252, 0.55),
-    0 7px 0 #2e1065,
+    0 0 24px rgba(96, 165, 250, 0.55),
+    0 7px 0 #0a2a5c,
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .star-spin-btn:active:not(:disabled) {
   transform: translateY(2px);
   box-shadow:
-    0 0 12px rgba(124, 58, 237, 0.35),
-    0 2px 0 #2e1065;
+    0 0 12px rgba(37, 99, 235, 0.35),
+    0 2px 0 #0a2a5c;
 }
 
 .star-spin-btn:disabled {
@@ -978,7 +978,7 @@ body {
   position: relative;
   width: min(100%, 300px);
   aspect-ratio: 420 / 700;
-  filter: drop-shadow(0 16px 28px rgba(124, 58, 237, 0.35));
+  filter: drop-shadow(0 16px 28px rgba(37, 99, 235, 0.35));
   overflow: visible;
   animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -999,7 +999,7 @@ body {
   height: 52px;
   border: 2px solid rgba(240, 193, 75, 0.85);
   border-radius: 999px;
-  background: linear-gradient(145deg, #7c3aed, #4c1d95 55%, #1e1b4b);
+  background: linear-gradient(145deg, #3b82f6, #1d4ed8 55%, #0b1a33);
   color: #fff7d6;
   font-family: var(--display);
   font-size: 1.25rem;
@@ -1007,8 +1007,8 @@ body {
   letter-spacing: 0.14em;
   cursor: pointer;
   box-shadow:
-    0 0 18px rgba(124, 58, 237, 0.45),
-    0 5px 0 #2e1065,
+    0 0 18px rgba(37, 99, 235, 0.45),
+    0 5px 0 #0a2a5c,
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
@@ -1016,16 +1016,16 @@ body {
 .tube-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow:
-    0 0 24px rgba(192, 132, 252, 0.55),
-    0 7px 0 #2e1065,
+    0 0 24px rgba(96, 165, 250, 0.55),
+    0 7px 0 #0a2a5c,
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .tube-btn:active:not(:disabled) {
   transform: translateY(2px);
   box-shadow:
-    0 0 12px rgba(124, 58, 237, 0.35),
-    0 2px 0 #2e1065;
+    0 0 12px rgba(37, 99, 235, 0.35),
+    0 2px 0 #0a2a5c;
 }
 
 .tube-btn:disabled {
@@ -1150,7 +1150,7 @@ body {
 
 .btn-ghost:hover,
 .btn-secondary:hover {
-  background: rgba(124, 58, 237, 0.28);
+  background: rgba(37, 99, 235, 0.28);
 }
 
 .icon-btn {
@@ -1380,7 +1380,7 @@ body {
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #4c1d95;
+  color: #1d4ed8;
   pointer-events: none;
   font-size: 0.85rem;
   font-weight: 600;
@@ -1604,7 +1604,7 @@ body {
   font-family: var(--display);
   font-size: clamp(1.5rem, 5vw, 2.2rem);
   font-weight: 400;
-  color: #3b0764;
+  color: #0c4a6e;
   line-height: 1.35;
   word-break: break-word;
 }
