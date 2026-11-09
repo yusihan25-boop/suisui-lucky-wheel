@@ -3,20 +3,20 @@
   const HISTORY_KEY = "lucky-wheel-history-v3";
   const DECOR_KEY = "lucky-wheel-decor-v1";
 
-  /* 莫兰迪色系：低饱和、柔和灰调 */
+  /* 用户提供的莫兰迪色板取样（避开过浅色，保证白字可读） */
   const PALETTE = [
-    "#A8B5A0",
-    "#B7C4CE",
-    "#D4B8B0",
-    "#C5B8A8",
-    "#A9B8C4",
-    "#D8C3B0",
-    "#B5A8B8",
-    "#9AADB5",
-    "#C9B5A5",
-    "#A3B5A8",
-    "#C4A8A5",
-    "#B0B8C0",
+    "#D5C9B3",
+    "#BEC8D2",
+    "#B4C2B1",
+    "#A19889",
+    "#8792A4",
+    "#94A08A",
+    "#904F53",
+    "#694C51",
+    "#A0777D",
+    "#7B876F",
+    "#9EA3B6",
+    "#53818E",
   ];
 
   function uid() {
