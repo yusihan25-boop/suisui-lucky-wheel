@@ -403,7 +403,7 @@
         ctx.rotate(mid);
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
-        ctx.font = `bold ${Math.max(13, Math.min(20, radius / 11))}px "Noto Sans SC", sans-serif`;
+        ctx.font = `bold ${Math.max(13, Math.min(20, radius / 11))}px "Noto Sans SC", sans-serif';
         ctx.shadowColor = "rgba(60,50,45,0.28)";
         ctx.shadowBlur = 3;
         ctx.fillText(labelFn(item), radius - 20, 5);
@@ -419,15 +419,166 @@
     ctx.restore();
   }
 
+  /** 人员侧：环形星轨转盘 + 中心发光星芒 */
+  function drawStarOrbitWheel(ctx, canvas, items, rotation) {
+    const size = canvas.width;
+    const cx = size / 2;
+    const cy = size / 2;
+    const outerR = size / 2 - 12;
+    const midR = outerR * 0.78;
+    const innerR = outerR * 0.38;
+    const total = totalProbability(items) || 1;
+    const t = performance.now() / 1000;
+
+    ctx.clearRect(0, 0, size, size);
+
+    // 外层星轨光环
+    ctx.save();
+    ctx.translate(cx, cy);
+    for (let i = 0; i < 3; i++) {
+      const rr = outerR + 6 + i * 7;
+      ctx.beginPath();
+      ctx.arc(0, 0, rr, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(${180 + i * 20}, ${160 + i * 15}, 255, ${0.18 - i * 0.04})`;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 10]);
+      ctx.lineDashOffset = -t * (12 + i * 8);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // 盘面底
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(12, 16, 48, 0.92)";
+    ctx.fill();
+
+    ctx.save();
+    ctx.rotate(rotation);
+
+    if (!items.length) {
+      ctx.beginPath();
+      ctx.arc(0, 0, outerR, 0, Math.PI * 2);
+      ctx.arc(0, 0, innerR, 0, Math.PI * 2, true);
+      ctx.fillStyle = "rgba(60, 50, 120, 0.55)";
+      ctx.fill("evenodd");
+      ctx.fillStyle = "#c4b5fd";
+      ctx.font = 'bold 18px "Noto Sans SC", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText("暂无人员", 0, 6);
+    } else {
+      let start = -Math.PI / 2;
+      items.forEach((item, idx) => {
+        const angle = ((Number(item.probability) || 0) / total) * Math.PI * 2;
+        const end = start + (angle || 0.0001);
+        const color = item.color || TUBE_TIPS[idx % TUBE_TIPS.length];
+
+        // 环形格子（类似签条色块）
+        ctx.beginPath();
+        ctx.arc(0, 0, outerR, start, end);
+        ctx.arc(0, 0, innerR, end, start, true);
+        ctx.closePath();
+        const grad = ctx.createRadialGradient(0, 0, innerR, 0, 0, outerR);
+        grad.addColorStop(0, "rgba(246, 231, 196, 0.92)");
+        grad.addColorStop(0.55, "rgba(246, 231, 196, 0.88)");
+        grad.addColorStop(0.72, color);
+        grad.addColorStop(1, color);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = "rgba(61, 42, 31, 0.55)";
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+
+        // 外缘金线
+        ctx.beginPath();
+        ctx.arc(0, 0, outerR - 1, start, end);
+        ctx.strokeStyle = "rgba(240, 193, 75, 0.55)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        const mid = (start + end) / 2;
+        ctx.save();
+        ctx.rotate(mid);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#2a1f18";
+        ctx.font = `bold ${Math.max(12, Math.min(18, outerR / 12))}px "Noto Sans SC", sans-serif`;
+        ctx.fillText(truncateLabel(item.name, 8), midR + 8, 5);
+        ctx.restore();
+        start = end;
+      });
+    }
+    ctx.restore();
+
+    // 内圈星轨细环
+    ctx.beginPath();
+    ctx.arc(0, 0, innerR + 4, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(192, 132, 252, 0.65)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(240, 193, 75, 0.7)";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // 中心发光星芒（不随转盘转）
+    const pulse = 0.85 + Math.sin(t * 2.4) * 0.15;
+    const g = ctx.createRadialGradient(0, 0, 2, 0, 0, innerR * 0.95);
+    g.addColorStop(0, `rgba(255, 250, 220, ${0.95 * pulse})`);
+    g.addColorStop(0.25, `rgba(240, 193, 75, ${0.55 * pulse})`);
+    g.addColorStop(0.55, `rgba(167, 139, 250, ${0.35 * pulse})`);
+    g.addColorStop(1, "rgba(12, 16, 48, 0)");
+    ctx.beginPath();
+    ctx.arc(0, 0, innerR - 2, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+
+    const rays = 8;
+    for (let i = 0; i < rays; i++) {
+      const a = (i / rays) * Math.PI * 2 + t * 0.35;
+      ctx.save();
+      ctx.rotate(a);
+      ctx.beginPath();
+      ctx.moveTo(0, -innerR * 0.12);
+      ctx.lineTo(innerR * 0.12 * pulse, -innerR * 0.72 * pulse);
+      ctx.lineTo(0, -innerR * 0.22);
+      ctx.lineTo(-innerR * 0.12 * pulse, -innerR * 0.72 * pulse);
+      ctx.closePath();
+      ctx.fillStyle = `rgba(255, 244, 180, ${0.55 * pulse})`;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.beginPath();
+    ctx.arc(0, 0, innerR * 0.18 * pulse, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff8dc";
+    ctx.shadowColor = "rgba(240, 193, 75, 0.9)";
+    ctx.shadowBlur = 18;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  let peopleGlowRaf = 0;
+  function ensurePeopleGlowLoop() {
+    if (peopleGlowRaf) return;
+    const tick = () => {
+      if (!spinningPeople) {
+        drawStarOrbitWheel(peopleCtx, els.peopleCanvas, config.people, peopleRotation);
+      }
+      peopleGlowRaf = requestAnimationFrame(tick);
+    };
+    peopleGlowRaf = requestAnimationFrame(tick);
+  }
+
   function redrawAll() {
-    drawWheel(
+    drawStarOrbitWheel(
       peopleCtx,
       els.peopleCanvas,
       config.people,
-      peopleRotation,
-      "暂无人员",
-      (p) => truncateLabel(p.name, 8)
+      peopleRotation
     );
+    ensurePeopleGlowLoop();
     syncTubeSticks();
     renderStockPanel();
     updateButtons();
@@ -874,13 +1025,11 @@
         peopleRotation = v;
       },
       draw: () =>
-        drawWheel(
+        drawStarOrbitWheel(
           peopleCtx,
           els.peopleCanvas,
           config.people,
-          peopleRotation,
-          "暂无人员",
-          (p) => truncateLabel(p.name, 8)
+          peopleRotation
         ),
       items: config.people,
       setSpinning: (v) => {
@@ -1810,6 +1959,13 @@
 
   // events
   els.btnSpinPeople.addEventListener("click", spinPeople);
+  els.peopleCanvas.addEventListener("click", spinPeople);
+  els.peopleCanvas.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      spinPeople();
+    }
+  });
   els.btnSpinPrize.addEventListener("click", spinPrize);
   els.btnSettings.addEventListener("click", openSettings);
   els.btnHistory.addEventListener("click", openHistory);

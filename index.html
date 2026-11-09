@@ -10,44 +10,25 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="festive-decor" aria-hidden="true">
-    <span class="dot d1"></span>
-    <span class="dot d2"></span>
-    <span class="dot d3"></span>
-    <span class="dot d4"></span>
-    <span class="dot d5"></span>
-    <span class="dot d6"></span>
-    <span class="dot d7"></span>
-    <span class="dot d8"></span>
-    <span class="dot d9"></span>
-    <span class="dot d10"></span>
-    <span class="dot d11"></span>
-    <span class="dot d12"></span>
-    <span class="dot d13"></span>
-    <span class="dot d14"></span>
-    <span class="dot d15"></span>
-    <span class="dot d16"></span>
-    <span class="dot d17"></span>
-    <span class="dot d18"></span>
-    <span class="flake f1"></span>
-    <span class="flake f2"></span>
-    <span class="flake f3"></span>
-    <span class="flake f4"></span>
-    <span class="flake f5"></span>
-    <span class="flake f6"></span>
-    <span class="flake f7"></span>
-    <span class="flake f8"></span>
-    <span class="flake f9"></span>
-    <span class="balloon balloon-l"></span>
-    <span class="balloon balloon-r"></span>
-    <span class="balloon balloon-m"></span>
-    <span class="balloon balloon-tr"></span>
-    <span class="balloon balloon-xl1"></span>
-    <span class="balloon balloon-xl2"></span>
-    <span class="balloon balloon-xl3"></span>
-    <span class="balloon balloon-xl4"></span>
-    <span class="balloon balloon-xl5"></span>
-    <span class="balloon balloon-xl6"></span>
+  <div class="cosmos-decor" aria-hidden="true">
+    <span class="nebula n1"></span>
+    <span class="nebula n2"></span>
+    <span class="nebula n3"></span>
+    <span class="star s1"></span>
+    <span class="star s2"></span>
+    <span class="star s3"></span>
+    <span class="star s4"></span>
+    <span class="star s5"></span>
+    <span class="star s6"></span>
+    <span class="star s7"></span>
+    <span class="star s8"></span>
+    <span class="star s9"></span>
+    <span class="star s10"></span>
+    <span class="star s11"></span>
+    <span class="star s12"></span>
+    <span class="meteor m1"></span>
+    <span class="meteor m2"></span>
+    <span class="meteor m3"></span>
   </div>
   <div class="app">
     <main class="stage">
@@ -69,12 +50,20 @@
               <h1 id="pageTitle" class="brand">幸运大转盘</h1>
             </header>
             <div class="stage-row dual">
-              <section class="wheel-col" data-wheel="people">
-                <div class="wheel-wrap small">
-                  <div class="pointer" aria-hidden="true"></div>
-                  <canvas id="peopleWheel" width="480" height="480"></canvas>
-                  <button type="button" id="btnSpinPeople" class="spin-btn">中奖人</button>
+              <section class="wheel-col star-wheel-col" data-wheel="people">
+                <div class="star-wheel-wrap">
+                  <div class="pointer star-pointer" aria-hidden="true"></div>
+                  <canvas
+                    id="peopleWheel"
+                    width="480"
+                    height="480"
+                    class="star-wheel-canvas"
+                    role="button"
+                    tabindex="0"
+                    aria-label="点击转动转盘"
+                  ></canvas>
                 </div>
+                <button type="button" id="btnSpinPeople" class="star-spin-btn">转动</button>
                 <p id="lastPerson" class="current-pick"></p>
               </section>
 
