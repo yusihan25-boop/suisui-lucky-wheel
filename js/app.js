@@ -1141,7 +1141,7 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     "碎碎生日快乐".split("").forEach((ch, i) => {
-      ctx.fillText(ch, cx, h * 0.48 + i * (h * 0.05));
+      ctx.fillText(ch, cx, h * 0.53 + i * (h * 0.05));
     });
     ctx.restore();
 
