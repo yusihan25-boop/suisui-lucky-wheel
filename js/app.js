@@ -84,22 +84,17 @@
     decorEmpty: document.getElementById("decorEmpty"),
     decorInput: document.getElementById("decorInput"),
     lotteryTube: document.getElementById("lotteryTube"),
-    tubeCanvas: document.getElementById("tubeCanvas"),
+    tubeSticks: document.getElementById("tubeSticks"),
+    tubeDrawn: document.getElementById("tubeDrawn"),
+    drawnTip: document.getElementById("drawnTip"),
+    drawnLabel: document.getElementById("drawnLabel"),
   };
 
   const peopleCtx = els.peopleCanvas.getContext("2d");
   const prizeCtx = els.prizeCanvas ? els.prizeCanvas.getContext("2d") : null;
-  const tubeCtx = els.tubeCanvas ? els.tubeCanvas.getContext("2d") : null;
 
   const tubeState = {
-    sticks: [],
     mode: "idle", // idle | shake | rise
-    riseStick: null,
-    riseLabel: "",
-    riseProgress: 0,
-    shakeAmp: 0,
-    raf: 0,
-    lastTs: 0,
   };
 
   let config = loadConfig();
@@ -420,221 +415,29 @@
   }
 
   function syncTubeSticks() {
-    if (!els.tubeCanvas || !tubeCtx) return;
+    if (!els.tubeSticks) return;
     const pool = availablePrizes();
-    const count = Math.max(14, Math.min(28, (pool.length || 1) * 4));
-    const prev = tubeState.sticks;
-    tubeState.sticks = [];
+    const count = Math.max(16, Math.min(26, Math.max(pool.length, 1) * 3));
+    els.tubeSticks.innerHTML = "";
     for (let i = 0; i < count; i++) {
-      const prize = pool[i % Math.max(pool.length, 1)] || { color: PALETTE[i % PALETTE.length], name: "" };
-      const old = prev[i];
-      const col = i % 7;
-      const row = Math.floor(i / 7);
-      tubeState.sticks.push({
-        x: old ? old.x : 0.18 + col * 0.105 + (row % 2) * 0.03 + (Math.random() - 0.5) * 0.02,
-        y: old ? old.y : 0.12 + row * 0.045 + Math.random() * 0.02,
-        wobble: old ? old.wobble : Math.random() * Math.PI * 2,
-        tip: prize.color || PALETTE[i % PALETTE.length],
-        lean: (Math.random() - 0.5) * 0.12,
-      });
+      const prize = pool[i % Math.max(pool.length, 1)] || { color: PALETTE[i % PALETTE.length] };
+      const stick = document.createElement("div");
+      stick.className = "tube-stick";
+      const tip = document.createElement("span");
+      tip.className = "stick-tip";
+      tip.style.background = prize.color || PALETTE[i % PALETTE.length];
+      stick.appendChild(tip);
+      const left = 4 + (i % 9) * 10 + (Math.floor(i / 9) % 2) * 4 + Math.random() * 3;
+      const bottom = 8 + Math.floor(i / 9) * 10 + Math.random() * 8;
+      const rot = (Math.random() - 0.5) * 10;
+      stick.style.left = `${left}%`;
+      stick.style.bottom = `${bottom}%`;
+      stick.style.height = `${130 + Math.random() * 40}px`;
+      stick.style.transform = `rotate(${rot}deg)`;
+      stick.style.zIndex = String(10 + i);
+      els.tubeSticks.appendChild(stick);
     }
-    ensureTubeLoop();
-  }
-
-  function ensureTubeLoop() {
-    if (tubeState.raf) return;
-    tubeState.lastTs = performance.now();
-    const tick = (ts) => {
-      const dt = Math.min(0.032, (ts - tubeState.lastTs) / 1000 || 0.016);
-      tubeState.lastTs = ts;
-      stepTube(dt);
-      drawTube();
-      tubeState.raf = requestAnimationFrame(tick);
-    };
-    tubeState.raf = requestAnimationFrame(tick);
-  }
-
-  function stepTube(dt) {
-    tubeState.sticks.forEach((s) => {
-      const speed = tubeState.mode === "shake" ? 18 : 2.2;
-      s.wobble += dt * speed;
-      if (tubeState.mode === "shake") {
-        s.lean += (Math.random() - 0.5) * 0.08;
-        s.lean *= 0.92;
-      } else {
-        s.lean *= 0.96;
-      }
-    });
-    if (tubeState.mode === "rise" && tubeState.riseStick) {
-      tubeState.riseProgress = Math.min(1, tubeState.riseProgress + dt * 1.35);
-    }
-    if (tubeState.mode === "shake") {
-      tubeState.shakeAmp = Math.min(1, tubeState.shakeAmp + dt * 4);
-    } else {
-      tubeState.shakeAmp = Math.max(0, tubeState.shakeAmp - dt * 3);
-    }
-  }
-
-  function roundedStickPath(ctx, x, y, w, h, r) {
-    const rr = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + rr, y);
-    ctx.arcTo(x + w, y, x + w, y + h, rr);
-    ctx.arcTo(x + w, y + h, x, y + h, rr);
-    ctx.arcTo(x, y + h, x, y, rr);
-    ctx.arcTo(x, y, x + w, y, rr);
-    ctx.closePath();
-  }
-
-  function drawOneStick(ctx, x, y, w, h, tipColor, lean, label) {
-    ctx.save();
-    ctx.translate(x + w / 2, y + h);
-    ctx.rotate(lean);
-    ctx.translate(-w / 2, -h);
-
-    const tipH = h * 0.22;
-    roundedStickPath(ctx, 0, 0, w, h, w * 0.45);
-    ctx.fillStyle = "#f3e4c4";
-    ctx.fill();
-    ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = 3.2;
-    ctx.stroke();
-
-    roundedStickPath(ctx, 0, 0, w, tipH, w * 0.45);
-    ctx.fillStyle = tipColor || "#d08a5a";
-    ctx.fill();
-    ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = 3.2;
-    ctx.stroke();
-
-    // seam under tip
-    ctx.beginPath();
-    ctx.moveTo(2, tipH);
-    ctx.lineTo(w - 2, tipH);
-    ctx.strokeStyle = "rgba(61,42,31,0.45)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    if (label) {
-      ctx.save();
-      ctx.translate(w / 2, h * 0.62);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillStyle = "#3d2a1f";
-      ctx.font = "bold 16px 'Noto Sans SC', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      const text = String(label).slice(0, 8);
-      ctx.fillText(text, 0, 0);
-      ctx.restore();
-    }
-    ctx.restore();
-  }
-
-  function drawTubeShell(ctx, w, h, alpha) {
-    const topY = h * 0.28;
-    const bottomY = h * 0.92;
-    const topW = w * 0.62;
-    const bottomW = w * 0.48;
-    const cx = w / 2;
-
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.beginPath();
-    ctx.moveTo(cx - topW / 2, topY);
-    ctx.lineTo(cx + topW / 2, topY);
-    ctx.lineTo(cx + bottomW / 2, bottomY);
-    ctx.quadraticCurveTo(cx, bottomY + h * 0.04, cx - bottomW / 2, bottomY);
-    ctx.closePath();
-    ctx.fillStyle = "#e87868";
-    ctx.fill();
-    ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = 5;
-    ctx.stroke();
-
-    // inner rim
-    ctx.beginPath();
-    ctx.ellipse(cx, topY, topW / 2, h * 0.035, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "#c45a4c";
-    ctx.fill();
-    ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    // highlight
-    ctx.beginPath();
-    ctx.moveTo(cx - topW * 0.38, topY + 8);
-    ctx.lineTo(cx - bottomW * 0.28, bottomY - 10);
-    ctx.strokeStyle = "rgba(255,255,255,0.28)";
-    ctx.lineWidth = 10;
-    ctx.lineCap = "round";
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawTube() {
-    if (!tubeCtx || !els.tubeCanvas) return;
-    const w = els.tubeCanvas.width;
-    const h = els.tubeCanvas.height;
-    tubeCtx.clearRect(0, 0, w, h);
-
-    const shakeX = tubeState.shakeAmp * Math.sin(performance.now() / 40) * 4;
-    const shakeRot = tubeState.shakeAmp * Math.sin(performance.now() / 55) * 0.03;
-
-    tubeCtx.save();
-    tubeCtx.translate(w / 2 + shakeX, h / 2);
-    tubeCtx.rotate(shakeRot);
-    tubeCtx.translate(-w / 2, -h / 2);
-
-    // back shell
-    drawTubeShell(tubeCtx, w, h, 1);
-
-    // sticks clipped to tube mouth area
-    const topY = h * 0.28;
-    const topW = w * 0.62;
-    const stickAreaTop = h * 0.02;
-    const stickH = h * 0.34;
-    const stickW = w * 0.07;
-
-    tubeCtx.save();
-    tubeCtx.beginPath();
-    tubeCtx.rect(w * 0.14, 0, w * 0.72, topY + 8);
-    tubeCtx.clip();
-
-    const ordered = [...tubeState.sticks].sort((a, b) => a.y - b.y);
-    ordered.forEach((s) => {
-      if (tubeState.riseStick === s) return;
-      const sx = w * 0.19 + s.x * topW * 0.9;
-      const sy = stickAreaTop + s.y * (topY - stickAreaTop);
-      const wob = Math.sin(s.wobble) * (tubeState.mode === "shake" ? 0.08 : 0.02);
-      drawOneStick(tubeCtx, sx, sy, stickW, stickH, s.tip, s.lean + wob, null);
-    });
-    tubeCtx.restore();
-
-    // translucent front shell
-    drawTubeShell(tubeCtx, w, h, 0.42);
-
-    // rising stick in front
-    if (tubeState.riseStick && tubeState.mode === "rise") {
-      const s = tubeState.riseStick;
-      const p = tubeState.riseProgress;
-      const ease = 1 - Math.pow(1 - p, 3);
-      const baseX = w / 2 - stickW / 2;
-      const startY = topY - stickH * 0.55;
-      const endY = h * 0.08;
-      const y = startY + (endY - startY) * ease;
-      drawOneStick(
-        tubeCtx,
-        baseX,
-        y,
-        stickW * 1.35,
-        stickH * 1.55,
-        s.tip,
-        Math.sin(p * 6) * 0.04,
-        tubeState.riseLabel
-      );
-    }
-
-    tubeCtx.restore();
+    if (els.tubeDrawn) els.tubeDrawn.hidden = true;
   }
 
   function animateLotteryTube({ items, onDone, setSpinning }) {
@@ -644,32 +447,35 @@
     updateButtons();
     syncTubeSticks();
     tubeState.mode = "shake";
-    tubeState.riseStick = null;
-    tubeState.riseProgress = 0;
-    tubeState.riseLabel = "";
     if (els.lotteryTube) els.lotteryTube.classList.add("shaking");
+    if (els.tubeDrawn) els.tubeDrawn.hidden = true;
 
     window.setTimeout(() => {
-      const pick = tubeState.sticks[Math.floor(Math.random() * tubeState.sticks.length)] || null;
-      if (pick) pick.tip = winner.color || pick.tip;
-      tubeState.riseStick = pick;
-      tubeState.riseLabel = winner.name || "";
-      tubeState.riseProgress = 0;
       tubeState.mode = "rise";
       if (els.lotteryTube) els.lotteryTube.classList.remove("shaking");
-    }, 1600);
+      if (els.drawnTip) els.drawnTip.style.background = winner.color || PALETTE[0];
+      if (els.drawnLabel) els.drawnLabel.textContent = winner.name || "";
+      if (els.tubeDrawn) {
+        els.tubeDrawn.hidden = false;
+        const drawn = els.tubeDrawn.querySelector(".tube-stick");
+        if (drawn) {
+          drawn.style.animation = "none";
+          void drawn.offsetWidth;
+          drawn.style.animation = "";
+        }
+      }
+    }, 1500);
 
     window.setTimeout(() => {
       tubeState.mode = "idle";
-      tubeState.riseStick = null;
-      tubeState.riseLabel = "";
-      tubeState.riseProgress = 0;
       setSpinning(false);
       updateButtons();
+      if (els.tubeDrawn) els.tubeDrawn.hidden = true;
       syncTubeSticks();
       onDone(winner);
-    }, 3200);
+    }, 3100);
   }
+
   function pickWeightedIndex(items) {
     const total = totalProbability(items);
     if (total <= 0) return Math.floor(Math.random() * items.length);
