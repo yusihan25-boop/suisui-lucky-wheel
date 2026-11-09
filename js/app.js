@@ -1854,8 +1854,6 @@
   }
 
   function hideResult() {
-    // 先弹提示，点确定后才真正关闭中奖弹窗
-    alert("请记得导出中奖记录");
     els.resultModal.classList.remove("open");
     els.resultModal.setAttribute("aria-hidden", "true");
     stopConfetti();
@@ -2438,6 +2436,14 @@
     else if (els.stockModal.classList.contains("open")) hideStock();
     else if (els.historyModal.classList.contains("open")) hideHistory();
     else if (els.settingsPanel.classList.contains("open")) closeSettings();
+  });
+
+  // 关闭浏览器窗口/标签时，若有中奖记录则拦截并提醒
+  window.addEventListener("beforeunload", (e) => {
+    if (!history.length) return;
+    e.preventDefault();
+    e.returnValue = "请记得导出中奖记录";
+    return "请记得导出中奖记录";
   });
 
   function renderDecor(dataUrl) {
