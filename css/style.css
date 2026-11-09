@@ -955,7 +955,7 @@ body {
   position: relative;
   width: 100%;
   aspect-ratio: 420 / 700;
-  filter: drop-shadow(0 16px 24px rgba(90, 40, 30, 0.22));
+  filter: drop-shadow(0 16px 28px rgba(244, 114, 182, 0.28));
   overflow: visible;
 }
 
@@ -973,16 +973,16 @@ body {
 .tube-btn {
   min-width: 120px;
   height: 52px;
-  border: 4px solid #3d2a1f;
+  border: 3px solid #be123c;
   border-radius: 999px;
-  background: #e85748;
+  background: linear-gradient(160deg, #fb7185, #e11d48);
   color: #fff;
   font-family: var(--display);
   font-size: 1.25rem;
   font-weight: 900;
   letter-spacing: 0.14em;
   cursor: pointer;
-  box-shadow: 0 5px 0 #3d2a1f, 0 10px 16px rgba(80, 40, 20, 0.16);
+  box-shadow: 0 5px 0 #9f1239, 0 10px 16px rgba(190, 24, 93, 0.28);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
@@ -992,7 +992,7 @@ body {
 
 .tube-btn:active:not(:disabled) {
   transform: translateY(3px);
-  box-shadow: 0 2px 0 #3d2a1f, 0 5px 10px rgba(80, 40, 20, 0.14);
+  box-shadow: 0 2px 0 #9f1239, 0 5px 10px rgba(190, 24, 93, 0.22);
 }
 
 .tube-btn:disabled {
