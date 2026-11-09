@@ -447,11 +447,11 @@
       const ring = 0.48 + layer * 0.16 + (slot % 3) * 0.02;
       tubeState.sticks.push({
         ang,
-        ring: Math.min(0.94, ring),
+        ring: Math.min(0.88, ring),
         tip: TUBE_TIPS[(i * 3) % TUBE_TIPS.length],
-        lean: Math.cos(ang) * (3 + layer * 2.2) + (i % 5 - 2) * 0.8,
-        // 闲置：花朵 + 签身露出，下端被前口沿遮住
-        h: 0.2 + (i % 5) * 0.016 + (2 - layer) * 0.014,
+        lean: Math.cos(ang) * (2 + layer * 1.6) + (i % 5 - 2) * 0.5,
+        // 闲置：花朵完整露出，下端被前口沿遮住
+        h: 0.18 + (i % 5) * 0.012 + (2 - layer) * 0.01,
         shade: i % 3 === 0 ? 0.08 : i % 3 === 1 ? 0.04 : 0,
         wobble: old ? old.wobble : Math.random() * Math.PI * 2,
       });
@@ -593,13 +593,13 @@
     tubeCtx.clearRect(0, 0, w, h);
 
     const cx = w * 0.5;
-    const rimY = h * 0.36;
+    const rimY = h * 0.4;
     const topRx = w * 0.3;
-    const topRy = h * 0.055;
+    const topRy = h * 0.05;
     const botY = h * 0.9;
     const botRx = w * 0.235;
     const stickW = w * 0.072;
-    const topPad = 22;
+    const topPad = 36;
     // 口沿外圈 / 内孔 —— 差值即厚度（像泡面桶卷边）
     const outRx = topRx;
     const outRy = topRy * 1.35;
@@ -647,18 +647,14 @@
     );
 
     // 3) 签子插进开口里（像叉子插进泡面桶）
+    // 裁剪加宽加高，避免花朵/签头被切掉
     tubeCtx.save();
     tubeCtx.beginPath();
-    // 允许画出开口上方 + 开口内腔
-    tubeCtx.moveTo(cx - inRx * 1.15, 0);
-    tubeCtx.lineTo(cx + inRx * 1.15, 0);
-    tubeCtx.lineTo(cx + inRx * 1.15, rimY);
-    tubeCtx.ellipse(cx, rimY - 2, inRx * 1.05, inRy * 1.25, 0, 0, Math.PI);
-    tubeCtx.closePath();
+    tubeCtx.rect(0, 0, w, rimY + inRy * 2.4);
     tubeCtx.clip();
 
     ordered.forEach((s) => {
-      const ox = Math.cos(s.ang) * inRx * s.ring * 0.82;
+      const ox = Math.cos(s.ang) * inRx * s.ring * 0.72;
       const baseX = cx + ox;
       // 根部深入口内，稍后被前半口沿挡住
       const baseY = rimY + inRy * 1.4;
@@ -668,10 +664,15 @@
           : Math.sin(s.wobble) * 0.25;
       const leanJ =
         tubeState.mode === "shake"
-          ? Math.sin(s.wobble * 1.4) * 2.8
+          ? Math.sin(s.wobble * 1.4) * 2.2
           : Math.sin(s.wobble) * 0.25;
-      const stickH = Math.min(h * s.h + inRy * 2.8, baseY - topPad);
-      if (stickH < stickW * 2) return;
+      // 预留花朵超出签顶的高度，防止头顶被裁
+      const flowerOver = stickW * 1.25 * 0.55;
+      const stickH = Math.min(
+        h * s.h + inRy * 2.8,
+        baseY + jiggle - topPad - flowerOver
+      );
+      if (stickH < stickW * 2.2) return;
       paintStick(
         tubeCtx,
         baseX,
