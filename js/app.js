@@ -1854,6 +1854,8 @@
   }
 
   function hideResult() {
+    // 先弹提示，点确定后才真正关闭中奖弹窗
+    alert("请记得导出中奖记录");
     els.resultModal.classList.remove("open");
     els.resultModal.setAttribute("aria-hidden", "true");
     stopConfetti();
@@ -1897,7 +1899,39 @@
     els.stockModal.setAttribute("aria-hidden", "true");
   }
 
-  function exportHistory() {
+  async function saveWorkbookWithPicker(book, filename) {
+    const buffer = XLSX.write(book, { bookType: "xlsx", type: "array" });
+    try {
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`,
+          types: [
+            {
+              description: "Excel 工作簿",
+              accept: {
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+                  ".xlsx",
+                ],
+              },
+            },
+          ],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(buffer);
+        await writable.close();
+        return true;
+      }
+    } catch (err) {
+      if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
+        return false;
+      }
+      console.warn("另存为失败，回退普通下载", err);
+    }
+    XLSX.writeFile(book, filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`);
+    return true;
+  }
+
+  async function exportHistory() {
     if (!history.length) {
       alert("暂无中奖记录可导出");
       return;
@@ -1931,7 +1965,7 @@
         const sheet = XLSX.utils.aoa_to_sheet(rows);
         XLSX.utils.book_append_sheet(book, sheet, sheetNameSafe(title, usedNames));
       });
-      XLSX.writeFile(book, `${filename}.xlsx`);
+      await saveWorkbookWithPicker(book, `${filename}.xlsx`);
       return;
     }
 
@@ -2127,38 +2161,7 @@
     const book = XLSX.utils.book_new();
     const sheet = XLSX.utils.aoa_to_sheet(rows);
     XLSX.utils.book_append_sheet(book, sheet, "模板");
-    const buffer = XLSX.write(book, { bookType: "xlsx", type: "array" });
-
-    try {
-      if (window.showSaveFilePicker) {
-        const handle = await window.showSaveFilePicker({
-          suggestedName: filename,
-          types: [
-            {
-              description: "Excel 工作簿",
-              accept: {
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-                  ".xlsx",
-                ],
-              },
-            },
-          ],
-        });
-        const writable = await handle.createWritable();
-        await writable.write(buffer);
-        await writable.close();
-        return;
-      }
-    } catch (err) {
-      // 用户取消另存为
-      if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
-        return;
-      }
-      console.warn("另存为失败，回退普通下载", err);
-    }
-
-    // 不支持 File System Access API 时回退
-    XLSX.writeFile(book, filename);
+    await saveWorkbookWithPicker(book, filename);
   }
 
   function downloadPeopleTemplate() {
