@@ -731,17 +731,28 @@ body {
 }
 
 .stage-row.dual {
-  align-items: stretch;
+  align-items: flex-end;
 }
 
 .wheel-col {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
   gap: 12px;
   flex: 1 1 0;
   min-width: 0;
   max-width: 460px;
+}
+
+/* 视觉区等高：转盘沉底，与蛋糕筒底对齐，按钮自然同高 */
+.stage-visual {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: min(62vh, 520px);
 }
 
 .wheel-title {
@@ -942,29 +953,19 @@ body {
   filter: grayscale(0.35) brightness(0.85);
 }
 
-/* —— 摇签筒（对照 GACHAGO LotteryTube） —— */
+/* —— 摇签筒（生日蛋糕造型） —— */
 .tube-col {
   flex: 1 1 0;
   max-width: 420px;
 }
 
-.tube-wrap {
-  width: min(100%, 300px);
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-  overflow: visible;
-}
-
 .lottery-tube {
   position: relative;
-  width: 100%;
+  width: min(100%, 300px);
   aspect-ratio: 420 / 700;
   filter: drop-shadow(0 16px 28px rgba(244, 114, 182, 0.28));
   overflow: visible;
+  animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .lottery-tube canvas {
