@@ -88,6 +88,145 @@ body {
   background: radial-gradient(circle, rgba(240,193,75,0.18), transparent 70%);
   animation-delay: -7s;
 }
+.cosmos-decor .n4 {
+  width: 300px; height: 220px;
+  top: 55%; right: 18%;
+  background: radial-gradient(circle, rgba(236,72,153,0.22), transparent 70%);
+  animation-delay: -2s;
+}
+.cosmos-decor .n5 {
+  width: 380px; height: 240px;
+  top: 35%; left: 55%;
+  background: radial-gradient(circle, rgba(99,102,241,0.28), transparent 70%);
+  animation-delay: -9s;
+}
+
+/* 密星层：用多重阴影铺满星空 */
+.cosmos-decor .starfield {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.9;
+  animation: starTwinkle 5s ease-in-out infinite;
+}
+.cosmos-decor .sf1 {
+  top: 0; left: 0;
+  box-shadow:
+    12vw 8vh 0 0 #fff, 18vw 22vh 0 1px #e0e7ff, 27vw 5vh 0 0 #fff,
+    35vw 18vh 0 0 #fde68a, 42vw 9vh 0 1px #fff, 51vw 28vh 0 0 #c4b5fd,
+    58vw 6vh 0 0 #fff, 66vw 20vh 0 0 #fff, 74vw 11vh 0 1px #fef3c7,
+    82vw 25vh 0 0 #fff, 91vw 7vh 0 0 #ddd6fe, 8vw 35vh 0 0 #fff,
+    15vw 48vh 0 1px #fff, 24vw 41vh 0 0 #fde68a, 33vw 55vh 0 0 #fff,
+    47vw 38vh 0 0 #c4b5fd, 55vw 52vh 0 1px #fff, 63vw 44vh 0 0 #fff,
+    71vw 58vh 0 0 #e0e7ff, 79vw 36vh 0 0 #fff, 88vw 49vh 0 1px #fde68a,
+    5vw 68vh 0 0 #fff, 14vw 75vh 0 0 #c4b5fd, 22vw 62vh 0 0 #fff,
+    31vw 80vh 0 1px #fff, 39vw 70vh 0 0 #fef3c7, 48vw 85vh 0 0 #fff,
+    57vw 72vh 0 0 #fff, 65vw 88vh 0 1px #ddd6fe, 73vw 66vh 0 0 #fff,
+    81vw 82vh 0 0 #fde68a, 90vw 74vh 0 0 #fff, 96vw 60vh 0 1px #fff,
+    3vw 92vh 0 0 #c4b5fd, 28vw 94vh 0 0 #fff, 44vw 96vh 0 0 #fff,
+    62vw 93vh 0 1px #e0e7ff, 77vw 97vh 0 0 #fff, 93vw 91vh 0 0 #fde68a;
+}
+.cosmos-decor .sf2 {
+  top: 0; left: 0;
+  animation-delay: -2.5s;
+  box-shadow:
+    7vw 14vh 0 0 #fff, 21vw 31vh 0 0 #c4b5fd, 29vw 12vh 0 1px #fff,
+    38vw 27vh 0 0 #fff, 46vw 3vh 0 0 #fde68a, 54vw 33vh 0 0 #fff,
+    61vw 15vh 0 1px #e0e7ff, 69vw 29vh 0 0 #fff, 77vw 4vh 0 0 #fff,
+    85vw 17vh 0 0 #ddd6fe, 94vw 32vh 0 1px #fff, 11vw 43vh 0 0 #fff,
+    19vw 57vh 0 0 #fef3c7, 26vw 49vh 0 1px #fff, 37vw 63vh 0 0 #c4b5fd,
+    44vw 46vh 0 0 #fff, 52vw 61vh 0 0 #fff, 60vw 39vh 0 1px #fde68a,
+    68vw 54vh 0 0 #fff, 76vw 47vh 0 0 #e0e7ff, 84vw 64vh 0 0 #fff,
+    92vw 42vh 0 1px #fff, 6vw 78vh 0 0 #fff, 17vw 86vh 0 0 #c4b5fd,
+    25vw 71vh 0 1px #fff, 34vw 89vh 0 0 #fff, 43vw 76vh 0 0 #fde68a,
+    50vw 90vh 0 0 #fff, 59vw 81vh 0 1px #ddd6fe, 67vw 95vh 0 0 #fff,
+    75vw 78vh 0 0 #fff, 83vw 90vh 0 0 #e0e7ff, 91vw 83vh 0 1px #fff,
+    2vw 51vh 0 0 #fff, 98vw 19vh 0 0 #fef3c7, 40vw 21vh 0 0 #fff;
+
+}
+
+.cosmos-decor .planet {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.78;
+  animation: planetDrift 18s ease-in-out infinite;
+}
+.cosmos-decor .p1 {
+  width: 58px; height: 58px;
+  top: 12%; right: 10%;
+  background: radial-gradient(circle at 32% 28%, #fde68a, #f59e0b 45%, #b45309);
+  box-shadow: 0 0 28px rgba(245, 158, 11, 0.5);
+}
+.cosmos-decor .p2 {
+  width: 38px; height: 38px;
+  top: 62%; left: 8%;
+  background: radial-gradient(circle at 30% 30%, #c4b5fd, #7c3aed 50%, #4c1d95);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.55);
+  animation-delay: -5s;
+}
+.cosmos-decor .p3 {
+  width: 24px; height: 24px;
+  bottom: 20%; right: 20%;
+  background: radial-gradient(circle at 35% 30%, #bfdbfe, #3b82f6 55%, #1e3a8a);
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.5);
+  animation-delay: -9s;
+}
+.cosmos-decor .p4 {
+  width: 18px; height: 18px;
+  top: 38%; left: 26%;
+  background: radial-gradient(circle at 35% 30%, #fecdd3, #fb7185 50%, #9f1239);
+  box-shadow: 0 0 14px rgba(251, 113, 133, 0.45);
+  animation-delay: -3s;
+}
+.cosmos-decor .p5 {
+  width: 44px; height: 44px;
+  top: 28%; left: 6%;
+  background: radial-gradient(circle at 32% 28%, #fef3c7, #d97706 48%, #78350f);
+  box-shadow: 0 0 22px rgba(217, 119, 6, 0.4);
+  animation-delay: -7s;
+}
+.cosmos-decor .p5.ringed::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 78px;
+  height: 18px;
+  margin: -9px 0 0 -39px;
+  border: 2px solid rgba(253, 224, 120, 0.65);
+  border-radius: 50%;
+  transform: rotate(-22deg);
+  box-shadow: 0 0 8px rgba(253, 224, 120, 0.35);
+  pointer-events: none;
+}
+.cosmos-decor .p6 {
+  width: 14px; height: 14px;
+  top: 78%; left: 48%;
+  background: radial-gradient(circle at 35% 30%, #a5f3fc, #06b6d4 55%, #155e75);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.45);
+  animation-delay: -11s;
+}
+
+.cosmos-decor .spark {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #fff8dc;
+  opacity: 0.85;
+  clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
+  filter: drop-shadow(0 0 6px rgba(255, 248, 220, 0.9));
+  animation: sparkPulse 4.2s ease-in-out infinite;
+}
+.cosmos-decor .sp1 { top: 18%; left: 32%; }
+.cosmos-decor .sp2 { top: 26%; right: 26%; width: 10px; height: 10px; animation-delay: -1s; }
+.cosmos-decor .sp3 { top: 52%; left: 16%; width: 12px; height: 12px; animation-delay: -2.2s; }
+.cosmos-decor .sp4 { bottom: 28%; left: 42%; animation-delay: -0.6s; }
+.cosmos-decor .sp5 { top: 8%; left: 58%; width: 9px; height: 9px; animation-delay: -3.1s; }
+.cosmos-decor .sp6 { bottom: 14%; right: 12%; width: 11px; height: 11px; animation-delay: -1.8s; }
+.cosmos-decor .sp7 { top: 44%; right: 42%; width: 8px; height: 8px; animation-delay: -2.7s; }
+.cosmos-decor .sp8 { bottom: 42%; left: 62%; width: 13px; height: 13px; animation-delay: -0.9s; }
 
 .cosmos-decor .star {
   position: absolute;
@@ -109,6 +248,30 @@ body {
 .cosmos-decor .s10 { top: 66%; left: 55%; animation-delay: -3s; }
 .cosmos-decor .s11 { top: 12%; right: 36%; animation-delay: -2.2s; }
 .cosmos-decor .s12 { bottom: 16%; left: 12%; width: 2px; height: 2px; animation-delay: -0.9s; }
+.cosmos-decor .s13 { top: 6%; left: 42%; width: 2px; height: 2px; animation-delay: -0.4s; }
+.cosmos-decor .s14 { top: 44%; right: 8%; animation-delay: -1.6s; }
+.cosmos-decor .s15 { top: 70%; right: 40%; width: 2px; height: 2px; animation-delay: -2.8s; }
+.cosmos-decor .s16 { bottom: 8%; left: 36%; animation-delay: -0.2s; }
+.cosmos-decor .s17 { top: 20%; left: 72%; width: 4px; height: 4px; animation-delay: -3.4s; }
+.cosmos-decor .s18 { top: 86%; right: 30%; width: 2px; height: 2px; animation-delay: -1.2s; }
+.cosmos-decor .s19 { top: 40%; left: 4%; animation-delay: -2.4s; }
+.cosmos-decor .s20 { top: 54%; left: 68%; width: 2px; height: 2px; animation-delay: -0.7s; }
+.cosmos-decor .s21 { bottom: 34%; left: 24%; animation-delay: -3.6s; }
+.cosmos-decor .s22 { top: 3%; right: 22%; width: 2px; height: 2px; animation-delay: -1.9s; }
+.cosmos-decor .s23 { top: 76%; left: 8%; animation-delay: -2.1s; }
+.cosmos-decor .s24 { top: 30%; left: 55%; width: 2px; height: 2px; animation-delay: -0.1s; }
+.cosmos-decor .s25 { top: 14%; left: 88%; width: 3px; height: 3px; animation-delay: -1.5s; }
+.cosmos-decor .s26 { top: 50%; left: 90%; width: 2px; height: 2px; animation-delay: -2.9s; }
+.cosmos-decor .s27 { top: 88%; left: 70%; animation-delay: -0.6s; }
+.cosmos-decor .s28 { top: 92%; left: 20%; width: 2px; height: 2px; animation-delay: -3.2s; }
+.cosmos-decor .s29 { top: 5%; left: 30%; width: 4px; height: 4px; animation-delay: -1.7s; }
+.cosmos-decor .s30 { top: 60%; left: 3%; width: 2px; height: 2px; animation-delay: -2.5s; }
+.cosmos-decor .s31 { top: 42%; left: 78%; animation-delay: -0.35s; }
+.cosmos-decor .s32 { top: 25%; left: 35%; width: 2px; height: 2px; animation-delay: -4s; }
+.cosmos-decor .s33 { top: 68%; left: 82%; width: 3px; height: 3px; animation-delay: -1.3s; }
+.cosmos-decor .s34 { top: 83%; left: 50%; width: 2px; height: 2px; animation-delay: -3.8s; }
+.cosmos-decor .s35 { top: 36%; left: 15%; animation-delay: -2.0s; }
+.cosmos-decor .s36 { top: 9%; left: 75%; width: 2px; height: 2px; animation-delay: -0.55s; }
 
 .cosmos-decor .meteor {
   position: absolute;
@@ -122,6 +285,10 @@ body {
 .cosmos-decor .m1 { top: 8%; left: 55%; animation-delay: 0s; }
 .cosmos-decor .m2 { top: 24%; left: 20%; width: 70px; animation-delay: -2.4s; }
 .cosmos-decor .m3 { top: 42%; left: 70%; width: 110px; animation-delay: -4.8s; }
+.cosmos-decor .m4 { top: 58%; left: 35%; width: 80px; animation-delay: -1.2s; transform: rotate(-35deg); }
+.cosmos-decor .m5 { top: 16%; left: 78%; width: 100px; animation-delay: -5.6s; }
+.cosmos-decor .m6 { top: 70%; left: 12%; width: 95px; animation-delay: -3.3s; transform: rotate(-40deg); }
+.cosmos-decor .m7 { top: 32%; left: 48%; width: 85px; animation-delay: -6.2s; }
 
 @keyframes nebulaPulse {
   0%, 100% { opacity: 0.4; transform: scale(1); }
@@ -130,6 +297,14 @@ body {
 @keyframes starTwinkle {
   0%, 100% { opacity: 0.35; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.4); }
+}
+@keyframes sparkPulse {
+  0%, 100% { opacity: 0.45; transform: scale(0.85) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(12deg); }
+}
+@keyframes planetDrift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 @keyframes meteorFall {
   0% { opacity: 0; transform: translate(0,0) rotate(-28deg); }
@@ -562,7 +737,6 @@ body {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: 50%;
   cursor: pointer;
 }
 
