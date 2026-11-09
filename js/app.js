@@ -92,16 +92,18 @@
   const tubeCtx = els.tubeCanvas ? els.tubeCanvas.getContext("2d") : null;
 
   const TUBE_TIPS = [
-    "#5b8fd9",
-    "#7a6fd0",
-    "#e07a3a",
-    "#6aae5e",
-    "#e6c04a",
-    "#e25b5b",
-    "#d47bb0",
-    "#4eb3a5",
-    "#8ecf5a",
-    "#f0a0c0",
+    "#f0a33a",
+    "#5aa8e8",
+    "#e45b5b",
+    "#6fc26a",
+    "#9b6fe0",
+    "#f2d04a",
+    "#e87ab8",
+    "#4ec4b8",
+    "#7a8ef0",
+    "#f07858",
+    "#8ed65a",
+    "#d46ad0",
   ];
 
   const tubeState = {
@@ -433,21 +435,23 @@
 
   function syncTubeSticks() {
     if (!els.tubeCanvas || !tubeCtx) return;
-    const pool = availablePrizes();
-    const count = pool.length < 1 ? 20 : Math.max(22, Math.min(32, pool.length * 4));
+    const count = 36;
     const prev = tubeState.sticks;
     tubeState.sticks = [];
     for (let i = 0; i < count; i++) {
       const old = prev[i];
-      const t = i / count;
-      const ang = t * Math.PI * 2 - Math.PI / 2;
-      const ring = 0.55 + (i % 5) * 0.08;
+      const layer = i % 4;
+      const slot = Math.floor(i / 4);
+      const slots = Math.ceil(count / 4);
+      const ang = (slot / slots) * Math.PI * 2 - Math.PI / 2 + layer * 0.08;
+      const ring = 0.42 + layer * 0.14 + (slot % 3) * 0.02;
       tubeState.sticks.push({
         ang,
-        ring,
-        tip: TUBE_TIPS[i % TUBE_TIPS.length],
-        lean: Math.cos(ang) * (6 + ring * 8),
-        h: 0.22 + (i % 6) * 0.018 + (1 - ring) * 0.04,
+        ring: Math.min(0.96, ring),
+        tip: TUBE_TIPS[(i * 3) % TUBE_TIPS.length],
+        lean: Math.cos(ang) * (4 + layer * 3) + (i % 5 - 2) * 1.2,
+        h: 0.26 + (i % 7) * 0.016 + (3 - layer) * 0.012,
+        shade: i % 3 === 0 ? 0.08 : i % 3 === 1 ? 0.04 : 0,
         wobble: old ? old.wobble : Math.random() * Math.PI * 2,
       });
     }
@@ -462,7 +466,7 @@
       tubeState.lastTs = ts;
       const shaking = tubeState.mode === "shake";
       tubeState.sticks.forEach((s) => {
-        s.wobble += dt * (shaking ? 9 : 1.4);
+        s.wobble += dt * (shaking ? 14 : 1.2);
       });
       if (tubeState.mode === "rise") {
         tubeState.riseProgress = Math.min(1, tubeState.riseProgress + dt * 1.2);
@@ -484,43 +488,55 @@
     ctx.closePath();
   }
 
-  function paintStick(ctx, x, y, w, h, tipColor, lean, label) {
+  function paintStick(ctx, x, y, w, h, tipColor, lean, label, shade = 0) {
     ctx.save();
     ctx.translate(x, y + h);
     ctx.rotate((lean * Math.PI) / 180);
     ctx.translate(-w / 2, -h);
 
-    const tipH = Math.max(w * 1.15, h * 0.22);
-    const bodyR = w * 0.42;
+    // GACHAGO 风格：扁平冰棍签，圆头彩帽 + 米色签身
+    const tipH = Math.max(w * 1.35, h * 0.28);
+    const r = w * 0.48;
+    const line = Math.max(2.4, w * 0.28);
+    const wood = shade > 0.05 ? "#e6d0a8" : shade > 0 ? "#efe0b8" : "#f6e7c4";
 
-    // 签身
-    roundRect(ctx, 0, tipH * 0.35, w, h - tipH * 0.35, bodyR);
-    ctx.fillStyle = "#f4e2c0";
+    // 整体外形描边底
+    roundRect(ctx, 0, 0, w, h, r);
+    ctx.fillStyle = wood;
     ctx.fill();
     ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = Math.max(2.2, w * 0.22);
+    ctx.lineWidth = line;
     ctx.stroke();
 
-    // 彩色圆头
-    roundRect(ctx, 0, 0, w, tipH, w * 0.5);
+    // 签身（略深一点的木色块，增加层次）
+    if (shade > 0) {
+      roundRect(ctx, line * 0.35, tipH * 0.75, w - line * 0.7, h - tipH * 0.75 - line * 0.2, r * 0.35);
+      ctx.fillStyle = `rgba(90, 55, 30, ${0.06 + shade * 0.35})`;
+      ctx.fill();
+    }
+
+    // 彩色圆头（占上部约 1/3）
+    roundRect(ctx, 0, 0, w, tipH, r);
     ctx.fillStyle = tipColor;
     ctx.fill();
     ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = Math.max(2.2, w * 0.22);
+    ctx.lineWidth = line;
     ctx.stroke();
 
-    // 头上小高光
+    // 头/身交界线
     ctx.beginPath();
-    ctx.ellipse(w * 0.35, tipH * 0.32, w * 0.16, tipH * 0.12, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255,255,255,0.35)";
-    ctx.fill();
+    ctx.moveTo(line * 0.4, tipH);
+    ctx.lineTo(w - line * 0.4, tipH);
+    ctx.strokeStyle = "#3d2a1f";
+    ctx.lineWidth = Math.max(1.6, line * 0.55);
+    ctx.stroke();
 
     if (label) {
       ctx.save();
       ctx.translate(w / 2, tipH + (h - tipH) * 0.55);
       ctx.rotate(-Math.PI / 2);
       ctx.fillStyle = "#3d2a1f";
-      ctx.font = `bold ${Math.max(13, Math.round(w * 1.05))}px 'Noto Sans SC', sans-serif`;
+      ctx.font = `bold ${Math.max(12, Math.round(w * 0.95))}px 'Noto Sans SC', sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(String(label).slice(0, 8), 0, 0);
@@ -541,7 +557,7 @@
     const topRy = h * 0.052;
     const botY = h * 0.9;
     const botRx = w * 0.235;
-    const stickW = w * 0.034;
+    const stickW = w * 0.048;
 
     // 底部软影
     tubeCtx.beginPath();
@@ -556,19 +572,14 @@
     tubeCtx.lineTo(cx + botRx, botY);
     tubeCtx.quadraticCurveTo(cx, botY + h * 0.028, cx - botRx, botY);
     tubeCtx.closePath();
-    const bodyGrad = tubeCtx.createLinearGradient(cx - topRx, rimY, cx + topRx, rimY);
-    bodyGrad.addColorStop(0, "#d94b3d");
-    bodyGrad.addColorStop(0.22, "#ef5d4d");
-    bodyGrad.addColorStop(0.55, "#e85748");
-    bodyGrad.addColorStop(1, "#c74338");
-    tubeCtx.fillStyle = bodyGrad;
+    tubeCtx.fillStyle = "#e85748";
     tubeCtx.fill();
     tubeCtx.strokeStyle = "#3d2a1f";
     tubeCtx.lineWidth = 5.5;
     tubeCtx.lineJoin = "round";
     tubeCtx.stroke();
 
-    // 口沿内壁（深色椭圆）
+    // 口沿内壁
     tubeCtx.beginPath();
     tubeCtx.ellipse(cx, rimY, topRx * 0.98, topRy * 1.55, 0, 0, Math.PI * 2);
     tubeCtx.fillStyle = "#b53f35";
@@ -579,40 +590,44 @@
 
     // 筒口深洞
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 4, topRx * 0.72, topRy * 1.05, 0, 0, Math.PI * 2);
+    tubeCtx.ellipse(cx, rimY - 4, topRx * 0.7, topRy * 1.0, 0, 0, Math.PI * 2);
     tubeCtx.fillStyle = "#4a2420";
     tubeCtx.fill();
 
-    // 后排签（在口沿后方）
     const ordered = [...tubeState.sticks].sort(
       (a, b) => Math.sin(a.ang) - Math.sin(b.ang)
     );
     const drawOne = (s, front) => {
       const depth = Math.sin(s.ang);
-      if (front ? depth < 0.05 : depth >= 0.05) return;
-      const ox = Math.cos(s.ang) * topRx * s.ring * 0.92;
-      const oy = Math.sin(s.ang) * topRy * 2.4 * s.ring;
+      if (front ? depth < 0.02 : depth >= 0.02) return;
+      const ox = Math.cos(s.ang) * topRx * s.ring * 0.88;
+      const oy = Math.sin(s.ang) * topRy * 2.2 * s.ring;
       const baseX = cx + ox;
-      const baseY = rimY + oy * 0.35;
+      const baseY = rimY + oy * 0.25;
       const stickH = h * s.h;
       const jiggle =
         tubeState.mode === "shake"
-          ? Math.sin(s.wobble) * 3.2
+          ? Math.sin(s.wobble * 1.8) * 4.5 + Math.cos(s.wobble) * 2
+          : Math.sin(s.wobble) * 0.35;
+      const leanJ =
+        tubeState.mode === "shake"
+          ? Math.sin(s.wobble * 1.4) * 5
           : Math.sin(s.wobble) * 0.4;
       paintStick(
         tubeCtx,
         baseX,
         baseY - stickH + jiggle,
-        stickW * (front ? 1 : 0.92),
+        stickW * (front ? 1 : 0.94),
         stickH,
         s.tip,
-        s.lean + jiggle * 0.6,
-        null
+        s.lean + leanJ,
+        null,
+        s.shade || 0
       );
     };
     ordered.forEach((s) => drawOne(s, false));
 
-    // 前口沿描边
+    // 前口沿
     tubeCtx.beginPath();
     tubeCtx.ellipse(cx, rimY, topRx, topRy, 0, 0.05, Math.PI - 0.05);
     tubeCtx.strokeStyle = "#3d2a1f";
@@ -622,9 +637,6 @@
     // 筒身竖排文字
     tubeCtx.save();
     tubeCtx.fillStyle = "#fff7ea";
-    tubeCtx.shadowColor = "rgba(61, 42, 31, 0.18)";
-    tubeCtx.shadowBlur = 0;
-    tubeCtx.shadowOffsetY = 1;
     tubeCtx.font = `${Math.round(w * 0.1)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
     tubeCtx.textAlign = "center";
     tubeCtx.textBaseline = "middle";
@@ -638,21 +650,19 @@
     tubeCtx.beginPath();
     tubeCtx.moveTo(cx - topRx * 0.72, rimY + 14);
     tubeCtx.lineTo(cx - botRx * 0.58, botY - 18);
-    tubeCtx.strokeStyle = "rgba(255,255,255,0.28)";
-    tubeCtx.lineWidth = 10;
+    tubeCtx.strokeStyle = "rgba(255,255,255,0.22)";
+    tubeCtx.lineWidth = 9;
     tubeCtx.lineCap = "round";
     tubeCtx.stroke();
 
-    // 前排签
     ordered.forEach((s) => drawOne(s, true));
 
-    // 抽出的签
     if (tubeState.mode === "rise") {
       const p = tubeState.riseProgress;
       const ease = 1 - Math.pow(1 - p, 3);
-      const sw = stickW * 1.85;
-      const sh = h * 0.42;
-      const y = rimY - sh * 0.2 - ease * h * 0.22;
+      const sw = stickW * 1.55;
+      const sh = h * 0.44;
+      const y = rimY - sh * 0.18 - ease * h * 0.22;
       paintStick(
         tubeCtx,
         cx,
@@ -661,7 +671,8 @@
         sh,
         tubeState.riseTip,
         Math.sin(p * 5) * 2.2,
-        tubeState.riseLabel
+        tubeState.riseLabel,
+        0
       );
     }
   }
@@ -676,6 +687,7 @@
     tubeState.riseProgress = 0;
     tubeState.riseLabel = "";
     if (els.lotteryTube) els.lotteryTube.classList.add("shaking");
+    playTubeShakeSound(2.2);
 
     window.setTimeout(() => {
       tubeState.mode = "rise";
@@ -874,6 +886,65 @@
     gain.connect(ctx.destination);
     osc.start(start);
     osc.stop(start + dur + 0.02);
+  }
+
+  /** 摇签筒：木质签条碰撞声 */
+  function playTubeShakeSound(durationSec = 2.2) {
+    try {
+      const ctx = ensureAudio();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const end = now + durationSec;
+
+      // 持续沙沙噪声底
+      const noiseDur = durationSec + 0.05;
+      const frames = Math.floor(ctx.sampleRate * noiseDur);
+      const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < frames; i++) {
+        const t = i / ctx.sampleRate;
+        const env = Math.min(1, t * 8) * Math.min(1, (noiseDur - t) * 6);
+        data[i] = (Math.random() * 2 - 1) * env * 0.55;
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = 1800;
+      filter.Q.value = 0.9;
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.0001, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.22, now + 0.05);
+      noiseGain.gain.setValueAtTime(0.18, now + durationSec * 0.7);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, end);
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start(now);
+      noise.stop(end + 0.02);
+
+      // 间歇木签敲击
+      let t = now;
+      while (t < end - 0.05) {
+        const gap = 0.045 + Math.random() * 0.07;
+        const freq = 220 + Math.random() * 480;
+        const click = ctx.createOscillator();
+        const clickGain = ctx.createGain();
+        click.type = "triangle";
+        click.frequency.setValueAtTime(freq, t);
+        click.frequency.exponentialRampToValueAtTime(freq * 0.55, t + 0.04);
+        clickGain.gain.setValueAtTime(0.0001, t);
+        clickGain.gain.exponentialRampToValueAtTime(0.14 + Math.random() * 0.08, t + 0.004);
+        clickGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+        click.connect(clickGain);
+        clickGain.connect(ctx.destination);
+        click.start(t);
+        click.stop(t + 0.06);
+        t += gap;
+      }
+    } catch (err) {
+      console.warn("摇签音效播放失败", err);
+    }
   }
 
   /** 中奖人转盘：上行和弦音效 */
