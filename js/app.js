@@ -434,22 +434,20 @@
   function syncTubeSticks() {
     if (!els.tubeCanvas || !tubeCtx) return;
     const pool = availablePrizes();
-    const count = Math.max(18, Math.min(24, Math.max(pool.length, 1) * 3));
+    const count = pool.length < 1 ? 20 : Math.max(22, Math.min(32, pool.length * 4));
     const prev = tubeState.sticks;
     tubeState.sticks = [];
     for (let i = 0; i < count; i++) {
-      const prize = pool[i % Math.max(pool.length, 1)] || {};
       const old = prev[i];
-      const ang = (i / count) * Math.PI * 2 - Math.PI / 2;
+      const t = i / count;
+      const ang = t * Math.PI * 2 - Math.PI / 2;
+      const ring = 0.55 + (i % 5) * 0.08;
       tubeState.sticks.push({
         ang,
-        ring: 0.82 + (i % 3) * 0.06,
-        tip:
-          prize.color && String(prize.color).startsWith("#")
-            ? prize.color
-            : TUBE_TIPS[i % TUBE_TIPS.length],
-        lean: Math.cos(ang) * 18 + Math.sin(ang) * 4,
-        h: 0.2 + (i % 4) * 0.012,
+        ring,
+        tip: TUBE_TIPS[i % TUBE_TIPS.length],
+        lean: Math.cos(ang) * (6 + ring * 8),
+        h: 0.22 + (i % 6) * 0.018 + (1 - ring) * 0.04,
         wobble: old ? old.wobble : Math.random() * Math.PI * 2,
       });
     }
@@ -492,27 +490,37 @@
     ctx.rotate((lean * Math.PI) / 180);
     ctx.translate(-w / 2, -h);
 
-    const tipH = h * 0.28;
-    roundRect(ctx, 0, 0, w, h, w * 0.45);
-    ctx.fillStyle = "#f3e4c4";
+    const tipH = Math.max(w * 1.15, h * 0.22);
+    const bodyR = w * 0.42;
+
+    // 签身
+    roundRect(ctx, 0, tipH * 0.35, w, h - tipH * 0.35, bodyR);
+    ctx.fillStyle = "#f4e2c0";
     ctx.fill();
     ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = Math.max(2.2, w * 0.22);
     ctx.stroke();
 
-    roundRect(ctx, 0, 0, w, tipH, w * 0.45);
+    // 彩色圆头
+    roundRect(ctx, 0, 0, w, tipH, w * 0.5);
     ctx.fillStyle = tipColor;
     ctx.fill();
     ctx.strokeStyle = "#3d2a1f";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = Math.max(2.2, w * 0.22);
     ctx.stroke();
+
+    // 头上小高光
+    ctx.beginPath();
+    ctx.ellipse(w * 0.35, tipH * 0.32, w * 0.16, tipH * 0.12, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.fill();
 
     if (label) {
       ctx.save();
-      ctx.translate(w / 2, h * 0.62);
+      ctx.translate(w / 2, tipH + (h - tipH) * 0.55);
       ctx.rotate(-Math.PI / 2);
       ctx.fillStyle = "#3d2a1f";
-      ctx.font = "bold 16px 'Noto Sans SC', sans-serif";
+      ctx.font = `bold ${Math.max(13, Math.round(w * 1.05))}px 'Noto Sans SC', sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(String(label).slice(0, 8), 0, 0);
@@ -528,106 +536,123 @@
     tubeCtx.clearRect(0, 0, w, h);
 
     const cx = w * 0.5;
-    const rimY = h * 0.32;
-    const topRx = w * 0.28;
-    const topRy = h * 0.048;
+    const rimY = h * 0.34;
+    const topRx = w * 0.3;
+    const topRy = h * 0.052;
     const botY = h * 0.9;
-    const botRx = w * 0.22;
+    const botRx = w * 0.235;
+    const stickW = w * 0.034;
+
+    // 底部软影
+    tubeCtx.beginPath();
+    tubeCtx.ellipse(cx, botY + h * 0.035, botRx * 1.05, h * 0.028, 0, 0, Math.PI * 2);
+    tubeCtx.fillStyle = "rgba(90, 50, 35, 0.16)";
+    tubeCtx.fill();
 
     // 筒身
     tubeCtx.beginPath();
     tubeCtx.moveTo(cx - topRx, rimY);
     tubeCtx.lineTo(cx + topRx, rimY);
     tubeCtx.lineTo(cx + botRx, botY);
-    tubeCtx.quadraticCurveTo(cx, botY + h * 0.03, cx - botRx, botY);
+    tubeCtx.quadraticCurveTo(cx, botY + h * 0.028, cx - botRx, botY);
     tubeCtx.closePath();
-    tubeCtx.fillStyle = "#e85748";
+    const bodyGrad = tubeCtx.createLinearGradient(cx - topRx, rimY, cx + topRx, rimY);
+    bodyGrad.addColorStop(0, "#d94b3d");
+    bodyGrad.addColorStop(0.22, "#ef5d4d");
+    bodyGrad.addColorStop(0.55, "#e85748");
+    bodyGrad.addColorStop(1, "#c74338");
+    tubeCtx.fillStyle = bodyGrad;
     tubeCtx.fill();
     tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 5;
+    tubeCtx.lineWidth = 5.5;
     tubeCtx.lineJoin = "round";
     tubeCtx.stroke();
 
-    // 口沿内壁
+    // 口沿内壁（深色椭圆）
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 2, topRx * 0.98, topRy * 1.45, 0, 0, Math.PI * 2);
-    tubeCtx.fillStyle = "#c2473c";
+    tubeCtx.ellipse(cx, rimY, topRx * 0.98, topRy * 1.55, 0, 0, Math.PI * 2);
+    tubeCtx.fillStyle = "#b53f35";
     tubeCtx.fill();
     tubeCtx.strokeStyle = "#3d2a1f";
     tubeCtx.lineWidth = 4;
     tubeCtx.stroke();
 
-    // 筒口
+    // 筒口深洞
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY - 6, topRx * 0.78, topRy * 1.1, 0, 0, Math.PI * 2);
-    tubeCtx.fillStyle = "#5a2f2a";
+    tubeCtx.ellipse(cx, rimY - 4, topRx * 0.72, topRy * 1.05, 0, 0, Math.PI * 2);
+    tubeCtx.fillStyle = "#4a2420";
     tubeCtx.fill();
-    tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 3.5;
-    tubeCtx.stroke();
 
-    // 筒身文字
-    tubeCtx.save();
-    tubeCtx.fillStyle = "#fff8ec";
-    tubeCtx.font = `${Math.round(w * 0.095)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
-    tubeCtx.textAlign = "center";
-    tubeCtx.textBaseline = "middle";
-    const chars = "碎碎生日快乐".split("");
-    chars.forEach((ch, i) => {
-      tubeCtx.fillText(ch, cx, h * 0.48 + i * (h * 0.055));
-    });
-    tubeCtx.restore();
-
-    // 左高光
-    tubeCtx.beginPath();
-    tubeCtx.moveTo(cx - topRx * 0.7, rimY + 10);
-    tubeCtx.lineTo(cx - botRx * 0.55, botY - 16);
-    tubeCtx.strokeStyle = "rgba(255,255,255,0.22)";
-    tubeCtx.lineWidth = 9;
-    tubeCtx.lineCap = "round";
-    tubeCtx.stroke();
-
-    // 签（按前后排序）
-    const stickW = w * 0.036;
+    // 后排签（在口沿后方）
     const ordered = [...tubeState.sticks].sort(
       (a, b) => Math.sin(a.ang) - Math.sin(b.ang)
     );
-    ordered.forEach((s) => {
-      const ox = Math.cos(s.ang) * topRx * s.ring;
-      const oy = Math.sin(s.ang) * topRy * 2.15 * s.ring;
+    const drawOne = (s, front) => {
+      const depth = Math.sin(s.ang);
+      if (front ? depth < 0.05 : depth >= 0.05) return;
+      const ox = Math.cos(s.ang) * topRx * s.ring * 0.92;
+      const oy = Math.sin(s.ang) * topRy * 2.4 * s.ring;
       const baseX = cx + ox;
-      const baseY = rimY + oy;
+      const baseY = rimY + oy * 0.35;
       const stickH = h * s.h;
       const jiggle =
         tubeState.mode === "shake"
-          ? Math.sin(s.wobble) * 2.5
-          : Math.sin(s.wobble) * 0.35;
+          ? Math.sin(s.wobble) * 3.2
+          : Math.sin(s.wobble) * 0.4;
       paintStick(
         tubeCtx,
         baseX,
         baseY - stickH + jiggle,
-        stickW,
+        stickW * (front ? 1 : 0.92),
         stickH,
         s.tip,
-        s.lean + jiggle,
+        s.lean + jiggle * 0.6,
         null
       );
-    });
+    };
+    ordered.forEach((s) => drawOne(s, false));
 
     // 前口沿描边
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, rimY, topRx, topRy, 0, 0.12, Math.PI - 0.12);
+    tubeCtx.ellipse(cx, rimY, topRx, topRy, 0, 0.05, Math.PI - 0.05);
     tubeCtx.strokeStyle = "#3d2a1f";
-    tubeCtx.lineWidth = 5;
+    tubeCtx.lineWidth = 5.5;
     tubeCtx.stroke();
+
+    // 筒身竖排文字
+    tubeCtx.save();
+    tubeCtx.fillStyle = "#fff7ea";
+    tubeCtx.shadowColor = "rgba(61, 42, 31, 0.18)";
+    tubeCtx.shadowBlur = 0;
+    tubeCtx.shadowOffsetY = 1;
+    tubeCtx.font = `${Math.round(w * 0.1)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
+    tubeCtx.textAlign = "center";
+    tubeCtx.textBaseline = "middle";
+    const chars = "碎碎生日快乐".split("");
+    chars.forEach((ch, i) => {
+      tubeCtx.fillText(ch, cx, h * 0.49 + i * (h * 0.058));
+    });
+    tubeCtx.restore();
+
+    // 左侧高光
+    tubeCtx.beginPath();
+    tubeCtx.moveTo(cx - topRx * 0.72, rimY + 14);
+    tubeCtx.lineTo(cx - botRx * 0.58, botY - 18);
+    tubeCtx.strokeStyle = "rgba(255,255,255,0.28)";
+    tubeCtx.lineWidth = 10;
+    tubeCtx.lineCap = "round";
+    tubeCtx.stroke();
+
+    // 前排签
+    ordered.forEach((s) => drawOne(s, true));
 
     // 抽出的签
     if (tubeState.mode === "rise") {
       const p = tubeState.riseProgress;
       const ease = 1 - Math.pow(1 - p, 3);
-      const sw = stickW * 1.6;
-      const sh = h * 0.4;
-      const y = rimY - sh * 0.25 - ease * h * 0.2;
+      const sw = stickW * 1.85;
+      const sh = h * 0.42;
+      const y = rimY - sh * 0.2 - ease * h * 0.22;
       paintStick(
         tubeCtx,
         cx,
@@ -635,7 +660,7 @@
         sw,
         sh,
         tubeState.riseTip,
-        Math.sin(p * 5) * 2.5,
+        Math.sin(p * 5) * 2.2,
         tubeState.riseLabel
       );
     }
@@ -657,9 +682,7 @@
       tubeState.riseProgress = 0;
       tubeState.riseLabel = winner.name || "";
       tubeState.riseTip =
-        winner.color && String(winner.color).startsWith("#")
-          ? winner.color
-          : TUBE_TIPS[Math.floor(Math.random() * TUBE_TIPS.length)];
+        TUBE_TIPS[Math.floor(Math.random() * TUBE_TIPS.length)];
       if (els.lotteryTube) els.lotteryTube.classList.remove("shaking");
     }, 2200);
 

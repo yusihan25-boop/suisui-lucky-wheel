@@ -757,8 +757,8 @@ body {
 }
 
 .lottery-tube.shaking canvas {
-  transform-origin: 50% 90%;
-  animation: tubeShake 0.5s ease-in-out infinite;
+  transform-origin: 50% 88%;
+  animation: tubeShake 0.42s ease-in-out infinite;
 }
 
 .tube-btn {
@@ -792,9 +792,11 @@ body {
 }
 
 @keyframes tubeShake {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-5deg); }
-  75% { transform: rotate(5deg); }
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  20% { transform: rotate(-7deg) translateX(-4px); }
+  40% { transform: rotate(6deg) translateX(3px); }
+  60% { transform: rotate(-5deg) translateX(-3px); }
+  80% { transform: rotate(5deg) translateX(4px); }
 }
 
 .wheel-wrap canvas {
