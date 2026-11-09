@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=orient1" />
+  <link rel="stylesheet" href="css/style.css?v=rotatetip1" />
 </head>
 <body>
   <div id="orientShell" class="orient-shell">
@@ -279,8 +279,22 @@
     </div>
   </div>
 
+  <div id="rotateTipModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-rotate-tip></div>
+    <div class="modal-card history-card rotate-tip-card" role="dialog" aria-labelledby="rotateTipHeading">
+      <h2 id="rotateTipHeading" class="modal-heading">建议将手机横过来</h2>
+      <p class="rotate-tip-text">普通模式适合横屏查看和操作。请旋转手机至横屏；若暂时不方便，可先返回直播投屏。</p>
+      <div class="history-actions rotate-tip-actions">
+        <button type="button" id="btnRotateTipLive" class="btn btn-secondary">返回直播投屏</button>
+        <button type="button" id="btnRotateTipOk" class="btn btn-primary">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" id="btnBackLive" class="back-live-fab" hidden>返回直播投屏</button>
+
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=orient1"></script>
+  <script src="js/app.js?v=rotatetip1"></script>
   </div>
 </body>
 </html>
