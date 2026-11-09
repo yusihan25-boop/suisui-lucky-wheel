@@ -419,33 +419,79 @@
     ctx.restore();
   }
 
-  /** 人员侧：环形星轨转盘 + 中心发光星芒 */
+  function paintOrbitStar(ctx, x, y, size, color) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.moveTo(0, -size);
+    ctx.lineTo(size * 0.22, -size * 0.22);
+    ctx.lineTo(size, 0);
+    ctx.lineTo(size * 0.22, size * 0.22);
+    ctx.lineTo(0, size);
+    ctx.lineTo(-size * 0.22, size * 0.22);
+    ctx.lineTo(-size, 0);
+    ctx.lineTo(-size * 0.22, -size * 0.22);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  /** 人员侧：环形星轨转盘 + 中心发光星芒 + 外圈金轨 */
   function drawStarOrbitWheel(ctx, canvas, items, rotation) {
     const size = canvas.width;
     const cx = size / 2;
     const cy = size / 2;
-    const outerR = size / 2 - 12;
+    const outerR = size / 2 - 38;
     const midR = outerR * 0.78;
     const innerR = outerR * 0.38;
     const total = totalProbability(items) || 1;
     const t = performance.now() / 1000;
+    const pulse = 0.85 + Math.sin(t * 2.4) * 0.15;
 
     ctx.clearRect(0, 0, size, size);
-
-    // 外层星轨光环
     ctx.save();
     ctx.translate(cx, cy);
-    for (let i = 0; i < 3; i++) {
-      const rr = outerR + 6 + i * 7;
+
+    const orbitSpecs = [
+      { rx: outerR + 16, ry: outerR * 0.4, rot: -0.48, alpha: 0.8, stars: 5 },
+      { rx: outerR + 26, ry: outerR * 0.48, rot: 0.32, alpha: 0.58, stars: 4 },
+      { rx: outerR + 34, ry: outerR * 0.34, rot: -0.12, alpha: 0.4, stars: 3 },
+    ];
+
+    function strokeOrbitHalf(o, oi, front) {
+      ctx.save();
+      ctx.rotate(o.rot + Math.sin(t * 0.35 + oi) * 0.03);
       ctx.beginPath();
-      ctx.arc(0, 0, rr, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(${180 + i * 20}, ${160 + i * 15}, 255, ${0.18 - i * 0.04})`;
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([6, 10]);
-      ctx.lineDashOffset = -t * (12 + i * 8);
+      // 后半弧 y>0 在盘后，前半弧 y<0 在盘前（椭圆参数角）
+      if (front) ctx.ellipse(0, 0, o.rx, o.ry, 0, Math.PI, Math.PI * 2);
+      else ctx.ellipse(0, 0, o.rx, o.ry, 0, 0, Math.PI);
+      ctx.strokeStyle = `rgba(240, 193, 75, ${o.alpha})`;
+      ctx.lineWidth = front ? 2.6 : 2.2;
+      ctx.shadowColor = "rgba(240, 193, 75, 0.55)";
+      ctx.shadowBlur = front ? 10 : 6;
       ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.shadowBlur = 0;
+      for (let k = 0; k < o.stars; k++) {
+        const a = (k / o.stars) * Math.PI * 2 + t * (0.12 + oi * 0.04);
+        const onFront = Math.sin(a) < 0;
+        if (onFront !== front) continue;
+        paintOrbitStar(
+          ctx,
+          Math.cos(a) * o.rx,
+          Math.sin(a) * o.ry,
+          6 + oi * 2,
+          k % 2 === 0 ? "#fff6c2" : "#f0c14b"
+        );
+      }
+      ctx.restore();
     }
+
+    // 盘后：轨道后半
+    orbitSpecs.forEach((o, oi) => strokeOrbitHalf(o, oi, false));
 
     // 盘面底
     ctx.beginPath();
@@ -473,7 +519,6 @@
         const end = start + (angle || 0.0001);
         const color = item.color || TUBE_TIPS[idx % TUBE_TIPS.length];
 
-        // 环形格子（类似签条色块）
         ctx.beginPath();
         ctx.arc(0, 0, outerR, start, end);
         ctx.arc(0, 0, innerR, end, start, true);
@@ -489,7 +534,6 @@
         ctx.lineWidth = 2.2;
         ctx.stroke();
 
-        // 外缘金线
         ctx.beginPath();
         ctx.arc(0, 0, outerR - 1, start, end);
         ctx.strokeStyle = "rgba(240, 193, 75, 0.55)";
@@ -509,20 +553,42 @@
     }
     ctx.restore();
 
-    // 内圈星轨细环
+    // 双层金色外框
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR + 3, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(240, 193, 75, 0.95)";
+    ctx.lineWidth = 5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR - 4, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(253, 224, 120, 0.55)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 外圈光珠
+    const beads = 28;
+    for (let i = 0; i < beads; i++) {
+      const a = (i / beads) * Math.PI * 2 - t * 0.2;
+      const bx = Math.cos(a) * (outerR + 3);
+      const by = Math.sin(a) * (outerR + 3);
+      const glow = 0.55 + Math.sin(t * 3 + i) * 0.35;
+      ctx.beginPath();
+      ctx.arc(bx, by, 3.4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 244, 180, ${glow})`;
+      ctx.shadowColor = "rgba(240, 193, 75, 0.9)";
+      ctx.shadowBlur = 9;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // 内圈紫金细环
     ctx.beginPath();
     ctx.arc(0, 0, innerR + 4, 0, Math.PI * 2);
     ctx.strokeStyle = "rgba(192, 132, 252, 0.65)";
     ctx.lineWidth = 3;
     ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(240, 193, 75, 0.7)";
-    ctx.lineWidth = 4;
-    ctx.stroke();
 
-    // 中心发光星芒（不随转盘转）
-    const pulse = 0.85 + Math.sin(t * 2.4) * 0.15;
+    // 中心发光星芒（保留）
     const g = ctx.createRadialGradient(0, 0, 2, 0, 0, innerR * 0.95);
     g.addColorStop(0, `rgba(255, 250, 220, ${0.95 * pulse})`);
     g.addColorStop(0.25, `rgba(240, 193, 75, ${0.55 * pulse})`);
@@ -556,6 +622,10 @@
     ctx.shadowBlur = 18;
     ctx.fill();
     ctx.shadowBlur = 0;
+
+    // 盘前：轨道前半 + 轨上星
+    orbitSpecs.forEach((o, oi) => strokeOrbitHalf(o, oi, true));
+
     ctx.restore();
   }
 
