@@ -69,6 +69,8 @@
     btnAddPrize: document.getElementById("btnAddPrize"),
     btnEvenPeople: document.getElementById("btnEvenPeople"),
     btnEvenPrize: document.getElementById("btnEvenPrize"),
+    btnDownloadPeopleTpl: document.getElementById("btnDownloadPeopleTpl"),
+    btnDownloadPrizeTpl: document.getElementById("btnDownloadPrizeTpl"),
     peopleExcelInput: document.getElementById("peopleExcelInput"),
     prizeExcelInput: document.getElementById("prizeExcelInput"),
     btnReset: document.getElementById("btnReset"),
@@ -2117,6 +2119,37 @@
     });
   }
 
+  function downloadWorkbook(filename, rows) {
+    if (!window.XLSX) {
+      alert("表格解析库未加载，请刷新页面后重试");
+      return;
+    }
+    const book = XLSX.utils.book_new();
+    const sheet = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(book, sheet, "模板");
+    XLSX.writeFile(book, filename);
+  }
+
+  function downloadPeopleTemplate() {
+    downloadWorkbook("人员导入模板.xlsx", [
+      ["姓名", "概率"],
+      ["张三", 25],
+      ["李四", 25],
+      ["王五", 25],
+      ["赵六", 25],
+    ]);
+  }
+
+  function downloadPrizeTemplate() {
+    downloadWorkbook("奖项导入模板.xlsx", [
+      ["奖品名称", "概率", "库存"],
+      ["一等奖", 5, 1],
+      ["二等奖", 15, 3],
+      ["三等奖", 30, 5],
+      ["谢谢参与", 50, ""],
+    ]);
+  }
+
   async function importPeople(file) {
     try {
       const rows = await readSheetRows(file);
@@ -2324,6 +2357,8 @@
     ensureProbSum100(draft.prizes, "even");
     renderPrizeEditor();
   });
+  els.btnDownloadPeopleTpl.addEventListener("click", downloadPeopleTemplate);
+  els.btnDownloadPrizeTpl.addEventListener("click", downloadPrizeTemplate);
   els.btnSave.addEventListener("click", commitSettings);
   els.btnReset.addEventListener("click", resetDefaults);
   els.btnCloseResult.addEventListener("click", hideResult);
