@@ -435,7 +435,7 @@
 
   function syncTubeSticks() {
     if (!els.tubeCanvas || !tubeCtx) return;
-    const count = 30;
+    const count = 28;
     const prev = tubeState.sticks;
     tubeState.sticks = [];
     for (let i = 0; i < count; i++) {
@@ -449,9 +449,9 @@
         ang,
         ring: Math.min(0.94, ring),
         tip: TUBE_TIPS[(i * 3) % TUBE_TIPS.length],
-        lean: Math.cos(ang) * (3 + layer * 2.5) + (i % 5 - 2) * 0.9,
-        // 相对筒口高度，保证顶端留在画布内
-        h: 0.2 + (i % 5) * 0.012 + (2 - layer) * 0.01,
+        lean: Math.cos(ang) * (3 + layer * 2.2) + (i % 5 - 2) * 0.8,
+        // 长签：明显高出筒口，接近参考图比例
+        h: 0.34 + (i % 6) * 0.018 + (2 - layer) * 0.02,
         shade: i % 3 === 0 ? 0.08 : i % 3 === 1 ? 0.04 : 0,
         wobble: old ? old.wobble : Math.random() * Math.PI * 2,
       });
@@ -495,10 +495,10 @@
     ctx.rotate((lean * Math.PI) / 180);
     ctx.translate(-w / 2, -h);
 
-    // GACHAGO 风格：扁平冰棍签，圆头彩帽 + 米色签身
-    const tipH = Math.max(w * 1.2, h * 0.22);
+    // 长签：彩头只占顶部一小段，签身很长
+    const tipH = Math.min(w * 1.25, h * 0.14);
     const r = w * 0.48;
-    const line = Math.max(2.6, w * 0.2);
+    const line = Math.max(2.8, w * 0.18);
     const wood = shade > 0.05 ? "#e6d0a8" : shade > 0 ? "#efe0b8" : "#f6e7c4";
 
     roundRect(ctx, 0, 0, w, h, r);
@@ -531,10 +531,9 @@
     if (label) {
       const text = String(label).slice(0, 8);
       const chars = text.split("");
-      // 保持现有合适字号，逐字竖排，避免挤出签身
-      const fontSize = Math.min(18, Math.max(14, Math.round(w * 0.38)));
-      const bodyTop = tipH + fontSize * 0.55;
-      const bodyBot = h - fontSize * 0.45;
+      const fontSize = Math.min(18, Math.max(14, Math.round(w * 0.36)));
+      const bodyTop = tipH + fontSize * 0.7;
+      const bodyBot = h - fontSize * 0.7;
       const span = Math.max(bodyBot - bodyTop, fontSize);
       const step = chars.length > 1 ? span / (chars.length - 1) : 0;
       ctx.fillStyle = "#3d2a1f";
@@ -555,18 +554,18 @@
     tubeCtx.clearRect(0, 0, w, h);
 
     const cx = w * 0.5;
-    // 筒口下移，给签头顶留足空间，避免被画布裁切
-    const rimY = h * 0.4;
+    // 筒身靠下，上方留给长签
+    const rimY = h * 0.5;
     const topRx = w * 0.3;
-    const topRy = h * 0.048;
+    const topRy = h * 0.04;
     const botY = h * 0.9;
     const botRx = w * 0.235;
-    const stickW = w * 0.066;
-    const topPad = 18;
+    const stickW = w * 0.07;
+    const topPad = 12;
 
     // 底部软影
     tubeCtx.beginPath();
-    tubeCtx.ellipse(cx, botY + h * 0.03, botRx * 1.05, h * 0.025, 0, 0, Math.PI * 2);
+    tubeCtx.ellipse(cx, botY + h * 0.025, botRx * 1.05, h * 0.022, 0, 0, Math.PI * 2);
     tubeCtx.fillStyle = "rgba(90, 50, 35, 0.16)";
     tubeCtx.fill();
 
@@ -575,7 +574,7 @@
     tubeCtx.moveTo(cx - topRx, rimY);
     tubeCtx.lineTo(cx + topRx, rimY);
     tubeCtx.lineTo(cx + botRx, botY);
-    tubeCtx.quadraticCurveTo(cx, botY + h * 0.025, cx - botRx, botY);
+    tubeCtx.quadraticCurveTo(cx, botY + h * 0.022, cx - botRx, botY);
     tubeCtx.closePath();
     tubeCtx.fillStyle = "#e85748";
     tubeCtx.fill();
@@ -617,9 +616,8 @@
         tubeState.mode === "shake"
           ? Math.sin(s.wobble * 1.4) * 4
           : Math.sin(s.wobble) * 0.35;
-      // 强制签顶完整落在画布内
       const stickH = Math.min(h * s.h, baseY + jiggle - topPad);
-      if (stickH < stickW * 2) return;
+      if (stickH < stickW * 2.5) return;
       paintStick(
         tubeCtx,
         baseX,
@@ -644,19 +642,19 @@
     // 筒身竖排文字
     tubeCtx.save();
     tubeCtx.fillStyle = "#fff7ea";
-    tubeCtx.font = `${Math.round(w * 0.1)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
+    tubeCtx.font = `${Math.round(w * 0.095)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
     tubeCtx.textAlign = "center";
     tubeCtx.textBaseline = "middle";
     const chars = "碎碎生日快乐".split("");
     chars.forEach((ch, i) => {
-      tubeCtx.fillText(ch, cx, h * 0.52 + i * (h * 0.052));
+      tubeCtx.fillText(ch, cx, h * 0.58 + i * (h * 0.045));
     });
     tubeCtx.restore();
 
     // 左侧高光
     tubeCtx.beginPath();
-    tubeCtx.moveTo(cx - topRx * 0.72, rimY + 14);
-    tubeCtx.lineTo(cx - botRx * 0.58, botY - 18);
+    tubeCtx.moveTo(cx - topRx * 0.72, rimY + 12);
+    tubeCtx.lineTo(cx - botRx * 0.58, botY - 16);
     tubeCtx.strokeStyle = "rgba(255,255,255,0.22)";
     tubeCtx.lineWidth = 9;
     tubeCtx.lineCap = "round";
@@ -668,13 +666,12 @@
       const p = tubeState.riseProgress;
       const ease = 1 - Math.pow(1 - p, 3);
       const label = tubeState.riseLabel || "";
-      const charCount = Math.max(2, Math.min(8, label.length || 2));
-      // 加宽加长结果签，字号保持可读
-      const sw = Math.max(stickW * 2.15, w * 0.13);
-      const fontSize = Math.min(18, Math.max(14, Math.round(sw * 0.38)));
-      const tipH = Math.max(sw * 1.2, 36);
-      const sh = tipH + fontSize * (charCount + 1.2) + 28;
-      const y = Math.max(topPad, rimY - sh * 0.12 - ease * (rimY - topPad - sh * 0.55));
+      // 结果签接近参考图：几乎通高的长签
+      const sw = Math.max(stickW * 1.55, w * 0.1);
+      const sh = h * 0.72;
+      const yStart = rimY - sh * 0.22;
+      const yEnd = topPad;
+      const y = yStart + (yEnd - yStart) * ease;
       paintStick(
         tubeCtx,
         cx,
@@ -682,7 +679,7 @@
         sw,
         sh,
         tubeState.riseTip,
-        Math.sin(p * 5) * 1.6,
+        Math.sin(p * 5) * 1.2,
         label,
         0
       );
