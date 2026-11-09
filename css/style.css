@@ -501,10 +501,10 @@ body {
 
 .stage-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   width: 100%;
   margin: 0 0 2px;
 }
@@ -767,38 +767,46 @@ body {
   font-weight: 500;
 }
 
-.stock-panel {
-  position: relative;
-  width: 100%;
-  padding: 14px 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgba(16, 20, 48, 0.82);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow);
-}
-
-.stock-panel.compact {
-  margin: 0;
-}
-
-.stock-panel h2,
-.stock-panel h3 {
-  margin: 0 0 10px;
-  font-size: 0.98rem;
-  color: var(--gold);
-  font-weight: 700;
-}
-
 .stock-list {
   list-style: none;
-  margin: 0;
+  margin: 0 0 16px;
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 320px;
+  max-height: 50vh;
   overflow: auto;
+}
+
+.modal-stock-list .stock-item {
+  background: #f4f8fb;
+  color: #1e1b4b;
+}
+
+.modal-stock-list .stock-item .name {
+  color: #1e1b4b;
+}
+
+.modal-stock-list .stock-item .qty {
+  color: #4c1d95;
+  font-weight: 700;
+}
+
+.modal-stock-list .stock-item .qty.low {
+  color: #b45309;
+}
+
+.modal-stock-list .stock-item .qty.out {
+  color: #be123c;
+}
+
+.modal-stock-list .empty {
+  color: #6b7280;
+  text-align: center;
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  list-style: none;
 }
 
 .stock-item {
