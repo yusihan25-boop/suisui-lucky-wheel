@@ -978,7 +978,7 @@ body {
   position: relative;
   width: min(100%, 300px);
   aspect-ratio: 420 / 700;
-  filter: drop-shadow(0 16px 28px rgba(244, 114, 182, 0.28));
+  filter: drop-shadow(0 16px 28px rgba(124, 58, 237, 0.35));
   overflow: visible;
   animation: wheelIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -997,26 +997,35 @@ body {
 .tube-btn {
   min-width: 120px;
   height: 52px;
-  border: 3px solid #be123c;
+  border: 2px solid rgba(240, 193, 75, 0.85);
   border-radius: 999px;
-  background: linear-gradient(160deg, #fb7185, #e11d48);
-  color: #fff;
+  background: linear-gradient(145deg, #7c3aed, #4c1d95 55%, #1e1b4b);
+  color: #fff7d6;
   font-family: var(--display);
   font-size: 1.25rem;
   font-weight: 900;
   letter-spacing: 0.14em;
   cursor: pointer;
-  box-shadow: 0 5px 0 #9f1239, 0 10px 16px rgba(190, 24, 93, 0.28);
+  box-shadow:
+    0 0 18px rgba(124, 58, 237, 0.45),
+    0 5px 0 #2e1065,
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .tube-btn:hover:not(:disabled) {
   transform: translateY(-2px);
+  box-shadow:
+    0 0 24px rgba(192, 132, 252, 0.55),
+    0 7px 0 #2e1065,
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .tube-btn:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 2px 0 #9f1239, 0 5px 10px rgba(190, 24, 93, 0.22);
+  transform: translateY(2px);
+  box-shadow:
+    0 0 12px rgba(124, 58, 237, 0.35),
+    0 2px 0 #2e1065;
 }
 
 .tube-btn:disabled {
