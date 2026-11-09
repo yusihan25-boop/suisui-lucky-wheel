@@ -1105,7 +1105,7 @@ body {
 
 .btn-secondary {
   background: rgba(29, 51, 72, 0.05);
-  color: var(--ink);
+  color: #1e1b4b;
   border: 1px solid var(--line);
 }
 
@@ -1259,10 +1259,15 @@ body {
   border: 1px solid var(--line);
   border-radius: 10px;
   background: #f4f8fb;
-  color: var(--ink);
+  color: #1e1b4b;
   padding: 10px 12px;
   font: inherit;
   outline: none;
+}
+
+.field input::placeholder,
+.prize-row input::placeholder {
+  color: #6b7280;
 }
 
 .field input:focus,
@@ -1342,9 +1347,10 @@ body {
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--muted);
+  color: #4c1d95;
   pointer-events: none;
   font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .prize-row .prob-unit input {
@@ -1565,7 +1571,7 @@ body {
   font-family: var(--display);
   font-size: clamp(1.5rem, 5vw, 2.2rem);
   font-weight: 400;
-  color: var(--ink);
+  color: #3b0764;
   line-height: 1.35;
   word-break: break-word;
 }
@@ -1573,6 +1579,7 @@ body {
 .modal-heading {
   margin: 0 0 16px;
   font-size: 1.25rem;
+  color: #1e1b4b;
 }
 
 .history-card {
@@ -1597,6 +1604,7 @@ body {
   background: #f4f8fb;
   border: 1px solid var(--line);
   font-size: 0.92rem;
+  color: #1e1b4b;
 }
 
 .history-list .empty {
