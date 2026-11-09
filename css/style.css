@@ -747,7 +747,7 @@ body {
 .lottery-tube {
   position: relative;
   width: 100%;
-  aspect-ratio: 420 / 760;
+  aspect-ratio: 420 / 640;
   filter: drop-shadow(0 16px 24px rgba(90, 40, 30, 0.22));
   overflow: visible;
 }
