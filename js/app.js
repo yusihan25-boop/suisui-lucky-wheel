@@ -495,8 +495,9 @@
     ctx.rotate((lean * Math.PI) / 180);
     ctx.translate(-w / 2, -h);
 
-    const tipH = Math.min(w * 1.2, Math.max(w * 0.9, h * 0.18));
-    const r = w * 0.48;
+    // 筒内露出部分为方头签，圆角极小
+    const tipH = Math.min(w * 1.05, Math.max(w * 0.75, h * 0.14));
+    const r = Math.max(2, w * 0.12);
     const line = Math.max(2.8, w * 0.18);
     const wood = shade > 0.05 ? "#e6d0a8" : shade > 0 ? "#efe0b8" : "#f6e7c4";
 
@@ -508,11 +509,12 @@
     ctx.stroke();
 
     if (shade > 0) {
-      roundRect(ctx, line * 0.35, tipH * 0.75, w - line * 0.7, h - tipH * 0.75 - line * 0.2, r * 0.35);
+      roundRect(ctx, line * 0.35, tipH * 0.7, w - line * 0.7, h - tipH * 0.7 - line * 0.2, r * 0.5);
       ctx.fillStyle = `rgba(90, 55, 30, ${0.06 + shade * 0.35})`;
       ctx.fill();
     }
 
+    // 顶部色块也保持方头
     roundRect(ctx, 0, 0, w, tipH, r);
     ctx.fillStyle = tipColor;
     ctx.fill();
@@ -521,24 +523,26 @@
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.moveTo(line * 0.4, tipH);
-    ctx.lineTo(w - line * 0.4, tipH);
+    ctx.moveTo(line * 0.35, tipH);
+    ctx.lineTo(w - line * 0.35, tipH);
     ctx.strokeStyle = "#3d2a1f";
     ctx.lineWidth = Math.max(1.6, line * 0.55);
     ctx.stroke();
 
     if (label) {
-      // 文字集中在签头下方，不分散到整根
+      // 文字放在签尾（底部），字号加大
       const text = String(label).slice(0, 8);
       const chars = text.split("");
-      const fontSize = Math.min(17, Math.max(13, Math.round(w * 0.34)));
-      const startY = tipH + fontSize * 0.75;
+      const fontSize = Math.min(26, Math.max(18, Math.round(w * 0.52)));
+      const gap = fontSize * 1.08;
+      const blockH = chars.length * gap;
+      const startY = h - fontSize * 0.55 - blockH + gap;
       ctx.fillStyle = "#3d2a1f";
       ctx.font = `bold ${fontSize}px 'Noto Sans SC', sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       chars.forEach((ch, i) => {
-        ctx.fillText(ch, w / 2, startY + i * fontSize * 1.05);
+        ctx.fillText(ch, w / 2, startY + i * gap);
       });
     }
     ctx.restore();
