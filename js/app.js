@@ -928,9 +928,45 @@
     for (let i = 3; i >= 0; i--) {
       ctx.beginPath();
       ctx.ellipse(0, -i * s * 0.22, s * (0.55 - i * 0.06), s * (0.32 - i * 0.03), 0, 0, Math.PI * 2);
-      ctx.fillStyle = i % 2 === 0 ? "#fffef8" : "#fff5e6";
+      ctx.fillStyle = i % 2 === 0 ? "#f4f0ff" : "#d8d0f5";
       ctx.fill();
     }
+    ctx.restore();
+  }
+
+  function paintGem(ctx, x, y, r, colorA, colorB) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, 1, x, y, r);
+    g.addColorStop(0, colorA);
+    g.addColorStop(1, colorB);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 248, 220, 0.35)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function paintBowCosmic(ctx, x, y, s) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(-s * 0.9, -s * 0.55, -s * 1.15, s * 0.1);
+    ctx.quadraticCurveTo(-s * 0.35, s * 0.25, 0, 0);
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(s * 0.9, -s * 0.55, s * 1.15, s * 0.1);
+    ctx.quadraticCurveTo(s * 0.35, s * 0.25, 0, 0);
+    ctx.fillStyle = "#7c3aed";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(0, s * 0.05, s * 0.28, s * 0.22, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#a78bfa";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(0, s * 0.02, s * 0.14, 0, Math.PI * 2);
+    ctx.fillStyle = "#f0c14b";
+    ctx.fill();
     ctx.restore();
   }
 
@@ -942,12 +978,13 @@
     ctx.quadraticCurveTo(cx, botY + h * 0.02, cx - botRx, botY);
     ctx.closePath();
     const g = ctx.createLinearGradient(cx - topRx, rimY, cx + topRx, botY);
-    g.addColorStop(0, "#ffd0dc");
-    g.addColorStop(0.45, "#ffb6c8");
-    g.addColorStop(1, "#f9a0b5");
+    g.addColorStop(0, "#3b2a78");
+    g.addColorStop(0.4, "#2a1f5c");
+    g.addColorStop(0.75, "#1a1448");
+    g.addColorStop(1, "#12103a");
     ctx.fillStyle = g;
     ctx.fill();
-    ctx.strokeStyle = "#e8799a";
+    ctx.strokeStyle = "rgba(240, 193, 75, 0.55)";
     ctx.lineWidth = 4;
     ctx.lineJoin = "round";
     ctx.stroke();
@@ -963,7 +1000,7 @@
     ctx.beginPath();
     ctx.ellipse(cx, cy, outRx, outRy, 0, 0, Math.PI * 2);
     ctx.ellipse(cx, cy - 2, inRx, inRy, 0, 0, Math.PI * 2, true);
-    ctx.fillStyle = "#fffaf0";
+    ctx.fillStyle = "#e8e0ff";
     ctx.fill("evenodd");
     const count = 14;
     for (let i = 0; i < count; i++) {
@@ -974,6 +1011,11 @@
       const py = cy + Math.sin(a) * ((outRy + inRy) * 0.5) - 4;
       paintCreamSwirl(ctx, px, py, Math.max(10, outRx * 0.14));
     }
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, outRx, outRy, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(240, 193, 75, 0.65)";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -1017,51 +1059,51 @@
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // 气球（身后）
-    paintBalloon(ctx, cx - topRx * 1.35, rimY + h * 0.12, 18, 24, "#7dd3fc", {
+    // 气球（身后）——紫金星夜
+    paintBalloon(ctx, cx - topRx * 1.35, rimY + h * 0.12, 18, 24, "#8b5cf6", {
       x: cx - botRx * 0.55,
       y: botY - 28,
     });
-    paintBalloon(ctx, cx - topRx * 1.05, rimY + h * 0.22, 12, 16, "#fde047", {
+    paintBalloon(ctx, cx - topRx * 1.05, rimY + h * 0.22, 12, 16, "#f0c14b", {
       x: cx - botRx * 0.4,
       y: botY - 20,
     });
-    paintBalloon(ctx, cx + topRx * 1.32, rimY + h * 0.14, 17, 23, "#fda4af", {
+    paintBalloon(ctx, cx + topRx * 1.32, rimY + h * 0.14, 17, 23, "#6366f1", {
       x: cx + botRx * 0.55,
       y: botY - 28,
     });
-    paintBalloon(ctx, cx + topRx * 1.02, rimY + h * 0.24, 11, 15, "#facc15", {
+    paintBalloon(ctx, cx + topRx * 1.02, rimY + h * 0.24, 11, 15, "#c4b5fd", {
       x: cx + botRx * 0.4,
       y: botY - 18,
     });
 
-    // 蛋糕身
+    // 星夜蛋糕身
     fillCakeBody(ctx, cx, rimY, topRx, botY, botRx, h);
 
-    // 腰部粉蓝丝带
+    // 腰部紫金丝带
     ctx.beginPath();
     ctx.moveTo(cx - botRx * 0.95, botY - 36);
     ctx.quadraticCurveTo(cx, botY - 22, cx + botRx * 0.95, botY - 36);
-    ctx.strokeStyle = "#7dd3fc";
+    ctx.strokeStyle = "rgba(167, 139, 250, 0.85)";
     ctx.lineWidth = 7;
     ctx.lineCap = "round";
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(cx - botRx * 0.92, botY - 26);
     ctx.quadraticCurveTo(cx, botY - 14, cx + botRx * 0.92, botY - 26);
-    ctx.strokeStyle = "#fb7185";
+    ctx.strokeStyle = "rgba(240, 193, 75, 0.9)";
     ctx.lineWidth = 6;
     ctx.stroke();
 
-    // 奶油后沿 + 内腔
+    // 星云奶油后沿 + 内腔
     fillCreamRim(ctx, cx, rimY, outRx, outRy, inRx, inRy, false);
     ctx.beginPath();
     ctx.ellipse(cx, rimY - 2, inRx, inRy, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "#6b3a2a";
+    ctx.fillStyle = "#0c1233";
     ctx.fill();
     ctx.beginPath();
     ctx.ellipse(cx, rimY - 2, inRx, inRy, 0, Math.PI, 0, true);
-    ctx.strokeStyle = "#c4a484";
+    ctx.strokeStyle = "#5b4a9a";
     ctx.lineWidth = Math.max(8, outRy - inRy);
     ctx.stroke();
 
@@ -1105,17 +1147,17 @@
     });
     ctx.restore();
 
-    // 奶油前沿盖住签根
+    // 星云奶油前沿盖住签根
     fillCreamRim(ctx, cx, rimY, outRx, outRy, inRx, inRy, true);
 
-    // 奶油上的水果 / 爱心（前沿附近）
-    paintStrawberry(ctx, cx - outRx * 0.55, rimY + outRy * 0.55, 14);
-    paintStrawberry(ctx, cx + outRx * 0.42, rimY + outRy * 0.35, 12);
-    paintBlueberry(ctx, cx - outRx * 0.18, rimY + outRy * 0.75, 5);
-    paintBlueberry(ctx, cx + outRx * 0.12, rimY + outRy * 0.7, 4.5);
-    paintBlueberry(ctx, cx + outRx * 0.65, rimY + outRy * 0.15, 5);
-    paintHeart(ctx, cx - outRx * 0.05, rimY + outRy * 0.35, 10, "#f43f5e");
-    paintHeart(ctx, cx + outRx * 0.28, rimY + outRy * 0.65, 8, "#fb7185");
+    // 口沿宝石 / 星芒
+    paintGem(ctx, cx - outRx * 0.55, rimY + outRy * 0.55, 7, "#fde68a", "#d97706");
+    paintGem(ctx, cx + outRx * 0.42, rimY + outRy * 0.35, 6, "#c4b5fd", "#6d28d9");
+    paintGem(ctx, cx - outRx * 0.18, rimY + outRy * 0.75, 4.5, "#bfdbfe", "#2563eb");
+    paintGem(ctx, cx + outRx * 0.12, rimY + outRy * 0.7, 4, "#fde68a", "#f59e0b");
+    paintGem(ctx, cx + outRx * 0.65, rimY + outRy * 0.15, 5, "#a78bfa", "#4c1d95");
+    paintSpark4(ctx, cx - outRx * 0.05, rimY + outRy * 0.3, 8, "#fff6c2");
+    paintSpark4(ctx, cx + outRx * 0.28, rimY + outRy * 0.6, 6, "#e9d5ff");
 
     // 侧边描线
     ctx.beginPath();
@@ -1123,7 +1165,7 @@
     ctx.lineTo(cx + botRx, botY);
     ctx.quadraticCurveTo(cx, botY + h * 0.02, cx - botRx, botY);
     ctx.lineTo(cx - topRx, rimY);
-    ctx.strokeStyle = "#e8799a";
+    ctx.strokeStyle = "rgba(192, 132, 252, 0.55)";
     ctx.lineWidth = 3.5;
     ctx.lineJoin = "round";
     ctx.stroke();
@@ -1132,36 +1174,39 @@
     ctx.beginPath();
     ctx.moveTo(cx - topRx * 0.7, rimY + 16);
     ctx.lineTo(cx - botRx * 0.55, botY - 40);
-    ctx.strokeStyle = "rgba(255,255,255,0.45)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.22)";
     ctx.lineWidth = 10;
     ctx.lineCap = "round";
     ctx.stroke();
 
     // 竖排「碎碎生日快乐」
     ctx.save();
-    ctx.fillStyle = "#e11d48";
+    ctx.fillStyle = "#f0c14b";
+    ctx.shadowColor = "rgba(240, 193, 75, 0.45)";
+    ctx.shadowBlur = 8;
     ctx.font = `${Math.round(w * 0.095)}px 'Long Cang', 'ZCOOL KuaiLe', cursive`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     "碎碎生日快乐".split("").forEach((ch, i) => {
       ctx.fillText(ch, cx, h * 0.53 + i * (h * 0.05));
     });
+    ctx.shadowBlur = 0;
     ctx.restore();
 
-    // 蛋糕身爱心 / 闪光 / 彩屑
-    paintHeart(ctx, cx - topRx * 0.55, h * 0.52, 14, "#ef4444");
-    paintHeart(ctx, cx + topRx * 0.52, h * 0.58, 12, "#f43f5e");
-    paintHeart(ctx, cx + topRx * 0.35, h * 0.7, 10, "#fb7185");
+    // 筒身星芒 / 爱心 / 星屑
+    paintHeart(ctx, cx - topRx * 0.55, h * 0.52, 14, "#c084fc");
+    paintHeart(ctx, cx + topRx * 0.52, h * 0.58, 12, "#a78bfa");
+    paintHeart(ctx, cx + topRx * 0.35, h * 0.7, 10, "#818cf8");
     paintSpark4(ctx, cx - topRx * 0.7, rimY + 28, 8, "#fde047");
     paintSpark4(ctx, cx + topRx * 0.72, rimY + 40, 7, "#fef08a");
-    paintSpark4(ctx, cx - topRx * 0.4, botY - 48, 6, "#fde68a");
+    paintSpark4(ctx, cx - topRx * 0.4, botY - 48, 6, "#e9d5ff");
     const confetti = [
-      [-0.75, 0.55, "#60a5fa", 0.4],
-      [0.7, 0.62, "#f472b6", -0.3],
-      [-0.6, 0.72, "#facc15", 0.6],
-      [0.55, 0.48, "#a78bfa", -0.5],
-      [-0.35, 0.78, "#34d399", 0.2],
-      [0.4, 0.75, "#fb923c", -0.2],
+      [-0.75, 0.55, "#a78bfa", 0.4],
+      [0.7, 0.62, "#f0c14b", -0.3],
+      [-0.6, 0.72, "#c4b5fd", 0.6],
+      [0.55, 0.48, "#60a5fa", -0.5],
+      [-0.35, 0.78, "#fde68a", 0.2],
+      [0.4, 0.75, "#818cf8", -0.2],
     ];
     confetti.forEach(([nx, ny, color, rot], i) => {
       const bx = cx + topRx * nx;
@@ -1174,8 +1219,8 @@
       ctx.restore();
     });
 
-    // 底部蝴蝶结
-    paintBow(ctx, cx, botY - 18, 22);
+    // 底部紫金蝴蝶结
+    paintBowCosmic(ctx, cx, botY - 18, 22);
 
     if (tubeState.mode === "rise") {
       const p = tubeState.riseProgress;
@@ -1407,58 +1452,73 @@
     osc.stop(start + dur + 0.02);
   }
 
-  /** 摇签筒：木质签条碰撞声 */
+  /** 摇签筒：竹木签条轻碰声（短噪声脉冲，非电子哔哔） */
   function playTubeShakeSound(durationSec = 2.2) {
     try {
       const ctx = ensureAudio();
       if (!ctx) return;
       const now = ctx.currentTime;
       const end = now + durationSec;
+      const sr = ctx.sampleRate;
 
-      // 持续沙沙噪声底
-      const noiseDur = durationSec + 0.05;
-      const frames = Math.floor(ctx.sampleRate * noiseDur);
-      const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < frames; i++) {
-        const t = i / ctx.sampleRate;
-        const env = Math.min(1, t * 8) * Math.min(1, (noiseDur - t) * 6);
-        data[i] = (Math.random() * 2 - 1) * env * 0.55;
+      function makeClackBuffer(lenSec) {
+        const n = Math.max(1, Math.floor(sr * lenSec));
+        const buf = ctx.createBuffer(1, n, sr);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < n; i++) {
+          const p = i / n;
+          const env = Math.exp(-p * 28) * (1 - p);
+          data[i] = (Math.random() * 2 - 1) * env;
+        }
+        return buf;
       }
-      const noise = ctx.createBufferSource();
-      noise.buffer = buffer;
-      const filter = ctx.createBiquadFilter();
-      filter.type = "bandpass";
-      filter.frequency.value = 1800;
-      filter.Q.value = 0.9;
-      const noiseGain = ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.0001, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.22, now + 0.05);
-      noiseGain.gain.setValueAtTime(0.18, now + durationSec * 0.7);
-      noiseGain.gain.exponentialRampToValueAtTime(0.0001, end);
-      noise.connect(filter);
-      filter.connect(noiseGain);
-      noiseGain.connect(ctx.destination);
-      noise.start(now);
-      noise.stop(end + 0.02);
 
-      // 间歇木签敲击
-      let t = now;
-      while (t < end - 0.05) {
-        const gap = 0.045 + Math.random() * 0.07;
-        const freq = 220 + Math.random() * 480;
-        const click = ctx.createOscillator();
-        const clickGain = ctx.createGain();
-        click.type = "triangle";
-        click.frequency.setValueAtTime(freq, t);
-        click.frequency.exponentialRampToValueAtTime(freq * 0.55, t + 0.04);
-        clickGain.gain.setValueAtTime(0.0001, t);
-        clickGain.gain.exponentialRampToValueAtTime(0.14 + Math.random() * 0.08, t + 0.004);
-        clickGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
-        click.connect(clickGain);
-        clickGain.connect(ctx.destination);
-        click.start(t);
-        click.stop(t + 0.06);
+      // 轻柔底噪
+      const bedFrames = Math.floor(sr * (durationSec + 0.08));
+      const bedBuf = ctx.createBuffer(1, bedFrames, sr);
+      const bedData = bedBuf.getChannelData(0);
+      for (let i = 0; i < bedFrames; i++) {
+        const t = i / sr;
+        const env = Math.min(1, t * 10) * Math.min(1, (durationSec - t) * 5);
+        bedData[i] = (Math.random() * 2 - 1) * env * 0.12;
+      }
+      const bed = ctx.createBufferSource();
+      bed.buffer = bedBuf;
+      const bedLp = ctx.createBiquadFilter();
+      bedLp.type = "lowpass";
+      bedLp.frequency.value = 900;
+      const bedGain = ctx.createGain();
+      bedGain.gain.value = 0.16;
+      bed.connect(bedLp);
+      bedLp.connect(bedGain);
+      bedGain.connect(ctx.destination);
+      bed.start(now);
+      bed.stop(end + 0.04);
+
+      // 不规则签条碰撞
+      let t = now + 0.02;
+      while (t < end - 0.08) {
+        const gap = 0.055 + Math.random() * 0.09;
+        const src = ctx.createBufferSource();
+        src.buffer = makeClackBuffer(0.045 + Math.random() * 0.03);
+        const bp = ctx.createBiquadFilter();
+        bp.type = "bandpass";
+        bp.frequency.value = 480 + Math.random() * 520;
+        bp.Q.value = 1.4;
+        const hp = ctx.createBiquadFilter();
+        hp.type = "highpass";
+        hp.frequency.value = 180;
+        const g = ctx.createGain();
+        const peak = 0.22 + Math.random() * 0.14;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(peak, t + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.055);
+        src.connect(hp);
+        hp.connect(bp);
+        bp.connect(g);
+        g.connect(ctx.destination);
+        src.start(t);
+        src.stop(t + 0.08);
         t += gap;
       }
     } catch (err) {
