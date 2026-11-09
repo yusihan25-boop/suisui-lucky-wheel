@@ -403,7 +403,7 @@
         ctx.rotate(mid);
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
-        ctx.font = `bold ${Math.max(13, Math.min(20, radius / 11))}px "Noto Sans SC", sans-serif';
+        ctx.font = `bold ${Math.max(13, Math.min(20, radius / 11))}px "Noto Sans SC", sans-serif`;
         ctx.shadowColor = "rgba(60,50,45,0.28)";
         ctx.shadowBlur = 3;
         ctx.fillText(labelFn(item), radius - 20, 5);
