@@ -1,5 +1,6 @@
 (() => {
   const STORAGE_KEY = "lucky-wheel-config-v3";
+  const LIVE_CAST_KEY = "lucky-wheel-live-cast";
   const HISTORY_KEY = "lucky-wheel-history-v3";
   const DECOR_KEY = "lucky-wheel-decor-v1";
 
@@ -56,6 +57,7 @@
     btnStock: document.getElementById("btnStock"),
     btnCloseStock: document.getElementById("btnCloseStock"),
     btnSettings: document.getElementById("btnSettings"),
+    btnLiveMode: document.getElementById("btnLiveMode"),
     btnHistory: document.getElementById("btnHistory"),
     btnExportHistory: document.getElementById("btnExportHistory"),
     settingsPanel: document.getElementById("settingsPanel"),
@@ -2358,6 +2360,11 @@
   els.btnSettings.addEventListener("click", openSettings);
   els.btnStock.addEventListener("click", openStock);
   els.btnHistory.addEventListener("click", openHistory);
+  if (els.btnLiveMode) {
+    els.btnLiveMode.addEventListener("click", () => {
+      setLiveCast(!isLiveCast());
+    });
+  }
   els.btnAddPerson.addEventListener("click", () => {
     const i = draft.people.length;
     draft.people.push({
@@ -2537,10 +2544,54 @@
     });
   }
 
+  function isLiveCast() {
+    return document.documentElement.classList.contains("live-cast");
+  }
+
+  function setLiveCast(on, persist) {
+    document.documentElement.classList.toggle("live-cast", !!on);
+    if (els.btnLiveMode) {
+      els.btnLiveMode.setAttribute("aria-pressed", on ? "true" : "false");
+      els.btnLiveMode.textContent = on ? "退出投屏" : "直播投屏";
+    }
+    if (persist !== false) {
+      try {
+        localStorage.setItem(LIVE_CAST_KEY, on ? "1" : "0");
+      } catch (_) {}
+    }
+    scheduleFit();
+    requestAnimationFrame(() => {
+      try {
+        redrawAll();
+      } catch (_) {}
+    });
+  }
+
+  function initLiveCast() {
+    let on = false;
+    try {
+      const params = new URLSearchParams(location.search);
+      if (params.get("live") === "1" || params.get("live") === "true") on = true;
+      else if (params.get("live") === "0" || params.get("live") === "false") on = false;
+      else on = localStorage.getItem(LIVE_CAST_KEY) === "1";
+    } catch (_) {
+      on = false;
+    }
+    setLiveCast(on, false);
+  }
+
   function fitStageBoard() {
     const board = document.getElementById("stageBoard");
     const scaler = board && board.parentElement;
     if (!board || !scaler) return;
+    if (isLiveCast()) {
+      board.style.width = "";
+      board.style.height = "";
+      board.style.transform = "";
+      board.style.left = "";
+      board.style.top = "";
+      return;
+    }
     const bw = 1660;
     const bh = 900;
     board.style.width = `${bw}px`;
@@ -2569,5 +2620,6 @@
   applyTitle();
   redrawAll();
   renderDecor(loadDecor());
+  initLiveCast();
   scheduleFit();
 })();
