@@ -59,6 +59,10 @@
     btnCloseStock: document.getElementById("btnCloseStock"),
     btnSettings: document.getElementById("btnSettings"),
     btnLiveMode: document.getElementById("btnLiveMode"),
+    btnBackLive: document.getElementById("btnBackLive"),
+    rotateTipModal: document.getElementById("rotateTipModal"),
+    btnRotateTipLive: document.getElementById("btnRotateTipLive"),
+    btnRotateTipOk: document.getElementById("btnRotateTipOk"),
     btnHistory: document.getElementById("btnHistory"),
     btnExportHistory: document.getElementById("btnExportHistory"),
     settingsPanel: document.getElementById("settingsPanel"),
@@ -2366,6 +2370,26 @@
       setLiveCast(!isLiveCast());
     });
   }
+  if (els.btnBackLive) {
+    els.btnBackLive.addEventListener("click", () => {
+      hideRotateTip();
+      setLiveCast(true);
+    });
+  }
+  if (els.btnRotateTipLive) {
+    els.btnRotateTipLive.addEventListener("click", () => {
+      hideRotateTip();
+      setLiveCast(true);
+    });
+  }
+  if (els.btnRotateTipOk) {
+    els.btnRotateTipOk.addEventListener("click", hideRotateTip);
+  }
+  if (els.rotateTipModal) {
+    els.rotateTipModal.querySelectorAll("[data-close-rotate-tip]").forEach((el) => {
+      el.addEventListener("click", hideRotateTip);
+    });
+  }
   els.btnAddPerson.addEventListener("click", () => {
     const i = draft.people.length;
     draft.people.push({
@@ -2440,7 +2464,8 @@
 
   window.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
-    if (els.resultModal.classList.contains("open")) hideResult();
+    if (els.rotateTipModal && els.rotateTipModal.classList.contains("open")) hideRotateTip();
+    else if (els.resultModal.classList.contains("open")) hideResult();
     else if (els.stockModal.classList.contains("open")) hideStock();
     else if (els.historyModal.classList.contains("open")) hideHistory();
     else if (els.settingsPanel.classList.contains("open")) closeSettings();
@@ -2558,13 +2583,28 @@
     return window.innerHeight >= window.innerWidth;
   }
 
-  /** 竖屏下普通模式无法滑动操作：用 CSS 旋转成横屏布局 */
-  function syncForceLandscapeUi() {
-    const force = !isLiveCast() && isPortraitViewport();
-    document.documentElement.classList.toggle("force-landscape-ui", force);
+  function showRotateTip() {
+    if (!els.rotateTipModal) return;
+    els.rotateTipModal.classList.add("open");
+    els.rotateTipModal.setAttribute("aria-hidden", "false");
+  }
+
+  function hideRotateTip() {
+    if (!els.rotateTipModal) return;
+    els.rotateTipModal.classList.remove("open");
+    els.rotateTipModal.setAttribute("aria-hidden", "true");
+  }
+
+  /** 竖屏普通模式：浮层按钮保证能回直播；退出投屏时提示横屏 */
+  function syncPortraitNormalUi(exitedLive) {
+    const portraitNormal = !isLiveCast() && isPortraitViewport();
+    if (els.btnBackLive) els.btnBackLive.hidden = !portraitNormal;
+    if (exitedLive && portraitNormal) showRotateTip();
+    if (!portraitNormal) hideRotateTip();
   }
 
   function setLiveCast(on, persist) {
+    const wasLive = isLiveCast();
     document.documentElement.classList.toggle("live-cast", !!on);
     if (els.btnLiveMode) {
       els.btnLiveMode.setAttribute("aria-pressed", on ? "true" : "false");
@@ -2575,7 +2615,7 @@
         localStorage.setItem(LIVE_CAST_KEY, on ? "1" : "0");
       } catch (_) {}
     }
-    syncForceLandscapeUi();
+    syncPortraitNormalUi(wasLive && !on);
     scheduleFit();
     requestAnimationFrame(() => {
       scheduleFit();
@@ -2631,13 +2671,13 @@
     fitRaf = requestAnimationFrame(fitStageBoard);
   };
   window.addEventListener("resize", () => {
-    syncForceLandscapeUi();
+    syncPortraitNormalUi(false);
     scheduleFit();
   });
   window.addEventListener("orientationchange", () => {
-    syncForceLandscapeUi();
+    syncPortraitNormalUi(false);
     setTimeout(() => {
-      syncForceLandscapeUi();
+      syncPortraitNormalUi(false);
       scheduleFit();
     }, 250);
   });
@@ -2649,6 +2689,6 @@
   redrawAll();
   renderDecor(loadDecor());
   initLiveCast();
-  syncForceLandscapeUi();
+  syncPortraitNormalUi(false);
   scheduleFit();
 })();
