@@ -502,15 +502,11 @@ body {
   line-height: 1.2;
 }
 
-#btnStock {
-  display: none;
-}
-
 .stage-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: nowrap;
   width: 100%;
   margin: 0 0 2px;
@@ -520,10 +516,11 @@ body {
 .stage-actions .btn {
   flex: 1 1 0;
   min-width: 0;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 4px;
+  padding-right: 4px;
   text-align: center;
   white-space: nowrap;
+  font-size: 0.86rem;
 }
 
 .stage {
@@ -555,7 +552,7 @@ body {
   left: 0;
   top: 0;
   display: grid;
-  grid-template-columns: 460px minmax(0, 1fr) 270px;
+  grid-template-columns: 420px minmax(0, 1fr) 340px;
   align-items: center;
   column-gap: 40px;
   row-gap: 24px;
@@ -679,17 +676,20 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-self: center;
+  align-self: stretch;
+  align-items: stretch;
   padding-top: 56px;
   gap: 12px;
   width: 100%;
   max-height: 100%;
   z-index: 2;
+  box-sizing: border-box;
 }
 
 .designate-bar {
   position: relative;
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -1876,7 +1876,7 @@ html.live-cast .stage-row.dual {
   justify-content: center;
   gap: 10px;
   padding-top: 18px;
-  padding-right: 118px; /* 给右上角浮层控制留空 */
+  padding-right: 130px; /* 给右上角浮层控制留空 */
 }
 
 html.live-cast .wheel-col {
@@ -1935,9 +1935,10 @@ html.live-cast .stage-side {
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 112px;
+  width: 124px;
   padding-top: 0;
   justify-content: flex-start;
+  align-items: stretch;
   gap: 6px;
   max-height: none;
   z-index: 4;
@@ -1947,6 +1948,7 @@ html.live-cast .stage-actions {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  width: 100%;
 }
 
 html.live-cast .stage-actions .btn,
@@ -1969,6 +1971,8 @@ html.live-cast #btnLiveMode.btn-ghost {
 }
 
 html.live-cast .designate-bar {
+  width: 100%;
+  box-sizing: border-box;
   padding: 7px;
   gap: 5px;
   background: rgba(16, 20, 48, 0.78);
@@ -2045,12 +2049,12 @@ html.live-cast #stockModal .modal-card {
 
 @media (max-aspect-ratio: 3/4) {
   html.live-cast .stage-row.dual {
-    padding-right: 104px;
+    padding-right: 118px;
     gap: clamp(6px, 2cqw, 18px);
   }
 
   html.live-cast .stage-side {
-    width: 98px;
+    width: 112px;
   }
 
   html.live-cast .star-wheel-wrap {
