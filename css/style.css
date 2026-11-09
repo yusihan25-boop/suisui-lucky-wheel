@@ -1924,7 +1924,8 @@ html.live-cast .stage-row.dual {
   justify-content: center;
   gap: 10px;
   padding-top: 18px;
-  padding-right: 130px; /* 给右上角浮层控制留空 */
+  /* 给右侧控制栏+照片留空，避免挡住抽签按钮 */
+  padding-right: 156px;
 }
 
 html.live-cast .wheel-col {
@@ -1936,6 +1937,12 @@ html.live-cast .wheel-col {
   justify-content: flex-end;
   gap: 4px;
   padding: 0;
+}
+
+html.live-cast .tube-col {
+  position: relative;
+  z-index: 2;
+  transform: translateX(-14px);
 }
 
 html.live-cast .star-wheel-col .stage-visual {
@@ -2098,8 +2105,12 @@ html.live-cast #stockModal .modal-card {
 
 @media (max-aspect-ratio: 3/4) {
   html.live-cast .stage-row.dual {
-    padding-right: 118px;
+    padding-right: 140px;
     gap: clamp(6px, 2cqw, 18px);
+  }
+
+  html.live-cast .tube-col {
+    transform: translateX(-10px);
   }
 
   html.live-cast .stage-side {
