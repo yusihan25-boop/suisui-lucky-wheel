@@ -69,6 +69,7 @@
     btnCloseDownloadOffer: document.getElementById("btnCloseDownloadOffer"),
     btnHistory: document.getElementById("btnHistory"),
     btnExportHistory: document.getElementById("btnExportHistory"),
+    btnCopyHistory: document.getElementById("btnCopyHistory"),
     settingsPanel: document.getElementById("settingsPanel"),
     inputTitle: document.getElementById("inputTitle"),
     inputRemoveWinner: document.getElementById("inputRemoveWinner"),
@@ -1937,7 +1938,9 @@
   async function triggerBlobDownload(blob, filename) {
     // 微信内置浏览器会把 blob 当成网页打开（出现 blob:https://...），不可靠
     if (isWeChatBrowser()) {
-      alert("微信里无法可靠保存文件。请点右上角 ··· →「在浏览器中打开」，再用 Safari/Chrome 导出。");
+      alert(
+        "微信里无法可靠保存 Excel。\n另外：微信和 Safari/Chrome 的中奖记录是分开存放的，互相同步不了。\n请用「复制记录」在微信里保存，或继续在微信中查看。"
+      );
       return false;
     }
 
@@ -2075,9 +2078,54 @@
     return true;
   }
 
+  async function copyHistoryText() {
+    if (!history.length) {
+      alert("暂无中奖记录可复制");
+      return false;
+    }
+    const text = history
+      .map((row) => {
+        const time = new Date(row.time).toLocaleString();
+        const info = historyLabel(row);
+        const title = recordTitle(row);
+        return `【${title}】${info.kind}：${info.value}（${time}）`;
+      })
+      .join("\n");
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+      alert("中奖记录已复制到剪贴板，可粘贴到微信聊天或备忘录保存。");
+      return true;
+    } catch (err) {
+      console.warn(err);
+      alert("复制失败，请长按记录文字手动复制。");
+      return false;
+    }
+  }
+
   async function exportHistory() {
     if (!history.length) {
       alert("暂无中奖记录可导出");
+      return;
+    }
+
+    // 微信与系统浏览器 localStorage 隔离：记录不会跟着“在浏览器打开”走
+    if (isWeChatBrowser()) {
+      const ok = confirm(
+        "微信里的中奖记录只存在微信中，用「在浏览器中打开」后看不到这些记录，这是正常现象。\n\n是否现在复制全部中奖记录到剪贴板？"
+      );
+      if (ok) await copyHistoryText();
       return;
     }
 
@@ -2612,6 +2660,9 @@
     openHistory();
   });
   els.btnExportHistory.addEventListener("click", exportHistory);
+  if (els.btnCopyHistory) {
+    els.btnCopyHistory.addEventListener("click", copyHistoryText);
+  }
   els.peopleExcelInput.addEventListener("change", (e) => {
     const file = e.target.files && e.target.files[0];
     if (file) importPeople(file);
