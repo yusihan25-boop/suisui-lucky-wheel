@@ -2241,6 +2241,14 @@ html.force-landscape-ui .settings {
   text-align: center;
 }
 
+.app-dialog-card #appDialogText,
+.app-dialog-card .rotate-tip-text {
+  color: #1e293b !important;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
 .download-offer-card .btn {
   text-align: center;
   text-decoration: none;
