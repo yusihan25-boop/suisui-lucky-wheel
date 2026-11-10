@@ -1903,12 +1903,65 @@
     els.stockModal.setAttribute("aria-hidden", "true");
   }
 
+  function isMobileLike() {
+    const ua = navigator.userAgent || "";
+    if (/Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return true;
+    // iPadOS 桌面 UA
+    if (navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua)) return true;
+    return false;
+  }
+
+  function canUseSavePicker() {
+    return typeof window.showSaveFilePicker === "function" && !isMobileLike();
+  }
+
+  async function downloadBlobMobileFriendly(buffer, filename) {
+    const name = filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`;
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    // 手机上优先系统分享（iOS/Android 最稳）
+    if (navigator.share && navigator.canShare) {
+      try {
+        const file = new File([blob], name, { type: blob.type });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: name,
+          });
+          return "shared";
+        }
+      } catch (err) {
+        if (err && err.name === "AbortError") return "abort";
+        console.warn("系统分享失败，回退下载", err);
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.rel = "noopener";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      a.remove();
+    }, 2500);
+    return "download";
+  }
+
   async function saveWorkbookWithPicker(book, filename) {
+    const safeName = filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`;
     const buffer = XLSX.write(book, { bookType: "xlsx", type: "array" });
-    try {
-      if (window.showSaveFilePicker) {
+
+    // 仅桌面 Chromium 用另存为；手机上 showSaveFilePicker 常不可用/会卡住
+    if (canUseSavePicker()) {
+      try {
         const handle = await window.showSaveFilePicker({
-          suggestedName: filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`,
+          suggestedName: safeName,
           types: [
             {
               description: "Excel 工作簿",
@@ -1924,14 +1977,21 @@
         await writable.write(buffer);
         await writable.close();
         return true;
+      } catch (err) {
+        if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
+          return false;
+        }
+        console.warn("另存为失败，回退普通下载", err);
       }
-    } catch (err) {
-      if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
-        return false;
-      }
-      console.warn("另存为失败，回退普通下载", err);
     }
-    XLSX.writeFile(book, filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`);
+
+    const mode = await downloadBlobMobileFriendly(buffer, safeName);
+    if (mode === "abort") return false;
+    if (mode === "download" && isMobileLike()) {
+      alert(
+        "导出已触发。请到手机「文件 / 下载」里查找该 Excel；若没有，请用 Safari 或 Chrome 打开本页后再导出（勿用微信内置浏览器）。"
+      );
+    }
     return true;
   }
 
