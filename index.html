@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=rotatetext1" />
+  <link rel="stylesheet" href="css/style.css?v=mobexport2" />
 </head>
 <body>
   <div id="orientShell" class="orient-shell">
@@ -293,7 +293,20 @@
     </div>
   </div>
 
+  <div id="downloadOfferModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-download-offer></div>
+    <div class="modal-card history-card download-offer-card" role="dialog" aria-labelledby="downloadOfferHeading">
+      <h2 id="downloadOfferHeading" class="modal-heading">保存导出文件</h2>
+      <p class="rotate-tip-text">请点下面的按钮保存到手机。若没反应，请用 Safari / Chrome 打开本页后再试（不要用微信打开）。</p>
+      <div class="history-actions rotate-tip-actions" style="flex-direction: column; gap: 10px;">
+        <a id="downloadOfferXlsx" class="btn btn-primary" download>下载 Excel</a>
+        <a id="downloadOfferCsv" class="btn btn-secondary" download hidden>下载 CSV（手机备用）</a>
+        <button type="button" id="btnCloseDownloadOffer" class="btn btn-ghost">关闭</button>
+      </div>
+    </div>
+  </div>
+
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=mobexport1"></script>
+  <script src="js/app.js?v=mobexport2"></script>
 </body>
 </html>
