@@ -67,6 +67,10 @@
     downloadOfferXlsx: document.getElementById("downloadOfferXlsx"),
     downloadOfferCsv: document.getElementById("downloadOfferCsv"),
     btnCloseDownloadOffer: document.getElementById("btnCloseDownloadOffer"),
+    appDialogModal: document.getElementById("appDialogModal"),
+    appDialogText: document.getElementById("appDialogText"),
+    btnAppDialogOk: document.getElementById("btnAppDialogOk"),
+    btnAppDialogCancel: document.getElementById("btnAppDialogCancel"),
     btnHistory: document.getElementById("btnHistory"),
     btnExportHistory: document.getElementById("btnExportHistory"),
     btnCopyHistory: document.getElementById("btnCopyHistory"),
@@ -1921,6 +1925,41 @@
     return /MicroMessenger/i.test(navigator.userAgent || "");
   }
 
+  let appDialogResolver = null;
+
+  function hideAppDialog(result) {
+    if (!els.appDialogModal) return;
+    els.appDialogModal.classList.remove("open");
+    els.appDialogModal.setAttribute("aria-hidden", "true");
+    const resolve = appDialogResolver;
+    appDialogResolver = null;
+    if (resolve) resolve(!!result);
+  }
+
+  /**
+   * 自定义弹窗，避免微信把系统 confirm 的「取消」变成「关闭网页」
+   * @returns {Promise<boolean>}
+   */
+  function showAppDialog({ text, showCancel = true, okText = "确定", cancelText = "取消" }) {
+    if (!els.appDialogModal || !els.appDialogText) {
+      if (showCancel) return Promise.resolve(window.confirm(text));
+      window.alert(text);
+      return Promise.resolve(true);
+    }
+    if (appDialogResolver) hideAppDialog(false);
+    els.appDialogText.textContent = text;
+    if (els.btnAppDialogOk) els.btnAppDialogOk.textContent = okText;
+    if (els.btnAppDialogCancel) {
+      els.btnAppDialogCancel.textContent = cancelText;
+      els.btnAppDialogCancel.hidden = !showCancel;
+    }
+    els.appDialogModal.classList.add("open");
+    els.appDialogModal.setAttribute("aria-hidden", "false");
+    return new Promise((resolve) => {
+      appDialogResolver = resolve;
+    });
+  }
+
   function canUseSavePicker() {
     return typeof window.showSaveFilePicker === "function" && !isMobileLike();
   }
@@ -2136,10 +2175,18 @@
     }
 
     if (ok) {
-      alert("请粘贴到聊天或备忘录");
+      await showAppDialog({
+        text: "请粘贴到聊天或备忘录",
+        showCancel: false,
+        okText: "确定",
+      });
       return true;
     }
-    alert("复制失败，请长按记录文字手动复制。");
+    await showAppDialog({
+      text: "复制失败，请长按记录文字手动复制。",
+      showCancel: false,
+      okText: "确定",
+    });
     return false;
   }
 
@@ -2149,9 +2196,14 @@
       return;
     }
 
-    // 微信：仅询问是否复制；确定后立刻复制（不要先讲浏览器隔离长文案）
+    // 微信：用自定义弹窗（取消=退回界面，不会关闭网页）
     if (isWeChatBrowser()) {
-      const ok = confirm("是否现在复制全部中奖记录到剪贴板？");
+      const ok = await showAppDialog({
+        text: "是否现在复制全部中奖记录到剪贴板？",
+        showCancel: true,
+        okText: "确定",
+        cancelText: "取消",
+      });
       if (ok) await copyHistoryText();
       return;
     }
@@ -2642,6 +2694,17 @@
       if (ok) hideDownloadOffer();
     });
   }
+  if (els.btnAppDialogOk) {
+    els.btnAppDialogOk.addEventListener("click", () => hideAppDialog(true));
+  }
+  if (els.btnAppDialogCancel) {
+    els.btnAppDialogCancel.addEventListener("click", () => hideAppDialog(false));
+  }
+  if (els.appDialogModal) {
+    els.appDialogModal.querySelectorAll("[data-close-app-dialog]").forEach((el) => {
+      el.addEventListener("click", () => hideAppDialog(false));
+    });
+  }
   els.btnAddPerson.addEventListener("click", () => {
     const i = draft.people.length;
     draft.people.push({
@@ -2719,7 +2782,8 @@
 
   window.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
-    if (els.downloadOfferModal && els.downloadOfferModal.classList.contains("open")) hideDownloadOffer();
+    if (els.appDialogModal && els.appDialogModal.classList.contains("open")) hideAppDialog(false);
+    else if (els.downloadOfferModal && els.downloadOfferModal.classList.contains("open")) hideDownloadOffer();
     else if (els.rotateTipModal && els.rotateTipModal.classList.contains("open")) hideRotateTip();
     else if (els.resultModal.classList.contains("open")) hideResult();
     else if (els.stockModal.classList.contains("open")) hideStock();
