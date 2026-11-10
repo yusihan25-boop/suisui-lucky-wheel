@@ -2077,9 +2077,10 @@
     const buffer = XLSX.write(book, { bookType: "xlsx", type: "array" });
     // octet-stream 在安卓上更容易进「下载」而不是被网页预览卡住
     const xlsxBlob = new Blob([buffer], { type: "application/octet-stream" });
+    const onMobile = isMobileLike() || isWeChatBrowser();
 
-    // 仅桌面 Chromium 用另存为
-    if (canUseSavePicker()) {
+    // 电脑端：弹出「另存为」选择文件夹，保存为 Excel
+    if (!onMobile && typeof window.showSaveFilePicker === "function") {
       try {
         const handle = await window.showSaveFilePicker({
           suggestedName: safeName,
@@ -2102,12 +2103,35 @@
         if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
           return false;
         }
-        console.warn("另存为失败，回退下载弹窗", err);
+        console.warn("另存为失败，回退浏览器下载", err);
       }
     }
 
-    // 手机 / 不支持另存为：弹出可点击下载链接（避免系统分享卡在网页）
-    const csvBlob = isMobileLike() ? workbookToCsvBlob(book) : null;
+    // 电脑端不支持另存为（如部分 Firefox/Safari）：仍导出 Excel，走浏览器下载
+    if (!onMobile) {
+      try {
+        XLSX.writeFile(book, safeName);
+        return true;
+      } catch (err) {
+        console.warn(err);
+        const url = URL.createObjectURL(
+          new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          })
+        );
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = safeName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        return true;
+      }
+    }
+
+    // 手机端：保持现有下载弹窗 / 分享流程
+    const csvBlob = workbookToCsvBlob(book);
     showDownloadOffer({
       xlsxBlob,
       xlsxName: safeName,
