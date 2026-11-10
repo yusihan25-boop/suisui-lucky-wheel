@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=copystore2" />
+  <link rel="stylesheet" href="css/style.css?v=copystore3" />
 </head>
 <body>
   <div id="orientShell" class="orient-shell">
@@ -307,7 +307,18 @@
     </div>
   </div>
 
+  <div id="appDialogModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-app-dialog></div>
+    <div class="modal-card history-card app-dialog-card" role="dialog" aria-labelledby="appDialogText">
+      <p id="appDialogText" class="rotate-tip-text" style="margin-bottom: 18px;"></p>
+      <div class="history-actions rotate-tip-actions">
+        <button type="button" id="btnAppDialogCancel" class="btn btn-secondary">取消</button>
+        <button type="button" id="btnAppDialogOk" class="btn btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=copystore2"></script>
+  <script src="js/app.js?v=copystore3"></script>
 </body>
 </html>
