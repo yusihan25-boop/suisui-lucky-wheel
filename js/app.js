@@ -2078,12 +2078,8 @@
     return true;
   }
 
-  async function copyHistoryText() {
-    if (!history.length) {
-      alert("暂无中奖记录可复制");
-      return false;
-    }
-    const text = history
+  function buildHistoryText() {
+    return history
       .map((row) => {
         const time = new Date(row.time).toLocaleString();
         const info = historyLabel(row);
@@ -2091,27 +2087,60 @@
         return `【${title}】${info.kind}：${info.value}（${time}）`;
       })
       .join("\n");
+  }
+
+  function copyTextViaTextarea(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "0";
+    ta.style.left = "0";
+    ta.style.width = "1px";
+    ta.style.height = "1px";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    let ok = false;
     try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(text);
-      } else {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.setAttribute("readonly", "");
-        ta.style.position = "fixed";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-      }
-      alert("中奖记录已复制到剪贴板，可粘贴到微信聊天或备忘录保存。");
-      return true;
-    } catch (err) {
-      console.warn(err);
-      alert("复制失败，请长按记录文字手动复制。");
+      ok = document.execCommand("copy");
+    } catch (_) {
+      ok = false;
+    }
+    ta.remove();
+    return ok;
+  }
+
+  async function copyHistoryText() {
+    if (!history.length) {
+      alert("暂无中奖记录可复制");
       return false;
     }
+    const text = buildHistoryText();
+    let ok = false;
+    // 微信里 clipboard API 常失败；优先用同步 execCommand，且要紧挨用户点击
+    if (isWeChatBrowser()) {
+      ok = copyTextViaTextarea(text);
+    } else {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          ok = true;
+        }
+      } catch (_) {
+        ok = false;
+      }
+      if (!ok) ok = copyTextViaTextarea(text);
+    }
+
+    if (ok) {
+      alert("请粘贴到聊天或备忘录");
+      return true;
+    }
+    alert("复制失败，请长按记录文字手动复制。");
+    return false;
   }
 
   async function exportHistory() {
@@ -2120,11 +2149,9 @@
       return;
     }
 
-    // 微信与系统浏览器 localStorage 隔离：记录不会跟着“在浏览器打开”走
+    // 微信：仅询问是否复制；确定后立刻复制（不要先讲浏览器隔离长文案）
     if (isWeChatBrowser()) {
-      const ok = confirm(
-        "微信里的中奖记录只存在微信中，用「在浏览器中打开」后看不到这些记录，这是正常现象。\n\n是否现在复制全部中奖记录到剪贴板？"
-      );
+      const ok = confirm("是否现在复制全部中奖记录到剪贴板？");
       if (ok) await copyHistoryText();
       return;
     }
