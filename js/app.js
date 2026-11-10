@@ -62,6 +62,10 @@
     rotateTipModal: document.getElementById("rotateTipModal"),
     btnRotateTipYes: document.getElementById("btnRotateTipYes"),
     btnRotateTipNo: document.getElementById("btnRotateTipNo"),
+    downloadOfferModal: document.getElementById("downloadOfferModal"),
+    downloadOfferXlsx: document.getElementById("downloadOfferXlsx"),
+    downloadOfferCsv: document.getElementById("downloadOfferCsv"),
+    btnCloseDownloadOffer: document.getElementById("btnCloseDownloadOffer"),
     btnHistory: document.getElementById("btnHistory"),
     btnExportHistory: document.getElementById("btnExportHistory"),
     settingsPanel: document.getElementById("settingsPanel"),
@@ -1915,49 +1919,99 @@
     return typeof window.showSaveFilePicker === "function" && !isMobileLike();
   }
 
-  async function downloadBlobMobileFriendly(buffer, filename) {
-    const name = filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`;
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+  let downloadOfferUrls = [];
 
-    // 手机上优先系统分享（iOS/Android 最稳）
-    if (navigator.share && navigator.canShare) {
+  function revokeDownloadOfferUrls() {
+    downloadOfferUrls.forEach((url) => {
       try {
-        const file = new File([blob], name, { type: blob.type });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: name,
-          });
-          return "shared";
-        }
-      } catch (err) {
-        if (err && err.name === "AbortError") return "abort";
-        console.warn("系统分享失败，回退下载", err);
-      }
+        URL.revokeObjectURL(url);
+      } catch (_) {}
+    });
+    downloadOfferUrls = [];
+  }
+
+  function hideDownloadOffer() {
+    if (!els.downloadOfferModal) return;
+    els.downloadOfferModal.classList.remove("open");
+    els.downloadOfferModal.setAttribute("aria-hidden", "true");
+    revokeDownloadOfferUrls();
+    if (els.downloadOfferXlsx) {
+      els.downloadOfferXlsx.removeAttribute("href");
+      els.downloadOfferXlsx.removeAttribute("download");
+    }
+    if (els.downloadOfferCsv) {
+      els.downloadOfferCsv.hidden = true;
+      els.downloadOfferCsv.removeAttribute("href");
+      els.downloadOfferCsv.removeAttribute("download");
+    }
+  }
+
+  function showDownloadOffer({ xlsxBlob, xlsxName, csvBlob, csvName }) {
+    if (!els.downloadOfferModal || !els.downloadOfferXlsx) {
+      // 极少数情况：直接尝试 a[download]
+      const url = URL.createObjectURL(xlsxBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = xlsxName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      return;
+    }
+    revokeDownloadOfferUrls();
+    const xUrl = URL.createObjectURL(xlsxBlob);
+    downloadOfferUrls.push(xUrl);
+    els.downloadOfferXlsx.href = xUrl;
+    els.downloadOfferXlsx.download = xlsxName;
+    els.downloadOfferXlsx.textContent = `下载 ${xlsxName}`;
+
+    if (csvBlob && els.downloadOfferCsv) {
+      const cUrl = URL.createObjectURL(csvBlob);
+      downloadOfferUrls.push(cUrl);
+      els.downloadOfferCsv.hidden = false;
+      els.downloadOfferCsv.href = cUrl;
+      els.downloadOfferCsv.download = csvName || xlsxName.replace(/\.xlsx$/i, ".csv");
+      els.downloadOfferCsv.textContent = `下载 CSV（手机备用）`;
+    } else if (els.downloadOfferCsv) {
+      els.downloadOfferCsv.hidden = true;
     }
 
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = name;
-    a.rel = "noopener";
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-      a.remove();
-    }, 2500);
-    return "download";
+    els.downloadOfferModal.classList.add("open");
+    els.downloadOfferModal.setAttribute("aria-hidden", "false");
+  }
+
+  function workbookToCsvBlob(book) {
+    try {
+      const sheetName = book.SheetNames && book.SheetNames[0];
+      if (!sheetName) return null;
+      // 多表时合并导出为单个 CSV，方便手机打开
+      const chunks = [];
+      book.SheetNames.forEach((name, idx) => {
+        const sheet = book.Sheets[name];
+        const csv = XLSX.utils.sheet_to_csv(sheet);
+        if (book.SheetNames.length > 1) {
+          chunks.push(`# ${name}`);
+        }
+        chunks.push(csv);
+        if (idx < book.SheetNames.length - 1) chunks.push("");
+      });
+      return new Blob(["\uFEFF" + chunks.join("\r\n")], {
+        type: "text/csv;charset=utf-8;",
+      });
+    } catch (err) {
+      console.warn(err);
+      return null;
+    }
   }
 
   async function saveWorkbookWithPicker(book, filename) {
     const safeName = filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`;
     const buffer = XLSX.write(book, { bookType: "xlsx", type: "array" });
+    // octet-stream 在安卓上更容易进「下载」而不是被网页预览卡住
+    const xlsxBlob = new Blob([buffer], { type: "application/octet-stream" });
 
-    // 仅桌面 Chromium 用另存为；手机上 showSaveFilePicker 常不可用/会卡住
+    // 仅桌面 Chromium 用另存为
     if (canUseSavePicker()) {
       try {
         const handle = await window.showSaveFilePicker({
@@ -1981,17 +2035,18 @@
         if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
           return false;
         }
-        console.warn("另存为失败，回退普通下载", err);
+        console.warn("另存为失败，回退下载弹窗", err);
       }
     }
 
-    const mode = await downloadBlobMobileFriendly(buffer, safeName);
-    if (mode === "abort") return false;
-    if (mode === "download" && isMobileLike()) {
-      alert(
-        "导出已触发。请到手机「文件 / 下载」里查找该 Excel；若没有，请用 Safari 或 Chrome 打开本页后再导出（勿用微信内置浏览器）。"
-      );
-    }
+    // 手机 / 不支持另存为：弹出可点击下载链接（避免系统分享卡在网页）
+    const csvBlob = isMobileLike() ? workbookToCsvBlob(book) : null;
+    showDownloadOffer({
+      xlsxBlob,
+      xlsxName: safeName,
+      csvBlob,
+      csvName: safeName.replace(/\.xlsx$/i, ".csv"),
+    });
     return true;
   }
 
@@ -2459,6 +2514,14 @@
       });
     });
   }
+  if (els.btnCloseDownloadOffer) {
+    els.btnCloseDownloadOffer.addEventListener("click", hideDownloadOffer);
+  }
+  if (els.downloadOfferModal) {
+    els.downloadOfferModal.querySelectorAll("[data-close-download-offer]").forEach((el) => {
+      el.addEventListener("click", hideDownloadOffer);
+    });
+  }
   els.btnAddPerson.addEventListener("click", () => {
     const i = draft.people.length;
     draft.people.push({
@@ -2533,7 +2596,8 @@
 
   window.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
-    if (els.rotateTipModal && els.rotateTipModal.classList.contains("open")) hideRotateTip();
+    if (els.downloadOfferModal && els.downloadOfferModal.classList.contains("open")) hideDownloadOffer();
+    else if (els.rotateTipModal && els.rotateTipModal.classList.contains("open")) hideRotateTip();
     else if (els.resultModal.classList.contains("open")) hideResult();
     else if (els.stockModal.classList.contains("open")) hideStock();
     else if (els.historyModal.classList.contains("open")) hideHistory();
